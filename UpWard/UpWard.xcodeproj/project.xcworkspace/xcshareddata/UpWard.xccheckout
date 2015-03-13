@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>91A9A6AC-4855-4F81-BBDA-F51AD7EEECB0</string>
+	<key>IDESourceControlProjectName</key>
+	<string>UpWard</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>E4B46F956293B088C72BE9795D07B452EE878274</key>
+		<string>https://github.com/g67277/MGD.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>UpWard/UpWard.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>E4B46F956293B088C72BE9795D07B452EE878274</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/g67277/MGD.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>E4B46F956293B088C72BE9795D07B452EE878274</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E4B46F956293B088C72BE9795D07B452EE878274</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MGD</string>
+		</dict>
+	</array>
+</dict>
+</plist>
