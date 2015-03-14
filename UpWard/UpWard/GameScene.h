@@ -28,6 +28,15 @@
     SKNode* _shelves;
     SKNode* _moving;
     
+    //Testing score node
+    SKNode* scoreContactNode;
+    //SKSpriteNode* scoreContactNode;
+    NSMutableArray* shelvesReference;
+    
+    //Score label and counting integer
+    SKLabelNode* _scoreLabelNode;
+    NSInteger _score;
+    
     int flapCount;
     BOOL _canRestart;
     BOOL _touchedTop;

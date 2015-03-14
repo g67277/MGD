@@ -22,6 +22,7 @@ static const uint32_t floorCategory = 1 << 2;
 static const uint32_t shelvesCategory = 1 << 3;
 static const uint32_t shelvesFloorCategory = 1 << 4;
 static const uint32_t roofCategory = 1 << 5;
+static const uint32_t scoreCategory = 1 << 6;
 
 -(void)didMoveToView:(SKView *)view {
     /* Setup your scene here */
@@ -34,6 +35,9 @@ static const uint32_t roofCategory = 1 << 5;
     worldSpeed = 2.5;
     initialDelay = 1.7;
     shelveDelay = 1.6;
+    
+    //testing shelve refrence
+    shelvesReference = [[NSMutableArray alloc] init];
     
     //Change the world gravity
     self.physicsWorld.gravity = CGVectorMake( 0.0, -5.0 );
@@ -55,12 +59,24 @@ static const uint32_t roofCategory = 1 << 5;
     _shelves = [SKNode node];
     [_moving addChild:_shelves];
     
-    
-    
     [self playMusic:@"BGMusic" withLoop:YES];
     //Adding the container
     [self physicsContainer];
     [self createScene];
+    [self scoreLabel];
+    
+   
+}
+
+-(void) scoreLabel{
+    // Initialize label and create a label which holds the score
+    _score = 0;
+    _scoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
+    _scoreLabelNode.fontColor = [UIColor grayColor];
+    _scoreLabelNode.position = CGPointMake( CGRectGetMidX( self.frame ), 3 * self.frame.size.height / 4 );
+    _scoreLabelNode.zPosition = -2;
+    _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
+    [self addChild:_scoreLabelNode];
 }
 
 -(void) playLevel{
@@ -126,7 +142,8 @@ static const uint32_t roofCategory = 1 << 5;
     [_shelves removeAllChildren];
     lost = false;
     _moving.speed = worldSpeed;
-    
+    _score = 0;
+    _scoreLabelNode.text = [NSString stringWithFormat:@"%d", _score];
     flapCount = 0;
     [player stop];
     [self playMusic:@"BGMusic" withLoop:YES];
@@ -248,10 +265,20 @@ static const uint32_t roofCategory = 1 << 5;
     
     SKSpriteNode* leftShelve = [SKSpriteNode spriteNodeWithTexture:_mountShevlesTexture];
     
-    if ((int)yPosition < 400 && (int)yPosition > 100) {
+    if ((int)yPosition < 400 && (int)yPosition > 130) {
         leftShelve.position = CGPointMake(350, 0);
     }else{
         leftShelve.position = CGPointMake(x, 0);
+        
+        //Adding score node after the solid shelves
+        scoreContactNode = [SKNode node];
+        //scoreContactNode = [SKSpriteNode spriteNodeWithColor:[UIColor blackColor] size:CGSizeMake(kHorizontalShelveGap, leftShelve.size.height)];
+        scoreContactNode.position = CGPointMake(x + leftShelve.size.width / 1.78, 40);
+        scoreContactNode.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(kHorizontalShelveGap, leftShelve.size.height)];
+        scoreContactNode.physicsBody.categoryBitMask = scoreCategory;
+        scoreContactNode.physicsBody.contactTestBitMask = birdCategory;
+        scoreContactNode.physicsBody.dynamic = NO;
+        [shelvePair addChild:scoreContactNode];
     }
     leftShelve.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:leftShelve.size];
     leftShelve.physicsBody.dynamic = NO;
@@ -263,7 +290,7 @@ static const uint32_t roofCategory = 1 << 5;
     topOLeftShelve.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:topOLeftShelve.size];
     topOLeftShelve.physicsBody.categoryBitMask = shelvesFloorCategory;
     topOLeftShelve.physicsBody.dynamic = NO;
-    [shelvePair addChild:topOLeftShelve];
+    [shelvePair addChild:topOLeftShelve]; // ** Maybe I need to change this to SKNode
     
     SKSpriteNode* rightShelve = [SKSpriteNode spriteNodeWithTexture:_mountShevlesTexture];
     rightShelve.position = CGPointMake(leftShelve.position.x + leftShelve.size.width + kHorizontalShelveGap, 0);
@@ -277,7 +304,9 @@ static const uint32_t roofCategory = 1 << 5;
     topORightShelve.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:topORightShelve.size];
     topORightShelve.physicsBody.categoryBitMask = shelvesFloorCategory;
     topORightShelve.physicsBody.dynamic = NO;
-    [shelvePair addChild:topORightShelve];
+    [shelvePair addChild:topORightShelve];  // ** Maybe I need to change this to SKNode
+    
+    [shelvesReference addObject:shelvePair];
     
     [shelvePair runAction:_moveAndRemoveShelves];
 
@@ -327,6 +356,33 @@ static const uint32_t roofCategory = 1 << 5;
         }
          */
        
+    }else if ( ( contact.bodyA.categoryBitMask & scoreCategory ) == scoreCategory || ( contact.bodyB.categoryBitMask & scoreCategory ) == scoreCategory ) {
+        // Bird has contact with score entity
+        
+        int i = 0;
+        while (i < shelvesReference.count) {
+            SKNode* testing = shelvesReference[i];
+            float testnumber = testing.position.y;
+            if (testing.position.y < 0) {
+                [shelvesReference removeObject:testing];
+            }else{
+                if (testing.children.count > 4) {
+                    NSLog(@"shelve position: %f, bird position: %f",testing.position.y , _bird.position.y );
+                    if (testing.position.y < _bird.position.y) {
+                        _score++;
+                        _scoreLabelNode.text = [NSString stringWithFormat:@"%d", _score];
+                        [shelvesReference removeObject:testing];
+                    }else{
+                        i++;
+                    }
+                }else{
+                    i++;
+                }
+            }
+            
+        }
+        
+        
     }
 }
 
