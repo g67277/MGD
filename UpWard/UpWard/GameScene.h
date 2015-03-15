@@ -27,11 +27,12 @@
     SKNode* shelvePair;
     SKNode* _shelves;
     SKNode* _moving;
-    
-    //Testing score node
+    // Score node
     SKNode* scoreContactNode;
-    //SKSpriteNode* scoreContactNode;
+    // Array to keep a reference to all the shelves
     NSMutableArray* shelvesReference;
+    //Testing pause button
+    UIButton* pauseBtn;
     
     //Score label and counting integer
     SKLabelNode* _scoreLabelNode;

@@ -36,7 +36,7 @@ static const uint32_t scoreCategory = 1 << 6;
     initialDelay = 1.7;
     shelveDelay = 1.6;
     
-    //testing shelve refrence
+    //Initializing refrence array
     shelvesReference = [[NSMutableArray alloc] init];
     
     //Change the world gravity
@@ -65,7 +65,6 @@ static const uint32_t scoreCategory = 1 << 6;
     [self createScene];
     [self scoreLabel];
     
-   
 }
 
 -(void) scoreLabel{
@@ -143,7 +142,8 @@ static const uint32_t scoreCategory = 1 << 6;
     lost = false;
     _moving.speed = worldSpeed;
     _score = 0;
-    _scoreLabelNode.text = [NSString stringWithFormat:@"%d", _score];
+    _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
+    [shelvesReference removeAllObjects];
     flapCount = 0;
     [player stop];
     [self playMusic:@"BGMusic" withLoop:YES];
@@ -361,17 +361,15 @@ static const uint32_t scoreCategory = 1 << 6;
         
         int i = 0;
         while (i < shelvesReference.count) {
-            SKNode* testing = shelvesReference[i];
-            float testnumber = testing.position.y;
-            if (testing.position.y < 0) {
-                [shelvesReference removeObject:testing];
+            SKNode* currentShelve = shelvesReference[i];
+            if (currentShelve.position.y < 0) {
+                [shelvesReference removeObject:currentShelve];
             }else{
-                if (testing.children.count > 4) {
-                    NSLog(@"shelve position: %f, bird position: %f",testing.position.y , _bird.position.y );
-                    if (testing.position.y < _bird.position.y) {
+                if (currentShelve.children.count > 4) {
+                    if (currentShelve.position.y < _bird.position.y) {
                         _score++;
                         _scoreLabelNode.text = [NSString stringWithFormat:@"%d", _score];
-                        [shelvesReference removeObject:testing];
+                        [shelvesReference removeObject:currentShelve];
                     }else{
                         i++;
                     }
