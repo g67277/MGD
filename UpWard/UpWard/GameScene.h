@@ -19,6 +19,8 @@
     SKAction* _moveAndRemoveShelves;
     SKAction* _moveMount1;
     SKAction* _moveMount2;
+    SKAction* _fly;
+    SKAction* _cry;
     SKView* _sceneSize;
     SKNode* _dummyFloor;
     SKNode* _dummyRoof;
@@ -29,14 +31,14 @@
     SKNode* _moving;
     // Score node
     SKNode* scoreContactNode;
+    SKShapeNode* scoreBG;
     // Array to keep a reference to all the shelves
     NSMutableArray* shelvesReference;
-    //Testing pause button
-    UIButton* pauseBtn;
     
     //Score label and counting integer
     SKLabelNode* _scoreLabelNode;
     NSInteger _score;
+    
     
     int flapCount;
     BOOL _canRestart;
