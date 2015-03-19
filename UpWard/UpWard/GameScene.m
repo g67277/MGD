@@ -8,6 +8,7 @@
 
 #import "GameScene.h"
 #import "Sprites.h"
+#define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
 @interface GameScene()
 
@@ -16,7 +17,6 @@
 
 @implementation GameScene
 
-static NSInteger const kHorizontalShelveGap = 100;
 static const uint32_t birdCategory = 1 << 0;
 static const uint32_t sidesCategory = 1 << 1;
 static const uint32_t floorCategory = 1 << 2;
@@ -25,17 +25,31 @@ static const uint32_t shelvesFloorCategory = 1 << 4;
 static const uint32_t roofCategory = 1 << 5;
 static const uint32_t scoreCategory = 1 << 6;
 
+NSString *const BodyRightWall = @"bodyRightWall";
+NSString *const BodyLeftWall = @"bodyLeftWall";
+NSString *const SolidShelvePosition = @"solidShelvePosition";
+NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
+
+
 -(void)didMoveToView:(SKView *)view {
     /* Setup your scene here */
+    
+    //Game Setup
     gameStarted = false;
     goingLeft = false;
     onShelve = false;
     lost = false;
     _touchedTop = false;
     flapCount = 0;
-    worldSpeed = 2.5;
+//    worldSpeed = 2.5;
+//    initialDelay = 1.7;
+//    shelveDelay = 1.6;
+    worldSpeed = 3.5;
     initialDelay = 1.7;
-    shelveDelay = 1.6;
+    shelveDelay = 1.5;
+    _flapSound = [SKAction playSoundFileNamed:@"flap.mp3" waitForCompletion:NO];
+    kHorizontalShelveGap = [self deviceSize:HorizontalShelveGap];
+    
     
     //Initializing refrence array
     shelvesReference = [[NSMutableArray alloc] init];
@@ -51,7 +65,6 @@ static const uint32_t scoreCategory = 1 << 6;
     
     //Creating the shelves texture here
     _mountShevlesTexture = [SKTexture textureWithImageNamed:@"mountShelve"];
-    
     _moving = [SKNode node];
     [self addChild:_moving];
     //Speed of the game
@@ -71,12 +84,43 @@ static const uint32_t scoreCategory = 1 << 6;
     
 }
 
+#pragma Device Type/Size methods
+
+- (int)deviceSize: (NSString*) callID{
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        if ([callID isEqualToString:BodyLeftWall]) {
+            return self.frame.size.width - 100;
+        }else if ([callID isEqualToString:BodyRightWall]) {
+            return 100;
+        }else if ([callID isEqualToString:SolidShelvePosition]) {
+            return 170;
+        }else if ([callID isEqualToString:HorizontalShelveGap]) {
+            return 120;
+        }
+        
+    } else {
+        if ([callID isEqualToString:BodyLeftWall]) {
+            return self.frame.size.width;
+        }else if ([callID isEqualToString:BodyRightWall]) {
+            return 1;
+        }else if ([callID isEqualToString:SolidShelvePosition]) {
+            return 370;
+        }else if ([callID isEqualToString:HorizontalShelveGap]) {
+            return 150;
+        }
+    }
+    
+    return 0;
+}
+
 #pragma Scene Creation Methods
 
 -(void) createBird{
     //Bird displayed
     //SKTexture* ellaTexture1 = [SKTexture textureWithImageNamed:@"ella_spriteSheet1"];
     _bird = [SKSpriteNode spriteNodeWithTexture:SPRITES_TEX_ELLA_FLAPDOWN];
+    [_bird setScale:1.3];
     _bird.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height / 1.7);
     _bird.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:_bird.size.height / 2];
     _bird.physicsBody.dynamic = YES;
@@ -123,14 +167,14 @@ static const uint32_t scoreCategory = 1 << 6;
 -(void) physicsContainer{
     
     _leftSide = [SKNode node];
-    _leftSide.position = CGPointMake(self.frame.size.width, 1);
-    _leftSide.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(self.frame.size.width / 1.72, self.frame.size.height * 2)];
+    _leftSide.position = CGPointMake([self deviceSize:BodyLeftWall], 1);
+    _leftSide.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(1, self.frame.size.height * 2)];
     _leftSide.physicsBody.dynamic = NO;
     _leftSide.physicsBody.categoryBitMask = sidesCategory;
     
     _rightSide = [SKNode node];
-    _rightSide.position = CGPointMake(1, 1);
-    _rightSide.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(self.frame.size.width / 1.7, self.frame.size.height * 2)];
+    _rightSide.position = CGPointMake([self deviceSize:BodyRightWall], 1);
+    _rightSide.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(1, self.frame.size.height * 2)];
     _rightSide.physicsBody.dynamic = NO;
     _rightSide.physicsBody.categoryBitMask = sidesCategory;
     
@@ -158,7 +202,8 @@ static const uint32_t scoreCategory = 1 << 6;
 -(void) populateShelves{
     [self setShelvesMovement];
     for (int i = 1; i < 7; i++) {
-        double shelvePosition = 133.33 * i;
+        //double shelvePosition = 133.33 * i;
+        double shelvePosition = 180 * i;
         CGFloat fPosition = (CGFloat) shelvePosition;
         [self spawnShelves:NO yPosition:fPosition];
     }
@@ -195,19 +240,21 @@ static const uint32_t scoreCategory = 1 << 6;
     shelvePair.zPosition = -5;
     
     //Random number for the left shelve
-    CGFloat x = [self randomFloatBetween:-100 and:_sceneSize.bounds.size.width - 150];
-    
+    //CGFloat x = [self randomFloatBetween:-100 and:_sceneSize.bounds.size.width - 250];
+    CGFloat x = [self randomFloatBetween:-400 and:50];
+
     SKSpriteNode* leftShelve = [SKSpriteNode spriteNodeWithTexture:_mountShevlesTexture];
+    //[leftShelve setScale:2.0];
     
-    if (((int)yPosition < 400 && (int)yPosition > 130) && !started) {
-        leftShelve.position = CGPointMake(350, 0);
+    if (((int)yPosition < 600 && (int)yPosition > 130) && !started) {
+        leftShelve.position = CGPointMake([self deviceSize:SolidShelvePosition], 0);
     }else{
         leftShelve.position = CGPointMake(x, 0);
         
         //Adding score node after the solid shelves
         scoreContactNode = [SKNode node];
-        //scoreContactNode = [SKSpriteNode spriteNodeWithColor:[UIColor blackColor] size:CGSizeMake(kHorizontalShelveGap, leftShelve.size.height)];
-        scoreContactNode.position = CGPointMake(x + leftShelve.size.width / 1.78, 40);
+        //scoreContactNode = [SKSpriteNode spriteNodeWithColor:[UIColor blackColor] size:CGSizeMake(kHorizontalShelveGap + 10, leftShelve.size.height)];
+        scoreContactNode.position = CGPointMake(x + leftShelve.size.width / 1.78, 60);
         scoreContactNode.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(kHorizontalShelveGap, leftShelve.size.height)];
         scoreContactNode.physicsBody.categoryBitMask = scoreCategory;
         scoreContactNode.physicsBody.contactTestBitMask = birdCategory;
@@ -219,8 +266,8 @@ static const uint32_t scoreCategory = 1 << 6;
     leftShelve.physicsBody.categoryBitMask = shelvesCategory;
     [shelvePair addChild:leftShelve];
     
-    SKSpriteNode* topOLeftShelve = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor] size:CGSizeMake(leftShelve.size.width - 2, leftShelve.size.height /4)];
-    topOLeftShelve.position = CGPointMake(x, 4.5);
+    SKSpriteNode* topOLeftShelve = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor] size:CGSizeMake(leftShelve.size.width - 4, leftShelve.size.height /4)];
+    topOLeftShelve.position = CGPointMake(x, 6.5);
     topOLeftShelve.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:topOLeftShelve.size];
     topOLeftShelve.physicsBody.categoryBitMask = shelvesFloorCategory;
     topOLeftShelve.physicsBody.dynamic = NO;
@@ -231,10 +278,11 @@ static const uint32_t scoreCategory = 1 << 6;
     rightShelve.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:rightShelve.size];
     rightShelve.physicsBody.dynamic = NO;
     rightShelve.physicsBody.categoryBitMask = shelvesCategory;
+    //[rightShelve setScale:2.0];
     [shelvePair addChild:rightShelve];
-    
-    SKSpriteNode* topORightShelve = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor] size:CGSizeMake(rightShelve.size.width - 2, rightShelve.size.height /4)];
-    topORightShelve.position = CGPointMake(x + leftShelve.size.width + kHorizontalShelveGap, 4.5);
+
+    SKSpriteNode* topORightShelve = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor] size:CGSizeMake(rightShelve.size.width - 4, rightShelve.size.height /4)];
+    topORightShelve.position = CGPointMake(x + leftShelve.size.width + kHorizontalShelveGap, 6.5);
     topORightShelve.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:topORightShelve.size];
     topORightShelve.physicsBody.categoryBitMask = shelvesFloorCategory;
     topORightShelve.physicsBody.dynamic = NO;
@@ -283,14 +331,14 @@ static const uint32_t scoreCategory = 1 << 6;
     if (!goingLeft) {
         _bird.texture = SPRITES_TEX_ELLA_LOOKLEFT;
         [_bird removeActionForKey:@"birdMoving"];
-        SKAction* birdMoveRight = [SKAction moveByX:_bird.size.width*2 y:0 duration:.004 * _bird.size.width*2];
+        SKAction* birdMoveRight = [SKAction moveByX:_bird.size.width*2 y:0 duration:.003 * _bird.size.width*2];
         SKAction* moveUntilCollision = [SKAction repeatActionForever:birdMoveRight];
         [_bird runAction:moveUntilCollision withKey:@"birdMoving"];
         goingLeft = true;
     }else{
         _bird.texture = SPRITES_TEX_ELLA_LOOKRIGHT;
         [_bird removeActionForKey:@"birdMoving"];
-        SKAction* birdMoveLeft = [SKAction moveByX:-_bird.size.width * 3 y:0 duration:.004 * _bird.size.width * 3];
+        SKAction* birdMoveLeft = [SKAction moveByX:-_bird.size.width * 3 y:0 duration:.003 * _bird.size.width * 3];
         SKAction* moveUntilCollision = [SKAction repeatActionForever:birdMoveLeft];
         [_bird runAction:moveUntilCollision withKey:@"birdMoving"];
         goingLeft = false;
@@ -302,7 +350,7 @@ static const uint32_t scoreCategory = 1 << 6;
 
 - (void) addHeader{
     
-    SKSpriteNode* headerNode = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:81.0/255.0f green:68.0/255.0f blue:66.0/255.0f alpha:1.0] size:CGSizeMake(self.frame.size.width * 2, 65)];
+    SKSpriteNode* headerNode = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:81.0/255.0f green:68.0/255.0f blue:66.0/255.0f alpha:1.0] size:CGSizeMake(self.frame.size.width * 2, 100)];
     //SKSpriteNode* headerNode = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor] size:CGSizeMake(self.frame.size.width * 2, 65)];
     headerNode.position = CGPointMake(1, self.frame.size.height / 1.04);
     headerNode.zPosition = 0;
@@ -312,7 +360,8 @@ static const uint32_t scoreCategory = 1 << 6;
     [self addChild:headerNode];
     
     SKSpriteNode* bigCoin = [SKSpriteNode spriteNodeWithImageNamed:@"coin_big"];
-    bigCoin.position = CGPointMake(self.frame.size.width / 3.2, self.frame.size.height / 1.04);
+    [bigCoin setScale:1.5];
+    bigCoin.position = CGPointMake([self deviceSize:BodyRightWall] + bigCoin.size.width / 2, self.frame.size.height / 1.04);
     bigCoin.zPosition = 20;
     
     [self addChild:bigCoin];
@@ -321,7 +370,8 @@ static const uint32_t scoreCategory = 1 << 6;
 
 - (SKSpriteNode *)pauseBtnNode{
     SKSpriteNode* pauseNode = [SKSpriteNode spriteNodeWithImageNamed:@"pauseBtn"];
-    pauseNode.position = CGPointMake(CGRectGetMidX( self.frame ), self.frame.size.height / 1.04 );
+    [pauseNode setScale:1.35];
+    pauseNode.position = CGPointMake(CGRectGetMidX( self.frame ), self.frame.size.height / 1.045 );
     pauseNode.name = @"pauseBtn";//how the node is identified later
     pauseNode.zPosition = 10.0;
     
@@ -330,7 +380,7 @@ static const uint32_t scoreCategory = 1 << 6;
 
 -(void) scoreLabel{
     
-    scoreBG = [SKShapeNode shapeNodeWithCircleOfRadius:100];
+    scoreBG = [SKShapeNode shapeNodeWithCircleOfRadius:150];
     scoreBG.fillColor = [UIColor colorWithWhite:1.0f alpha:0.8f];
     scoreBG.position = CGPointMake( CGRectGetMidX( self.frame ), CGRectGetMidY(self.frame));
     scoreBG.zPosition = -8;
@@ -338,8 +388,8 @@ static const uint32_t scoreCategory = 1 << 6;
     // Initialize label and create a label which holds the score
     _score = 0;
     _scoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
-    _scoreLabelNode.fontColor = [UIColor grayColor];
-    _scoreLabelNode.fontSize = 90;
+    _scoreLabelNode.fontColor = [UIColor lightGrayColor];
+    _scoreLabelNode.fontSize = 120;
     //_scoreLabelNode.position = CGPointMake( CGRectGetMidX( self.frame ), CGRectGetMidY(self.frame) - 10 );
     _scoreLabelNode.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 35);
     _scoreLabelNode.zPosition = -7;
@@ -382,8 +432,8 @@ static const uint32_t scoreCategory = 1 << 6;
                     // Tap to jump
                     if (flapCount < 2) {
                         _bird.physicsBody.velocity = CGVectorMake(0, 0);
-                        [_bird.physicsBody applyImpulse:CGVectorMake(0, 55)];
-                        [self runAction:[SKAction playSoundFileNamed:@"flap.mp3" waitForCompletion:NO]];
+                        [_bird.physicsBody applyImpulse:CGVectorMake(0, 120)];
+                        [self runAction:_flapSound];
                         [_bird runAction:_fly];
                         flapCount++;
                     }
@@ -493,7 +543,7 @@ static const uint32_t scoreCategory = 1 << 6;
 -(void)update:(CFTimeInterval)currentTime {
     /* Called before each frame is rendered */
     
-    if (_bird.position.y < 300) {
+    if (_bird.position.y < 250) {
         [_bird runAction:_cry withKey:@"crying"];
     }else{
         [_bird removeActionForKey:@"crying"];

@@ -21,6 +21,7 @@
     SKAction* _moveMount2;
     SKAction* _fly;
     SKAction* _cry;
+    SKAction* _flapSound;
     SKView* _sceneSize;
     SKNode* _dummyFloor;
     SKNode* _dummyRoof;
@@ -39,6 +40,7 @@
     SKLabelNode* _scoreLabelNode;
     NSInteger _score;
     
+    NSInteger kHorizontalShelveGap;
     
     int flapCount;
     BOOL _canRestart;
