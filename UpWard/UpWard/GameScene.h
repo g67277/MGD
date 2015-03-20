@@ -22,6 +22,12 @@
     SKAction* _fly;
     SKAction* _cry;
     SKAction* _flapSound;
+    SKAction* moveUntilCollisionR;
+    SKAction* moveUntilCollisionL;
+    SKAction* scaleScoreBG;
+    SKAction* losingScoreAnimation;
+    SKAction* bounceScoreLabel;
+    SKAction* bounceScoreBG;
     SKView* _sceneSize;
     SKNode* _dummyFloor;
     SKNode* _dummyRoof;
@@ -39,6 +45,7 @@
     //Score label and counting integer
     SKLabelNode* _scoreLabelNode;
     NSInteger _score;
+    SKLabelNode* gameOver; // Need to change;
     
     NSInteger kHorizontalShelveGap;
     

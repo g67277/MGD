@@ -41,21 +41,16 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     lost = false;
     _touchedTop = false;
     flapCount = 0;
-//    worldSpeed = 2.5;
-//    initialDelay = 1.7;
-//    shelveDelay = 1.6;
     worldSpeed = 3.5;
     initialDelay = 1.7;
     shelveDelay = 1.5;
-    _flapSound = [SKAction playSoundFileNamed:@"flap.mp3" waitForCompletion:NO];
     kHorizontalShelveGap = [self deviceSize:HorizontalShelveGap];
-    
-    
+
     //Initializing refrence array
     shelvesReference = [[NSMutableArray alloc] init];
     
     //Change the world gravity
-    self.physicsWorld.gravity = CGVectorMake( 0.0, -5.0 );
+    self.physicsWorld.gravity = CGVectorMake( 0.0, -6.0 );
     self.physicsWorld.contactDelegate = self;
     _sceneSize = (SKView *)self.view;
     
@@ -65,8 +60,10 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     //Creating the shelves texture here
     _mountShevlesTexture = [SKTexture textureWithImageNamed:@"mountShelve"];
+    
     _moving = [SKNode node];
     [self addChild:_moving];
+    
     //Speed of the game
     _moving.speed = worldSpeed;
     
@@ -77,12 +74,13 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     //Adding the container
     [self physicsContainer];
     [self createScene];
-    [self scoreLabel];
     //Adding header
     [self addHeader];
     
     
 }
+
+
 
 #pragma Device Type/Size methods
 
@@ -160,7 +158,39 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self createBird];
     [self populateShelves];
     [self moveScene];
+    [self scoreLabel];
+    [self initAllActions];
     [self moveBird];
+}
+
+-(void) initAllActions{
+    // Flap sound action
+    _flapSound = [SKAction playSoundFileNamed:@"flap.mp3" waitForCompletion:NO];
+    
+    // Move bird to the right
+    SKAction* birdMoveRight = [SKAction moveByX:_bird.size.width*2 y:0 duration:.003 * _bird.size.width*2];
+    moveUntilCollisionR = [SKAction repeatActionForever:birdMoveRight];
+    
+    // Move bird to the left
+    SKAction* birdMoveLeft = [SKAction moveByX:-_bird.size.width * 3 y:0 duration:.003 * _bird.size.width * 3];
+    moveUntilCollisionL = [SKAction repeatActionForever:birdMoveLeft];
+    
+    // Scale losing background, change font size and color
+    scaleScoreBG = [SKAction scaleTo:1.8 duration:.1];
+    losingScoreAnimation = [SKAction runBlock:(dispatch_block_t)^(){
+        scoreBG.zPosition = 10;
+        scoreBG.fillColor = [UIColor colorWithWhite:1.0f alpha:1.0f];
+        _scoreLabelNode.fontSize = 100;
+        _scoreLabelNode.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 100);
+        _scoreLabelNode.zPosition = 11;
+        _scoreLabelNode.fontColor = [UIColor grayColor];
+    }];
+    
+    // Score feedback and animation
+    bounceScoreLabel = [SKAction sequence:@[[SKAction scaleTo:1.5 duration:0.1], [SKAction scaleTo:1.0 duration:0.1]]];
+    bounceScoreBG = [SKAction sequence:@[[SKAction scaleTo:0.8 duration:0.1], [SKAction scaleTo:1.0 duration:0.1]]];
+    
+    
 }
 
 // Creating a ground and sides physics container dummy which will be replaced once shelves are added
@@ -202,7 +232,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 -(void) populateShelves{
     [self setShelvesMovement];
     for (int i = 1; i < 7; i++) {
-        //double shelvePosition = 133.33 * i;
         double shelvePosition = 180 * i;
         CGFloat fPosition = (CGFloat) shelvePosition;
         [self spawnShelves:NO yPosition:fPosition];
@@ -240,7 +269,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     shelvePair.zPosition = -5;
     
     //Random number for the left shelve
-    //CGFloat x = [self randomFloatBetween:-100 and:_sceneSize.bounds.size.width - 250];
     CGFloat x = [self randomFloatBetween:-400 and:50];
 
     SKSpriteNode* leftShelve = [SKSpriteNode spriteNodeWithTexture:_mountShevlesTexture];
@@ -321,8 +349,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 // Moves scene
 -(void) moveScene{
-    [_mount1Sprite runAction:_moveMount1];
-    [_mount2Sprite runAction:_moveMount2];
+    [_mount1Sprite runAction:_moveMount1 withKey:@"moveScene"];
+    [_mount2Sprite runAction:_moveMount2 withKey:@"moveScene"];
 }
 
 //-----------------------Moves bird left to right--------------------------------------------------------
@@ -331,16 +359,12 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     if (!goingLeft) {
         _bird.texture = SPRITES_TEX_ELLA_LOOKLEFT;
         [_bird removeActionForKey:@"birdMoving"];
-        SKAction* birdMoveRight = [SKAction moveByX:_bird.size.width*2 y:0 duration:.003 * _bird.size.width*2];
-        SKAction* moveUntilCollision = [SKAction repeatActionForever:birdMoveRight];
-        [_bird runAction:moveUntilCollision withKey:@"birdMoving"];
+        [_bird runAction:moveUntilCollisionR withKey:@"birdMoving"];
         goingLeft = true;
     }else{
         _bird.texture = SPRITES_TEX_ELLA_LOOKRIGHT;
         [_bird removeActionForKey:@"birdMoving"];
-        SKAction* birdMoveLeft = [SKAction moveByX:-_bird.size.width * 3 y:0 duration:.003 * _bird.size.width * 3];
-        SKAction* moveUntilCollision = [SKAction repeatActionForever:birdMoveLeft];
-        [_bird runAction:moveUntilCollision withKey:@"birdMoving"];
+        [_bird runAction:moveUntilCollisionL withKey:@"birdMoving"];
         goingLeft = false;
     }
 }
@@ -390,12 +414,27 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _scoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
     _scoreLabelNode.fontColor = [UIColor lightGrayColor];
     _scoreLabelNode.fontSize = 120;
-    //_scoreLabelNode.position = CGPointMake( CGRectGetMidX( self.frame ), CGRectGetMidY(self.frame) - 10 );
     _scoreLabelNode.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 35);
     _scoreLabelNode.zPosition = -7;
     _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
     [self addChild:_scoreLabelNode];
     [self addChild:scoreBG];
+
+}
+
+-(void) losingLabel{
+    
+    gameOver = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
+    gameOver.fontColor = [UIColor grayColor];
+    gameOver.fontSize = 85;
+    gameOver.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) + 30);
+    gameOver.zPosition = 11;
+    gameOver.text = @"Game Over!";
+    [self addChild:gameOver];
+    
+    [scoreBG runAction:scaleScoreBG];
+    _scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", (long)_score];
+    [scoreBG runAction:losingScoreAnimation];
 
 }
 
@@ -450,7 +489,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     if ((contact.bodyA.categoryBitMask & sidesCategory) == sidesCategory || (contact.bodyB.categoryBitMask & sidesCategory) == sidesCategory) { // When bird hits side
         [self moveBird];
     }else if ((contact.bodyA.categoryBitMask & floorCategory) == floorCategory || (contact.bodyB.categoryBitMask & floorCategory) == floorCategory){ // When bird hits floor
-        //[self runAction:[SKAction playSoundFileNamed:@"losing.mp3" waitForCompletion:NO]];
         if (onShelve) {
             if (!lost) {
                 [player stop];
@@ -459,6 +497,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
                     _moving.speed = 0;
                     [_bird removeActionForKey:@"birdMoving"];
                     [self removeActionForKey:@"spawnThenDelayForever"];
+                    [self losingLabel];
                 }
                 onShelve = false;
                 lost = true;
@@ -489,7 +528,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         
     }else if ( ( contact.bodyA.categoryBitMask & scoreCategory ) == scoreCategory || ( contact.bodyB.categoryBitMask & scoreCategory ) == scoreCategory ) {
         // Bird has contact with score entity
-        
+        // Checking the shelves refrence to count up the score only for jumping new shelves
         int i = 0;
         while (i < shelvesReference.count) {
             SKNode* currentShelve = shelvesReference[i];
@@ -500,8 +539,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
                     if (currentShelve.position.y < _bird.position.y) {
                         _score++;
                         _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
-                        [_scoreLabelNode runAction:[SKAction sequence:@[[SKAction scaleTo:1.5 duration:0.1], [SKAction scaleTo:1.0 duration:0.1]]]];
-                        [scoreBG runAction:[SKAction sequence:@[[SKAction scaleTo:0.8 duration:0.1], [SKAction scaleTo:1.0 duration:0.1]]]];
+                        [_scoreLabelNode runAction:bounceScoreLabel];
+                        [scoreBG runAction:bounceScoreBG];
                         [shelvesReference removeObject:currentShelve];
                     }else{
                         i++;
@@ -521,27 +560,56 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     // Moving bird to original position
     _bird.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height / 1.7);
     _bird.physicsBody.velocity = CGVectorMake(0, 0);
+    
+    // Reseting the scene
+    [_mount1Sprite removeActionForKey:@"moveScene"];
+    [_mount2Sprite removeActionForKey:@"moveScene"];
     _mount1Sprite.position = CGPointMake(CGRectGetMidX(self.frame) * 1.1, (_mount1Sprite.size.height / 2) - 2);
     _mount2Sprite.position = CGPointMake(CGRectGetMidX(self.frame) / 1.3, _mount1Sprite.size.height / 2);
+    [self moveScene];
+    
+    // Removing all shelves to repopulate screen
+    // Clearing all refrences
     [_shelves removeAllChildren];
-    [_bird removeActionForKey:@"crying"];
-    lost = false;
-    _moving.speed = worldSpeed;
-    _score = 0;
-    _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
     [shelvesReference removeAllObjects];
-    flapCount = 0;
+
+    // remove crying animations
+    [_bird removeActionForKey:@"crying"];
+    
+    // Reset game status
+    lost = false;
+    
+    // Moving the world again
+    _moving.speed = worldSpeed;
+    
+    // remove lose label and recreating score label
+    [_scoreLabelNode removeFromParent];
+    [scoreBG removeFromParent];
+    [gameOver removeFromParent];
+    [self scoreLabel];
+
+    flapCount = 0; // This needs to be changed**
+    
+    // Stop losing music to play the game background music
     [player stop];
     [self playMusic:@"BGMusic" withLoop:YES];
+    
+    // Recreate shelves
     [self populateShelves];
+    
+    // Start bird movement
     [self moveBird];
-    [_bird runAction:_fly];
-    //[self initShelves]; // Starts generating shells
+    
+    // Reset bird texture
+    _bird.texture = SPRITES_TEX_ELLA_FLAPDOWN;
+    
 }
 
 
 -(void)update:(CFTimeInterval)currentTime {
     /* Called before each frame is rendered */
+    
+    // Start crying animation when close to losing
     
     if (_bird.position.y < 250) {
         [_bird runAction:_cry withKey:@"crying"];
