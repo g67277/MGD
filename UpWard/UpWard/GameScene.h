@@ -12,18 +12,28 @@
 @interface GameScene : SKScene <SKPhysicsContactDelegate>{
     
     SKSpriteNode* _bird;
+    SKSpriteNode* _cat;
     SKSpriteNode* _mount1Sprite;
     SKSpriteNode* _mount2Sprite;
     SKColor* _background;
     SKTexture* _mountShevlesTexture;
+    
+    //Intro items
+    SKSpriteNode* titleBanner;
+    SKSpriteNode* playBtn;
+    SKAction* _titleMove;
+    SKAction* _playBtnMove;
+    
     SKAction* _moveAndRemoveShelves;
     SKAction* _moveMount1;
     SKAction* _moveMount2;
     SKAction* _fly;
     SKAction* _cry;
+    SKAction* _fight;
     SKAction* _flapSound;
     SKAction* moveUntilCollisionR;
     SKAction* moveUntilCollisionL;
+    SKAction* moveCatRight;
     SKAction* scaleScoreBG;
     SKAction* losingScoreAnimation;
     SKAction* bounceScoreLabel;
@@ -60,7 +70,6 @@
     //testing... to be deleted
     Boolean onShelve;
     Boolean lost;
-    Boolean gameStarted;
     Boolean goingLeft;
     AVAudioPlayer* player;
 }

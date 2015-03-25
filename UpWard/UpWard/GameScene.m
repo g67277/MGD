@@ -8,6 +8,7 @@
 
 #import "GameScene.h"
 #import "Sprites.h"
+#import "LevelSprites.h"
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
 @interface GameScene()
@@ -24,6 +25,7 @@ static const uint32_t shelvesCategory = 1 << 3;
 static const uint32_t shelvesFloorCategory = 1 << 4;
 static const uint32_t roofCategory = 1 << 5;
 static const uint32_t scoreCategory = 1 << 6;
+static const uint32_t catCategory = 1 << 7;
 
 NSString *const BodyRightWall = @"bodyRightWall";
 NSString *const BodyLeftWall = @"bodyLeftWall";
@@ -35,7 +37,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     /* Setup your scene here */
     
     //Game Setup
-    gameStarted = false;
     goingLeft = false;
     onShelve = false;
     lost = false;
@@ -76,8 +77,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self createScene];
     //Adding header
     [self addHeader];
-    
-    
+    [self createIntro];
 }
 
 
@@ -114,6 +114,35 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 #pragma Scene Creation Methods
 
+-(void) playLevel{
+    [self createBird];
+    [self createCat];
+    [self populateShelves];
+    [self moveScene];
+    [self scoreLabel];
+    [self initAllActions];
+    [self moveBirdCat];
+    [self createFightAnimation];
+    [titleBanner runAction:_titleMove];
+    [playBtn runAction:_playBtnMove];
+}
+
+-(void) createIntro{
+    titleBanner = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_TITLE];
+    titleBanner.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2 - 5);
+    titleBanner.zPosition = -15;
+    [_moving addChild:titleBanner];
+    
+    playBtn = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_PLAYBTN];
+    playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2 -5);
+    playBtn.zPosition = 1;
+    playBtn.name = @"playBtn";
+    [_moving addChild:playBtn];
+    
+    _titleMove = [SKAction moveByX:0 y:-titleBanner.size.height * 2 duration:.1 * titleBanner.size.height*2];
+    _playBtnMove = [SKAction moveByX:0 y:-titleBanner.size.height * 2 duration:.1 * titleBanner.size.height*2];
+}
+
 -(void) createBird{
     //Bird displayed
     //SKTexture* ellaTexture1 = [SKTexture textureWithImageNamed:@"ella_spriteSheet1"];
@@ -124,8 +153,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _bird.physicsBody.dynamic = YES;
     _bird.physicsBody.allowsRotation = NO;
     _bird.physicsBody.categoryBitMask = birdCategory;
-    _bird.physicsBody.collisionBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory;
-    _bird.physicsBody.contactTestBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory;
+    _bird.physicsBody.collisionBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory | catCategory;
+    _bird.physicsBody.contactTestBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory | catCategory;
     [self addChild:_bird];
     
     // Might need to move somewhere else
@@ -133,6 +162,19 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     SKAction* tears = [SKAction animateWithTextures:SPRITES_ANIM_ELLA_TEAR timePerFrame:.75];
     _fly = [SKAction repeatAction:flap count:3];
     _cry = [SKAction repeatActionForever:tears];
+}
+
+-(void) createCat{
+    //Create Evil Cat
+    _cat = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_CAT];
+    [_cat setScale:1.3];
+    _cat.position = CGPointMake(CGRectGetMidX(self.frame), 25);
+    _cat.zPosition = 1;
+    _cat.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:_cat.size.height / 2];
+    _cat.physicsBody.dynamic = YES;
+    _cat.physicsBody.categoryBitMask = catCategory;
+    _cat.physicsBody.collisionBitMask = sidesCategory | floorCategory;
+    [self addChild:_cat];
 }
 
 -(void) createScene{
@@ -154,14 +196,12 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [_moving addChild:_mount2Sprite]; // adding to stop movement
 }
 
--(void) playLevel{
-    [self createBird];
-    [self populateShelves];
-    [self moveScene];
-    [self scoreLabel];
-    [self initAllActions];
-    [self moveBird];
+-(void) createFightAnimation{
+    SKAction* fightAnim = [SKAction animateWithTextures:LEVELSPRITES_ANIM_FIGHT timePerFrame:.1];
+    _fight = [SKAction repeatActionForever:fightAnim];
 }
+
+
 
 -(void) initAllActions{
     // Flap sound action
@@ -170,19 +210,20 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     // Move bird to the right
     SKAction* birdMoveRight = [SKAction moveByX:_bird.size.width*2 y:0 duration:.003 * _bird.size.width*2];
     moveUntilCollisionR = [SKAction repeatActionForever:birdMoveRight];
-    
     // Move bird to the left
     SKAction* birdMoveLeft = [SKAction moveByX:-_bird.size.width * 3 y:0 duration:.003 * _bird.size.width * 3];
     moveUntilCollisionL = [SKAction repeatActionForever:birdMoveLeft];
     
+    moveCatRight = [SKAction moveByX:self.frame.size.width y:0 duration:.003 * self.frame.size.width];
+    
     // Scale losing background, change font size and color
     scaleScoreBG = [SKAction scaleTo:1.8 duration:.1];
     losingScoreAnimation = [SKAction runBlock:(dispatch_block_t)^(){
-        scoreBG.zPosition = 10;
+        scoreBG.zPosition = 100;
         scoreBG.fillColor = [UIColor colorWithWhite:1.0f alpha:1.0f];
         _scoreLabelNode.fontSize = 100;
         _scoreLabelNode.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 100);
-        _scoreLabelNode.zPosition = 11;
+        _scoreLabelNode.zPosition = 101;
         _scoreLabelNode.fontColor = [UIColor grayColor];
     }];
     
@@ -266,7 +307,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     }else{ // once the scene is created, create shelves automotically
         shelvePair.position = CGPointMake(0, self.frame.size.height + _mountShevlesTexture.size.height * 2);
     }
-    shelvePair.zPosition = -5;
+    shelvePair.zPosition = 0;
     
     //Random number for the left shelve
     CGFloat x = [self randomFloatBetween:-400 and:50];
@@ -354,17 +395,25 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 }
 
 //-----------------------Moves bird left to right--------------------------------------------------------
--(void) moveBird{
+-(void) moveBirdCat{
     //adding motion to the bird
     if (!goingLeft) {
-        _bird.texture = SPRITES_TEX_ELLA_LOOKLEFT;
+        if (!lost) {
+            _bird.texture = SPRITES_TEX_ELLA_LOOKLEFT;
+        }
         [_bird removeActionForKey:@"birdMoving"];
         [_bird runAction:moveUntilCollisionR withKey:@"birdMoving"];
+        [_cat removeActionForKey:@"catMoving"];
+        [_cat runAction:moveUntilCollisionR withKey:@"catMoving"];
         goingLeft = true;
     }else{
-        _bird.texture = SPRITES_TEX_ELLA_LOOKRIGHT;
+        if (!lost) {
+            _bird.texture = SPRITES_TEX_ELLA_LOOKRIGHT;
+        }
         [_bird removeActionForKey:@"birdMoving"];
         [_bird runAction:moveUntilCollisionL withKey:@"birdMoving"];
+        [_cat removeActionForKey:@"catMoving"];
+        [_cat runAction:moveUntilCollisionL withKey:@"catMoving"];
         goingLeft = false;
     }
 }
@@ -377,27 +426,27 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     SKSpriteNode* headerNode = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:81.0/255.0f green:68.0/255.0f blue:66.0/255.0f alpha:1.0] size:CGSizeMake(self.frame.size.width * 2, 100)];
     //SKSpriteNode* headerNode = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor] size:CGSizeMake(self.frame.size.width * 2, 65)];
     headerNode.position = CGPointMake(1, self.frame.size.height / 1.04);
-    headerNode.zPosition = 0;
+    headerNode.zPosition = 99;
     headerNode.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(self.frame.size.width * 2, 80)];
     headerNode.physicsBody.dynamic = NO;
     headerNode.physicsBody.categoryBitMask = roofCategory;
     [self addChild:headerNode];
     
-    SKSpriteNode* bigCoin = [SKSpriteNode spriteNodeWithImageNamed:@"coin_big"];
-    [bigCoin setScale:1.5];
-    bigCoin.position = CGPointMake([self deviceSize:BodyRightWall] + bigCoin.size.width / 2, self.frame.size.height / 1.04);
-    bigCoin.zPosition = 20;
+    SKSpriteNode* bigCoin = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_STAR];
+    [bigCoin setScale:1.2];
+    bigCoin.position = CGPointMake([self deviceSize:BodyRightWall] + bigCoin.size.width / 1.8, self.frame.size.height / 1.045);
+    bigCoin.zPosition = 100;
     
     [self addChild:bigCoin];
     [self addChild:[self pauseBtnNode]];
 }
 
 - (SKSpriteNode *)pauseBtnNode{
-    SKSpriteNode* pauseNode = [SKSpriteNode spriteNodeWithImageNamed:@"pauseBtn"];
-    [pauseNode setScale:1.35];
+    SKSpriteNode* pauseNode = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_PAUSEBTN];
+    [pauseNode setScale:1.4];
     pauseNode.position = CGPointMake(CGRectGetMidX( self.frame ), self.frame.size.height / 1.045 );
     pauseNode.name = @"pauseBtn";//how the node is identified later
-    pauseNode.zPosition = 10.0;
+    pauseNode.zPosition = 100;
     
     return pauseNode;
 }
@@ -407,7 +456,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     scoreBG = [SKShapeNode shapeNodeWithCircleOfRadius:150];
     scoreBG.fillColor = [UIColor colorWithWhite:1.0f alpha:0.8f];
     scoreBG.position = CGPointMake( CGRectGetMidX( self.frame ), CGRectGetMidY(self.frame));
-    scoreBG.zPosition = -8;
+    scoreBG.zPosition = -2;
     
     // Initialize label and create a label which holds the score
     _score = 0;
@@ -415,7 +464,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _scoreLabelNode.fontColor = [UIColor lightGrayColor];
     _scoreLabelNode.fontSize = 120;
     _scoreLabelNode.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 35);
-    _scoreLabelNode.zPosition = -7;
+    _scoreLabelNode.zPosition = -1;
     _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
     [self addChild:_scoreLabelNode];
     [self addChild:scoreBG];
@@ -428,7 +477,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     gameOver.fontColor = [UIColor grayColor];
     gameOver.fontSize = 85;
     gameOver.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) + 30);
-    gameOver.zPosition = 11;
+    gameOver.zPosition = 101;
     gameOver.text = @"Game Over!";
     [self addChild:gameOver];
     
@@ -457,52 +506,35 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     UITouch* touch = [touches anyObject];
     CGPoint location = [touch locationInNode:self];
     SKNode* node = [self nodeAtPoint:location];
-    
-        // Starts bird movement when game starts
         
-        if (_moving.speed > 0) {
-            if ([node.name isEqualToString:@"pauseBtn"]) {
-                [self pauseGame];
-            }else{
-                if (!gameStarted) {
-                    [self playLevel];
-                    gameStarted = true;
-                }else{
-                    // Tap to jump
-                    if (flapCount < 2) {
-                        _bird.physicsBody.velocity = CGVectorMake(0, 0);
-                        [_bird.physicsBody applyImpulse:CGVectorMake(0, 120)];
-                        [self runAction:_flapSound];
-                        [_bird runAction:_fly];
-                        flapCount++;
-                    }
-                }
+    if (_moving.speed > 0) {
+        if ([node.name isEqualToString:@"pauseBtn"]) {
+            [self pauseGame];
+        }else if([node.name isEqualToString:@"playBtn"]){
+            [self playLevel];
+            playBtn.zPosition = -14;
+        }else{
+            // Tap to jump
+            if (flapCount < 2) {
+                _bird.physicsBody.velocity = CGVectorMake(0, 0);
+                [_bird.physicsBody applyImpulse:CGVectorMake(0, 120)];
+                [self runAction:_flapSound];
+                [_bird runAction:_fly];
+                flapCount++;
             }
-        }else if (lost){ //Lost game
-            [self resetScene];
         }
+    }else if (lost){ //Lost game
+        [self resetScene];
+    }
     
 }
 
 - (void)didBeginContact:(SKPhysicsContact *)contact {
     
     if ((contact.bodyA.categoryBitMask & sidesCategory) == sidesCategory || (contact.bodyB.categoryBitMask & sidesCategory) == sidesCategory) { // When bird hits side
-        [self moveBird];
-    }else if ((contact.bodyA.categoryBitMask & floorCategory) == floorCategory || (contact.bodyB.categoryBitMask & floorCategory) == floorCategory){ // When bird hits floor
-        if (onShelve) {
-            if (!lost) {
-                [player stop];
-                [self playMusic:@"losing" withLoop:NO];
-                if (_moving.speed > 0) {
-                    _moving.speed = 0;
-                    [_bird removeActionForKey:@"birdMoving"];
-                    [self removeActionForKey:@"spawnThenDelayForever"];
-                    [self losingLabel];
-                }
-                onShelve = false;
-                lost = true;
-            }
-        }
+        
+        [self moveBirdCat];
+       
     }else if((contact.bodyA.categoryBitMask & shelvesCategory) == shelvesCategory || (contact.bodyB.categoryBitMask & shelvesCategory) == shelvesCategory){ // When bird hits shelves
         onShelve = true; //Needs to be changed****
     }else if ((contact.bodyA.categoryBitMask & shelvesFloorCategory) == shelvesFloorCategory || (contact.bodyB.categoryBitMask & shelvesFloorCategory) == shelvesFloorCategory){ // when bird hits top of shelve
@@ -550,7 +582,30 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
                 }
             }
         }
+    }else if(( contact.bodyA.categoryBitMask & catCategory) == catCategory || ( contact.bodyB.categoryBitMask & catCategory) == catCategory){
+        
+        [player stop];
+        [self playMusic:@"losing" withLoop:NO];
+        if (_moving.speed > 0) {
+            _moving.speed = 0;
+            [_bird removeActionForKey:@"birdMoving"];
+            [self removeActionForKey:@"spawnThenDelayForever"];
+            [self losingLabel];
+        }
+        onShelve = false;
+        lost = true;
+        
+        [_bird removeActionForKey:@"crying"];
+        [self startFight];
+
     }
+}
+
+-(void) startFight{
+    
+    _cat.hidden = true;
+    [_bird runAction:_fight withKey:@"fightScene"];
+    [_bird setScale:2.5];
 }
 
 #pragma Reset Scene
@@ -560,7 +615,12 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     // Moving bird to original position
     _bird.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height / 1.7);
     _bird.physicsBody.velocity = CGVectorMake(0, 0);
+    [_bird setScale:1.3];
+    [_bird removeActionForKey:@"fightScene"];
+    [_bird removeActionForKey:@"crying"];
     
+    _cat.hidden = false;
+
     // Reseting the scene
     [_mount1Sprite removeActionForKey:@"moveScene"];
     [_mount2Sprite removeActionForKey:@"moveScene"];
@@ -572,9 +632,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     // Clearing all refrences
     [_shelves removeAllChildren];
     [shelvesReference removeAllObjects];
-
-    // remove crying animations
-    [_bird removeActionForKey:@"crying"];
     
     // Reset game status
     lost = false;
@@ -598,7 +655,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self populateShelves];
     
     // Start bird movement
-    [self moveBird];
+    [self moveBirdCat];
     
     // Reset bird texture
     _bird.texture = SPRITES_TEX_ELLA_FLAPDOWN;
@@ -611,10 +668,12 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     // Start crying animation when close to losing
     
-    if (_bird.position.y < 250) {
-        [_bird runAction:_cry withKey:@"crying"];
-    }else{
-        [_bird removeActionForKey:@"crying"];
+    if (!lost) {
+        if (_bird.position.y < 250) {
+            [_bird runAction:_cry withKey:@"crying"];
+        }else{
+            [_bird removeActionForKey:@"crying"];
+        }
     }
 }
 

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		811081CD1AB5E32C004E0C12 /* PhysicsContainerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 811081CC1AB5E32C004E0C12 /* PhysicsContainerNode.m */; };
 		811081D61AB62279004E0C12 /* Sprites.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = 811081D41AB62279004E0C12 /* Sprites.atlasc */; };
+		812C33F01ABF883F00BE675C /* LevelSprites.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = 812C33EE1ABF883F00BE675C /* LevelSprites.atlasc */; };
 		8143A9F91AA54D6E000C951E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8143A9F81AA54D6E000C951E /* main.m */; };
 		8143A9FC1AA54D6E000C951E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8143A9FB1AA54D6E000C951E /* AppDelegate.m */; };
 		8143A9FF1AA54D6E000C951E /* GameScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 8143A9FE1AA54D6E000C951E /* GameScene.m */; };
@@ -38,6 +39,8 @@
 		811081CC1AB5E32C004E0C12 /* PhysicsContainerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhysicsContainerNode.m; sourceTree = "<group>"; };
 		811081D41AB62279004E0C12 /* Sprites.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sprites.atlasc; sourceTree = "<group>"; };
 		811081D51AB62279004E0C12 /* Sprites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sprites.h; sourceTree = "<group>"; };
+		812C33EE1ABF883F00BE675C /* LevelSprites.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = LevelSprites.atlasc; sourceTree = "<group>"; };
+		812C33EF1ABF883F00BE675C /* LevelSprites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSprites.h; sourceTree = "<group>"; };
 		8143A9F31AA54D6E000C951E /* UpWard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UpWard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8143A9F71AA54D6E000C951E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8143A9F81AA54D6E000C951E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -98,6 +101,8 @@
 		8143A9F51AA54D6E000C951E /* UpWard */ = {
 			isa = PBXGroup;
 			children = (
+				812C33EE1ABF883F00BE675C /* LevelSprites.atlasc */,
+				812C33EF1ABF883F00BE675C /* LevelSprites.h */,
 				811081D41AB62279004E0C12 /* Sprites.atlasc */,
 				811081D51AB62279004E0C12 /* Sprites.h */,
 				818EF2841AABD8E50005D758 /* Music and FX */,
@@ -238,6 +243,7 @@
 				818EF2881AABDDE20005D758 /* losing.mp3 in Resources */,
 				8143AA0C1AA54D6E000C951E /* LaunchScreen.xib in Resources */,
 				8143AA091AA54D6E000C951E /* Images.xcassets in Resources */,
+				812C33F01ABF883F00BE675C /* LevelSprites.atlasc in Resources */,
 				8143AA011AA54D6E000C951E /* GameScene.sks in Resources */,
 				8143AA071AA54D6E000C951E /* Main.storyboard in Resources */,
 				811081D61AB62279004E0C12 /* Sprites.atlasc in Resources */,
