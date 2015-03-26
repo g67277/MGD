@@ -19,6 +19,7 @@
 		8143AA091AA54D6E000C951E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8143AA081AA54D6E000C951E /* Images.xcassets */; };
 		8143AA0C1AA54D6E000C951E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8143AA0A1AA54D6E000C951E /* LaunchScreen.xib */; };
 		8143AA181AA54D6E000C951E /* UpWardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8143AA171AA54D6E000C951E /* UpWardTests.m */; };
+		817696771AC38CF700330D2F /* GameData.m in Sources */ = {isa = PBXBuildFile; fileRef = 817696761AC38CF700330D2F /* GameData.m */; };
 		818EF2831AABD8DF0005D758 /* BGMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2821AABD8DF0005D758 /* BGMusic.mp3 */; };
 		818EF2861AABDDCA0005D758 /* flap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2851AABDDCA0005D758 /* flap.mp3 */; };
 		818EF2881AABDDE20005D758 /* losing.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2871AABDDE20005D758 /* losing.mp3 */; };
@@ -57,6 +58,8 @@
 		8143AA111AA54D6E000C951E /* UpWardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UpWardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8143AA161AA54D6E000C951E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8143AA171AA54D6E000C951E /* UpWardTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UpWardTests.m; sourceTree = "<group>"; };
+		817696751AC38CF700330D2F /* GameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameData.h; sourceTree = "<group>"; };
+		817696761AC38CF700330D2F /* GameData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameData.m; sourceTree = "<group>"; };
 		818EF2821AABD8DF0005D758 /* BGMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BGMusic.mp3; sourceTree = "<group>"; };
 		818EF2851AABDDCA0005D758 /* flap.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = flap.mp3; sourceTree = "<group>"; };
 		818EF2871AABDDE20005D758 /* losing.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = losing.mp3; sourceTree = "<group>"; };
@@ -119,6 +122,8 @@
 				8143A9F61AA54D6E000C951E /* Supporting Files */,
 				811081CB1AB5E32C004E0C12 /* PhysicsContainerNode.h */,
 				811081CC1AB5E32C004E0C12 /* PhysicsContainerNode.m */,
+				817696751AC38CF700330D2F /* GameData.h */,
+				817696761AC38CF700330D2F /* GameData.m */,
 			);
 			path = UpWard;
 			sourceTree = "<group>";
@@ -268,6 +273,7 @@
 				8143AA041AA54D6E000C951E /* GameViewController.m in Sources */,
 				8143A9FC1AA54D6E000C951E /* AppDelegate.m in Sources */,
 				8143A9FF1AA54D6E000C951E /* GameScene.m in Sources */,
+				817696771AC38CF700330D2F /* GameData.m in Sources */,
 				8143A9F91AA54D6E000C951E /* main.m in Sources */,
 				811081CD1AB5E32C004E0C12 /* PhysicsContainerNode.m in Sources */,
 			);

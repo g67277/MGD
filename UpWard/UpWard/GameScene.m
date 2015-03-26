@@ -9,6 +9,8 @@
 #import "GameScene.h"
 #import "Sprites.h"
 #import "LevelSprites.h"
+#import "GameData.h"
+
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
 @interface GameScene()
@@ -71,7 +73,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _shelves = [SKNode node];
     [_moving addChild:_shelves];
     
-    [self playMusic:@"BGMusic" withLoop:YES];
+    
+    // **[self playMusic:@"BGMusic" withLoop:YES];
     //Adding the container
     [self physicsContainer];
     [self createScene];
@@ -125,16 +128,20 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self createFightAnimation];
     [titleBanner runAction:_titleMove];
     [playBtn runAction:_playBtnMove];
+    
+    //_highScore.text = [NSString stringWithFormat:@"High: %li pt", [RWGameData sharedGameData].highScore];
+
 }
 
 -(void) createIntro{
     titleBanner = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_TITLE];
     titleBanner.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2 - 5);
+    [titleBanner setScale:1.2];
     titleBanner.zPosition = -15;
     [_moving addChild:titleBanner];
     
     playBtn = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_PLAYBTN];
-    playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2 -5);
+    playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2.5 -5);
     playBtn.zPosition = 1;
     playBtn.name = @"playBtn";
     [_moving addChild:playBtn];
@@ -179,11 +186,82 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 -(void) createScene{
     //Parallax background
+    
+//    //Grass background
+//    SKSpriteNode* grass = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:98/255.0f green:204/255.0f blue:103/255.0f alpha:1.0f] size:CGSizeMake(self.frame.size.width, self.frame.size.height / 1.5)];
+//    grass.position = CGPointMake(grass.size.width /2 , grass.size.height / 2);
+//    grass.zPosition = -100;
+//    [_moving addChild:grass];
+//    //Front tree
+//    SKSpriteNode* frontTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_FIRSTTREE];
+//    frontTree.position = CGPointMake(90, frontTree.size.height /2 );
+//    frontTree.zPosition = -14;
+//    [_moving addChild:frontTree];
+//    
+//    //Left Tree
+//    SKSpriteNode* leftTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LEFTTREE];
+//    leftTree.position = CGPointMake(self.frame.size.width / 1.2, leftTree.size.height / 2 - 5);
+//    leftTree.zPosition = -20;
+//    [_moving addChild:leftTree];
+//    
+//    //Right Tree
+//    SKSpriteNode* rightTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_RIGHTTREE];
+//    rightTree.position = CGPointMake(120, rightTree.size.height / 1.7);
+//    rightTree.zPosition = -20;
+//    [_moving addChild:rightTree];
+//    
+//    //Right Mid Tree
+//    SKSpriteNode* rightMidTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_RIGHTMIDTREE];
+//    rightMidTree.position = CGPointMake(250, rightMidTree.size.height);
+//    rightMidTree.zPosition = -19;
+//    [_moving addChild:rightMidTree];
+//    
+//    //Left Mid Tree
+//    SKSpriteNode* leftMidTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LEFTMIDTREE];
+//    leftMidTree.position = CGPointMake(self.frame.size.width / 1.6, leftMidTree.size.height);
+//    leftMidTree.zPosition = -22;
+//    [_moving addChild:leftMidTree];
+//    
+//    //Mid Tree
+//    SKSpriteNode* midTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_MIDTREE];
+//    midTree.position = CGPointMake(self.size.width / 2, midTree.size.height * 1.13);
+//    midTree.zPosition = -18;
+//    [_moving addChild:midTree];
+//    
+//    //Background trees
+//    SKSpriteNode* bGTrees = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_BACKGROUNDTREES];
+//    [bGTrees setScale:1.1];
+//    bGTrees.position = CGPointMake(430, bGTrees.size.height * 2);
+//    bGTrees.zPosition = -25;
+//    [_moving addChild:bGTrees];
+//    
+//    //Lake
+//    SKSpriteNode* lake = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LAKE];
+//    lake.position = CGPointMake(self.size.width / 2, lake.size.height * 4.8);
+//    lake.zPosition = -40;
+//    [_moving addChild:lake];
+//    
+//    //small Mountains
+//    SKSpriteNode* smallMount1 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
+//    smallMount1.position = CGPointMake(self.size.width / 2, smallMount1.size.height * 3.8);
+//    smallMount1.zPosition = -30;
+//    [_moving addChild:smallMount1];
+//    
+//    SKSpriteNode* smallMount2 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
+//    smallMount2.position = CGPointMake(smallMount2.size.width / 4, smallMount1.size.height * 3.8);
+//    smallMount2.zPosition = -31;
+//    [_moving addChild:smallMount2];
+//    
+//    SKSpriteNode* smallMount3 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
+//    smallMount3.position = CGPointMake(smallMount3.size.width, smallMount1.size.height * 3.8);
+//    smallMount3.zPosition = -31;
+//    [_moving addChild:smallMount3];
+    
     //MainMountain
     SKTexture* mainMountainTexture = [SKTexture textureWithImageNamed:@"mainMountain"];
     _moveMount1 = [SKAction moveByX:0 y:-mainMountainTexture.size.height*2 duration:0.1 * mainMountainTexture.size.height*2];
     _mount1Sprite = [SKSpriteNode spriteNodeWithTexture:mainMountainTexture];
-    _mount1Sprite.zPosition = -10;
+    _mount1Sprite.zPosition = -300;
     _mount1Sprite.position = CGPointMake(CGRectGetMidX(self.frame) * 1.1, (_mount1Sprite.size.height / 2) - 2);
     [_moving addChild:_mount1Sprite]; // adding it to stop movement
     
@@ -191,7 +269,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     SKTexture* secondMountainTexture = [SKTexture textureWithImageNamed:@"secondMountain"];
     _moveMount2 = [SKAction moveByX:0 y:-secondMountainTexture.size.height*2 duration:0.15 * secondMountainTexture.size.height*2];
     _mount2Sprite = [SKSpriteNode spriteNodeWithTexture:secondMountainTexture];
-    _mount2Sprite.zPosition = -15;
+    _mount2Sprite.zPosition = -305;
     _mount2Sprite.position = CGPointMake(CGRectGetMidX(self.frame) / 1.3, _mount1Sprite.size.height / 2);
     [_moving addChild:_mount2Sprite]; // adding to stop movement
 }
@@ -482,7 +560,10 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self addChild:gameOver];
     
     [scoreBG runAction:scaleScoreBG];
-    _scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", (long)_score];
+    
+    //_scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", (long)_score];
+    _scoreLabelNode.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].highScore];
+
     [scoreBG runAction:losingScoreAnimation];
 
 }
@@ -506,7 +587,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     UITouch* touch = [touches anyObject];
     CGPoint location = [touch locationInNode:self];
     SKNode* node = [self nodeAtPoint:location];
-        
+    
     if (_moving.speed > 0) {
         if ([node.name isEqualToString:@"pauseBtn"]) {
             [self pauseGame];
@@ -569,8 +650,10 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
             }else{
                 if (currentShelve.children.count > 4) {
                     if (currentShelve.position.y < _bird.position.y) {
-                        _score++;
-                        _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
+                        [GameData sharedGameData].score += 1;
+                        //_score++;
+                        //_scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
+                        _scoreLabelNode.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].score];
                         [_scoreLabelNode runAction:bounceScoreLabel];
                         [scoreBG runAction:bounceScoreBG];
                         [shelvesReference removeObject:currentShelve];
@@ -584,12 +667,16 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         }
     }else if(( contact.bodyA.categoryBitMask & catCategory) == catCategory || ( contact.bodyB.categoryBitMask & catCategory) == catCategory){
         
+        [GameData sharedGameData].highScore = MAX([GameData sharedGameData].score,
+                                                    [GameData sharedGameData].highScore);
+        [[GameData sharedGameData] save];
         [player stop];
         [self playMusic:@"losing" withLoop:NO];
         if (_moving.speed > 0) {
             _moving.speed = 0;
             [_bird removeActionForKey:@"birdMoving"];
             [self removeActionForKey:@"spawnThenDelayForever"];
+            [[GameData sharedGameData] reset];
             [self losingLabel];
         }
         onShelve = false;
