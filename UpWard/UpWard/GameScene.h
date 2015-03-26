@@ -24,6 +24,37 @@
     SKAction* _titleMove;
     SKAction* _playBtnMove;
     
+    //Scene SkSpriteNodes
+    SKSpriteNode* grass;
+    SKSpriteNode* frontTree;
+    SKSpriteNode* rightTree;
+    SKSpriteNode* leftTree;
+    SKSpriteNode* rightMidTree;
+    SKSpriteNode* leftMidTree;
+    SKSpriteNode* midTree;
+    SKSpriteNode* bGTrees;
+    SKSpriteNode* lake;
+    SKSpriteNode* smallMount1;
+    SKSpriteNode* smallMount2;
+    SKSpriteNode* smallMount3;
+    SKSpriteNode* largeMount1;
+    SKSpriteNode* largeMount2;
+    
+    //Scene Animation
+    SKAction* keepGM;
+    SKAction* keepFTM;
+    SKAction* keepLTM;
+    SKAction* keepRTM;
+    SKAction* keepRMTM;
+    SKAction* keepLMTM;
+    SKAction* keepMTM;
+    SKAction* keepBGTL;
+    SKAction* keepSM1;
+    SKAction* keepSM2;
+    SKAction* keepSM3;
+    SKAction* keepLM1;
+    SKAction* keepLM2;
+
     SKAction* _moveAndRemoveShelves;
     SKAction* _moveMount1;
     SKAction* _moveMount2;
@@ -54,6 +85,7 @@
     
     //Score label and counting integer
     SKLabelNode* _scoreLabelNode;
+    SKLabelNode* _highScoreLabelNode;
     NSInteger _score;
     SKLabelNode* gameOver; // Need to change;
     

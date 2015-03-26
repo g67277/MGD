@@ -73,7 +73,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _shelves = [SKNode node];
     [_moving addChild:_shelves];
     
-    
+
     // **[self playMusic:@"BGMusic" withLoop:YES];
     //Adding the container
     [self physicsContainer];
@@ -121,14 +121,10 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self createBird];
     [self createCat];
     [self populateShelves];
+    [self initAllActions];
     [self moveScene];
     [self scoreLabel];
-    [self initAllActions];
     [self moveBirdCat];
-    [self createFightAnimation];
-    [titleBanner runAction:_titleMove];
-    [playBtn runAction:_playBtnMove];
-    
     //_highScore.text = [NSString stringWithFormat:@"High: %li pt", [RWGameData sharedGameData].highScore];
 
 }
@@ -147,7 +143,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [_moving addChild:playBtn];
     
     _titleMove = [SKAction moveByX:0 y:-titleBanner.size.height * 2 duration:.1 * titleBanner.size.height*2];
-    _playBtnMove = [SKAction moveByX:0 y:-titleBanner.size.height * 2 duration:.1 * titleBanner.size.height*2];
+    
+    
 }
 
 -(void) createBird{
@@ -186,100 +183,129 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 -(void) createScene{
     //Parallax background
+    //Grass background
+    grass = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:98/255.0f green:204/255.0f blue:103/255.0f alpha:1.0f] size:CGSizeMake(self.frame.size.width, self.frame.size.height / 1.5)];
+    grass.position = CGPointMake(grass.size.width /2 , grass.size.height / 2);
+    grass.zPosition = -100;
+    [_moving addChild:grass];
     
-//    //Grass background
-//    SKSpriteNode* grass = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:98/255.0f green:204/255.0f blue:103/255.0f alpha:1.0f] size:CGSizeMake(self.frame.size.width, self.frame.size.height / 1.5)];
-//    grass.position = CGPointMake(grass.size.width /2 , grass.size.height / 2);
-//    grass.zPosition = -100;
-//    [_moving addChild:grass];
-//    //Front tree
-//    SKSpriteNode* frontTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_FIRSTTREE];
-//    frontTree.position = CGPointMake(90, frontTree.size.height /2 );
-//    frontTree.zPosition = -14;
-//    [_moving addChild:frontTree];
-//    
-//    //Left Tree
-//    SKSpriteNode* leftTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LEFTTREE];
-//    leftTree.position = CGPointMake(self.frame.size.width / 1.2, leftTree.size.height / 2 - 5);
-//    leftTree.zPosition = -20;
-//    [_moving addChild:leftTree];
-//    
-//    //Right Tree
-//    SKSpriteNode* rightTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_RIGHTTREE];
-//    rightTree.position = CGPointMake(120, rightTree.size.height / 1.7);
-//    rightTree.zPosition = -20;
-//    [_moving addChild:rightTree];
-//    
-//    //Right Mid Tree
-//    SKSpriteNode* rightMidTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_RIGHTMIDTREE];
-//    rightMidTree.position = CGPointMake(250, rightMidTree.size.height);
-//    rightMidTree.zPosition = -19;
-//    [_moving addChild:rightMidTree];
-//    
-//    //Left Mid Tree
-//    SKSpriteNode* leftMidTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LEFTMIDTREE];
-//    leftMidTree.position = CGPointMake(self.frame.size.width / 1.6, leftMidTree.size.height);
-//    leftMidTree.zPosition = -22;
-//    [_moving addChild:leftMidTree];
-//    
-//    //Mid Tree
-//    SKSpriteNode* midTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_MIDTREE];
-//    midTree.position = CGPointMake(self.size.width / 2, midTree.size.height * 1.13);
-//    midTree.zPosition = -18;
-//    [_moving addChild:midTree];
-//    
-//    //Background trees
-//    SKSpriteNode* bGTrees = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_BACKGROUNDTREES];
-//    [bGTrees setScale:1.1];
-//    bGTrees.position = CGPointMake(430, bGTrees.size.height * 2);
-//    bGTrees.zPosition = -25;
-//    [_moving addChild:bGTrees];
-//    
-//    //Lake
-//    SKSpriteNode* lake = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LAKE];
-//    lake.position = CGPointMake(self.size.width / 2, lake.size.height * 4.8);
-//    lake.zPosition = -40;
-//    [_moving addChild:lake];
-//    
-//    //small Mountains
-//    SKSpriteNode* smallMount1 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
-//    smallMount1.position = CGPointMake(self.size.width / 2, smallMount1.size.height * 3.8);
-//    smallMount1.zPosition = -30;
-//    [_moving addChild:smallMount1];
-//    
-//    SKSpriteNode* smallMount2 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
-//    smallMount2.position = CGPointMake(smallMount2.size.width / 4, smallMount1.size.height * 3.8);
-//    smallMount2.zPosition = -31;
-//    [_moving addChild:smallMount2];
-//    
-//    SKSpriteNode* smallMount3 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
-//    smallMount3.position = CGPointMake(smallMount3.size.width, smallMount1.size.height * 3.8);
-//    smallMount3.zPosition = -31;
-//    [_moving addChild:smallMount3];
+    SKAction* grassMove = [SKAction moveByX:0 y: -grass.size.height * 2 duration:1.0 * grass.size.height * 2];
+    keepGM = [SKAction repeatActionForever:grassMove];
     
-    //MainMountain
-    SKTexture* mainMountainTexture = [SKTexture textureWithImageNamed:@"mainMountain"];
-    _moveMount1 = [SKAction moveByX:0 y:-mainMountainTexture.size.height*2 duration:0.1 * mainMountainTexture.size.height*2];
-    _mount1Sprite = [SKSpriteNode spriteNodeWithTexture:mainMountainTexture];
-    _mount1Sprite.zPosition = -300;
-    _mount1Sprite.position = CGPointMake(CGRectGetMidX(self.frame) * 1.1, (_mount1Sprite.size.height / 2) - 2);
-    [_moving addChild:_mount1Sprite]; // adding it to stop movement
+    //Front tree
+    frontTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_FIRSTTREE];
+    frontTree.position = CGPointMake(90, frontTree.size.height /2 );
+    frontTree.zPosition = -14;
+    [_moving addChild:frontTree];
     
-    //Second Mountain
-    SKTexture* secondMountainTexture = [SKTexture textureWithImageNamed:@"secondMountain"];
-    _moveMount2 = [SKAction moveByX:0 y:-secondMountainTexture.size.height*2 duration:0.15 * secondMountainTexture.size.height*2];
-    _mount2Sprite = [SKSpriteNode spriteNodeWithTexture:secondMountainTexture];
-    _mount2Sprite.zPosition = -305;
-    _mount2Sprite.position = CGPointMake(CGRectGetMidX(self.frame) / 1.3, _mount1Sprite.size.height / 2);
-    [_moving addChild:_mount2Sprite]; // adding to stop movement
+    SKAction* frontTreeMove = [SKAction moveByX:-frontTree.size.width y: -frontTree.size.height * 2 duration:.3 * frontTree.size.height * 2];
+    keepFTM = [SKAction repeatActionForever:frontTreeMove];
+    
+    //Left Tree
+    leftTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LEFTTREE];
+    leftTree.position = CGPointMake(self.frame.size.width / 1.2, leftTree.size.height / 2 - 5);
+    leftTree.zPosition = -20;
+    [_moving addChild:leftTree];
+    
+    SKAction* leftTreeMove = [SKAction moveByX:leftTree.size.width / 2 y: -leftTree.size.height * 2 duration:.2 * leftTree.size.height * 2];
+    keepLTM = [SKAction repeatActionForever:leftTreeMove];
+    
+    //Right Tree
+    rightTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_RIGHTTREE];
+    rightTree.position = CGPointMake(120, rightTree.size.height / 1.7);
+    rightTree.zPosition = -20;
+    [_moving addChild:rightTree];
+    
+    SKAction* rightTreeMove = [SKAction moveByX:-rightTree.size.width / 2 y: -rightTree.size.height * 2 duration:.2 * rightTree.size.height * 2];
+    keepRTM = [SKAction repeatActionForever:rightTreeMove];
+    
+    //Right Mid Tree
+    rightMidTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_RIGHTMIDTREE];
+    rightMidTree.position = CGPointMake(250, rightMidTree.size.height);
+    rightMidTree.zPosition = -19;
+    [_moving addChild:rightMidTree];
+    
+    SKAction* rightMidTreeMove = [SKAction moveByX:-rightMidTree.size.width / 3 y: -rightMidTree.size.height * 2 duration:.4 * rightMidTree.size.height * 2];
+    keepRMTM = [SKAction repeatActionForever:rightMidTreeMove];
+    
+    //Left Mid Tree
+    leftMidTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LEFTMIDTREE];
+    leftMidTree.position = CGPointMake(self.frame.size.width / 1.6, leftMidTree.size.height);
+    leftMidTree.zPosition = -22;
+    [_moving addChild:leftMidTree];
+    
+    SKAction* leftMidTreeMove = [SKAction moveByX:leftMidTree.size.width / 3 y: -leftMidTree.size.height * 2 duration:.4 * leftMidTree.size.height * 2];
+    keepLMTM = [SKAction repeatActionForever:leftMidTreeMove];
+    
+    //Mid Tree
+    midTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_MIDTREE];
+    midTree.position = CGPointMake(self.size.width / 2, midTree.size.height * 1.13);
+    midTree.zPosition = -18;
+    [_moving addChild:midTree];
+    
+    SKAction* midTreeMove = [SKAction moveByX:0 y: -midTree.size.height * 2 duration:.4 * midTree.size.height * 2];
+    keepMTM = [SKAction repeatActionForever:midTreeMove];
+    
+    //Background trees
+    bGTrees = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_BACKGROUNDTREES];
+    [bGTrees setScale:1.1];
+    bGTrees.position = CGPointMake(430, bGTrees.size.height * 2);
+    bGTrees.zPosition = -25;
+    [_moving addChild:bGTrees];
+    
+    //Lake
+    lake = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LAKE];
+    lake.position = CGPointMake(self.size.width / 2, lake.size.height * 4.8);
+    lake.zPosition = -40;
+    [_moving addChild:lake];
+    
+    SKAction* bGTreesNLake = [SKAction moveByX:0 y: -bGTrees.size.height * 2 duration:.4 * bGTrees.size.height * 2];
+    keepBGTL = [SKAction repeatActionForever:bGTreesNLake];
+    
+    //small Mountains
+    smallMount1 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
+    smallMount1.position = CGPointMake(self.size.width / 2, smallMount1.size.height * 3.8);
+    smallMount1.zPosition = -30;
+    [_moving addChild:smallMount1];
+    
+    SKAction* smallMount1Move = [SKAction moveByX:0 y: -smallMount1.size.height * 2 duration:.4 * smallMount1.size.height * 2];
+    keepSM1 = [SKAction repeatActionForever:smallMount1Move];
+    
+    smallMount2 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
+    smallMount2.position = CGPointMake(smallMount2.size.width / 4, smallMount1.size.height * 3.8);
+    smallMount2.zPosition = -31;
+    [_moving addChild:smallMount2];
+    
+    SKAction* smallMount2Move = [SKAction moveByX:0 y: -smallMount1.size.height * 2 duration:.45 * smallMount1.size.height * 2];
+    keepSM2 = [SKAction repeatActionForever:smallMount2Move];
+    
+    smallMount3 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
+    smallMount3.position = CGPointMake(smallMount3.size.width, smallMount1.size.height * 3.8);
+    smallMount3.zPosition = -31;
+    [_moving addChild:smallMount3];
+    
+    SKAction* smallMount3Move = [SKAction moveByX:0 y: -smallMount1.size.height * 2 duration:.43 * smallMount1.size.height * 2];
+    keepSM3 = [SKAction repeatActionForever:smallMount3Move];
+    
+    //Large mountains
+    largeMount1 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_BIGMOUNTAIN];
+    largeMount1.position = CGPointMake(self.frame.size.width / 1.4, smallMount1.size.height * 5);
+    largeMount1.zPosition = -34;
+    [_moving addChild:largeMount1];
+    
+    SKAction* largeMount1Move = [SKAction moveByX:0 y: -largeMount1.size.height * 2 duration:.5 * largeMount1.size.height * 2];
+    keepLM1 = [SKAction repeatActionForever:largeMount1Move];
+    
+    largeMount2 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_BIGMOUNTAIN];
+    [largeMount2 setScale:.8];
+    largeMount2.position = CGPointMake(self.frame.size.width / 3, smallMount1.size.height * 5);
+    largeMount2.zPosition = -35;
+    [_moving addChild:largeMount2];
+    
+    SKAction* largeMount2Move = [SKAction moveByX:0 y: -largeMount1.size.height * 2 duration:.55 * largeMount1.size.height * 2];
+    keepLM2 = [SKAction repeatActionForever:largeMount2Move];
+    
 }
-
--(void) createFightAnimation{
-    SKAction* fightAnim = [SKAction animateWithTextures:LEVELSPRITES_ANIM_FIGHT timePerFrame:.1];
-    _fight = [SKAction repeatActionForever:fightAnim];
-}
-
-
 
 -(void) initAllActions{
     // Flap sound action
@@ -292,8 +318,9 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     SKAction* birdMoveLeft = [SKAction moveByX:-_bird.size.width * 3 y:0 duration:.003 * _bird.size.width * 3];
     moveUntilCollisionL = [SKAction repeatActionForever:birdMoveLeft];
     
-    moveCatRight = [SKAction moveByX:self.frame.size.width y:0 duration:.003 * self.frame.size.width];
-    
+    SKAction* fightAnim = [SKAction animateWithTextures:LEVELSPRITES_ANIM_FIGHT timePerFrame:.1];
+    _fight = [SKAction repeatActionForever:fightAnim];
+        
     // Scale losing background, change font size and color
     scaleScoreBG = [SKAction scaleTo:1.8 duration:.1];
     losingScoreAnimation = [SKAction runBlock:(dispatch_block_t)^(){
@@ -468,8 +495,24 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 // Moves scene
 -(void) moveScene{
-    [_mount1Sprite runAction:_moveMount1 withKey:@"moveScene"];
-    [_mount2Sprite runAction:_moveMount2 withKey:@"moveScene"];
+    
+    [titleBanner runAction:_titleMove withKey:@"BGAnim"];
+    [playBtn runAction:_titleMove withKey:@"BGAnim"];
+    [frontTree runAction:keepFTM withKey:@"BGAnim"];
+    [leftTree runAction:keepLTM withKey:@"BGAnim"];
+    [rightTree runAction:keepRTM withKey:@"BGAnim"];
+    [rightMidTree runAction:keepRMTM withKey:@"BGAnim"];
+    [leftMidTree runAction:keepLMTM withKey:@"BGAnim"];
+    [midTree runAction:keepMTM withKey:@"BGAnim"];
+    [bGTrees runAction:keepBGTL withKey:@"BGAnim"];
+    [lake runAction:keepBGTL withKey:@"BGAnim"];
+    [smallMount1 runAction:keepSM1 withKey:@"BGAnim"];
+    [smallMount2 runAction:keepSM2 withKey:@"BGAnim"];
+    [smallMount3 runAction:keepSM3 withKey:@"BGAnim"];
+    [largeMount1 runAction:keepLM1 withKey:@"BGAnim"];
+    [largeMount2 runAction:keepLM2 withKey:@"BGAnim"];
+    [grass runAction:keepGM withKey:@"BGAnim"];
+    [_highScoreLabelNode runAction:_titleMove withKey:@"BGAnim"];
 }
 
 //-----------------------Moves bird left to right--------------------------------------------------------
@@ -546,6 +589,13 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
     [self addChild:_scoreLabelNode];
     [self addChild:scoreBG];
+    
+    _highScoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
+    _highScoreLabelNode.fontColor = [UIColor redColor];
+    _highScoreLabelNode.fontSize = 40;
+    _highScoreLabelNode.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2.5 -5);
+    _highScoreLabelNode.zPosition = -1;
+    _highScoreLabelNode.text = [NSString stringWithFormat:@"High Score: %li", [GameData sharedGameData].highScore];
 
 }
 
@@ -562,7 +612,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [scoreBG runAction:scaleScoreBG];
     
     //_scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", (long)_score];
-    _scoreLabelNode.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].highScore];
+    _scoreLabelNode.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].score];
 
     [scoreBG runAction:losingScoreAnimation];
 
@@ -676,8 +726,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
             _moving.speed = 0;
             [_bird removeActionForKey:@"birdMoving"];
             [self removeActionForKey:@"spawnThenDelayForever"];
-            [[GameData sharedGameData] reset];
             [self losingLabel];
+            [[GameData sharedGameData] reset];
         }
         onShelve = false;
         lost = true;
@@ -697,6 +747,49 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 #pragma Reset Scene
 
+-(void) resetBackGround{
+    titleBanner.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2 - 5);
+    [titleBanner removeActionForKey:@"BGAnim"];
+    [playBtn removeFromParent];
+    [_highScoreLabelNode removeFromParent];
+    playBtn = [SKSpriteNode spriteNodeWithColor:[UIColor whiteColor] size:CGSizeMake(400, 100)];
+    playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2.5 -5);
+    playBtn.zPosition = -14;
+    playBtn.name = @"NplayBtn";
+    [_moving addChild:_highScoreLabelNode];
+    [_moving addChild:playBtn];
+    [playBtn removeActionForKey:@"BGAnim"];
+    [_highScoreLabelNode removeActionForKey:@"BGAnim"];
+    grass.position = CGPointMake(grass.size.width /2 , grass.size.height / 2);
+    [grass removeActionForKey:@"BGAnim"];
+    frontTree.position = CGPointMake(90, frontTree.size.height /2 );
+    [frontTree removeActionForKey:@"BGAnim"];
+    leftTree.position = CGPointMake(self.frame.size.width / 1.2, leftTree.size.height / 2 - 5);
+    [leftTree removeActionForKey:@"BGAnim"];
+    rightTree.position = CGPointMake(120, rightTree.size.height / 1.7);
+    [rightTree removeActionForKey:@"BGAnim"];
+    rightMidTree.position = CGPointMake(250, rightMidTree.size.height);
+    [rightMidTree removeActionForKey:@"BGAnim"];
+    leftMidTree.position = CGPointMake(self.frame.size.width / 1.6, leftMidTree.size.height);
+    [leftMidTree removeActionForKey:@"BGAnim"];
+    midTree.position = CGPointMake(self.size.width / 2, midTree.size.height * 1.13);
+    [midTree removeActionForKey:@"BGAnim"];
+    bGTrees.position = CGPointMake(430, bGTrees.size.height * 2);
+    [bGTrees removeActionForKey:@"BGAnim"];
+    lake.position = CGPointMake(self.size.width / 2, lake.size.height * 4.8);
+    [lake removeActionForKey:@"BGAnim"];
+    smallMount1.position = CGPointMake(self.size.width / 2, smallMount1.size.height * 3.8);
+    [smallMount1 removeActionForKey:@"BGAnim"];
+    smallMount2.position = CGPointMake(smallMount2.size.width / 4, smallMount1.size.height * 3.8);
+    [smallMount2 removeActionForKey:@"BGAnim"];
+    smallMount3.position = CGPointMake(smallMount3.size.width, smallMount1.size.height * 3.8);
+    [smallMount3 removeActionForKey:@"BGAnim"];
+    largeMount1.position = CGPointMake(self.frame.size.width / 1.4, smallMount1.size.height * 5);
+    [largeMount1 removeActionForKey:@"BGAnim"];
+    largeMount2.position = CGPointMake(self.frame.size.width / 3, smallMount1.size.height * 5);
+    [largeMount2 removeActionForKey:@"BGAnim"];
+}
+
 -(void) resetScene{
     
     // Moving bird to original position
@@ -709,10 +802,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _cat.hidden = false;
 
     // Reseting the scene
-    [_mount1Sprite removeActionForKey:@"moveScene"];
-    [_mount2Sprite removeActionForKey:@"moveScene"];
-    _mount1Sprite.position = CGPointMake(CGRectGetMidX(self.frame) * 1.1, (_mount1Sprite.size.height / 2) - 2);
-    _mount2Sprite.position = CGPointMake(CGRectGetMidX(self.frame) / 1.3, _mount1Sprite.size.height / 2);
+    [self resetBackGround];
     [self moveScene];
     
     // Removing all shelves to repopulate screen
