@@ -13,8 +13,6 @@
     
     SKSpriteNode* _bird;
     SKSpriteNode* _cat;
-    SKSpriteNode* _mount1Sprite;
-    SKSpriteNode* _mount2Sprite;
     SKColor* _background;
     SKTexture* _mountShevlesTexture;
     
@@ -57,8 +55,6 @@
     SKAction* keepLM2;
 
     SKAction* _moveAndRemoveShelves;
-    SKAction* _moveMount1;
-    SKAction* _moveMount2;
     SKAction* _fly;
     SKAction* _cry;
     SKAction* _fight;
@@ -88,21 +84,16 @@
     SKLabelNode* _scoreLabelNode;
     SKLabelNode* _highScoreLabelNode;
     NSInteger _score;
-    SKLabelNode* gameOver; // Need to change;
+    SKLabelNode* gameOver;
     SKLabelNode* restartLabel;
     
     NSInteger kHorizontalShelveGap;
     
     int flapCount;
-    BOOL _canRestart;
-    BOOL _touchedTop;
-    
     float worldSpeed;
     float initialDelay;
     float shelveDelay;
     
-    //testing... to be deleted
-    Boolean onShelve;
     Boolean lost;
     Boolean goingLeft;
     AVAudioPlayer* player;

@@ -56,21 +56,16 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 -(void)didMoveToView:(SKView *)view {
     /* Setup your scene here */
-    
     //Game Setup
     goingLeft = false;
-    onShelve = false;
     lost = false;
-    _touchedTop = false;
     flapCount = 0;
     worldSpeed = 3.5;
     initialDelay = 1.7;
     shelveDelay = 1.5;
     kHorizontalShelveGap = [self deviceSize:HorizontalShelveGap];
-    
     //Initializing refrence array
     shelvesReference = [[NSMutableArray alloc] init];
-    
     //Change the world gravity
     self.physicsWorld.gravity = CGVectorMake( 0.0, -6.0 );
     self.physicsWorld.contactDelegate = self;
@@ -85,25 +80,18 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     _moving = [SKNode node];
     [self addChild:_moving];
-    
     //Speed of the game
     _moving.speed = worldSpeed;
-    
     _shelves = [SKNode node];
     [_moving addChild:_shelves];
-    
-
     [self playMusic:@"BGMusic" withLoop:YES];
     //Adding the container
     [self physicsContainer];
     [self createScene];
-    //Adding header
-    [self addHeader];
+    [self addChild:[self pauseBtnNode]];
     [self createIntro];
     [self playLevel];
 }
-
-
 
 #pragma Device Type/Size methods
 
@@ -161,12 +149,10 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self highScorelabel];
     
     _titleMove = [SKAction moveByX:0 y:-titleBanner.size.height * 2 duration:.1 * titleBanner.size.height*2];
-    
 }
 
 -(void) createBird{
     //Bird displayed
-    //SKTexture* ellaTexture1 = [SKTexture textureWithImageNamed:@"ella_spriteSheet1"];
     _bird = [SKSpriteNode spriteNodeWithTexture:SPRITES_TEX_ELLA_FLAPDOWN];
     [_bird setScale:1.3];
     _bird.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height / 1.7);
@@ -446,7 +432,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         
         //Adding score node after the solid shelves
         scoreContactNode = [SKNode node];
-        //scoreContactNode = [SKSpriteNode spriteNodeWithColor:[UIColor blackColor] size:CGSizeMake(kHorizontalShelveGap + 10, leftShelve.size.height)];
         scoreContactNode.position = CGPointMake(x + leftShelve.size.width / 1.78, 60);
         scoreContactNode.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(kHorizontalShelveGap, leftShelve.size.height)];
         scoreContactNode.physicsBody.categoryBitMask = scoreCategory;
@@ -561,26 +546,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 #pragma HUD Methods
 
-- (void) addHeader{
-    
-    SKSpriteNode* headerNode = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:81.0/255.0f green:68.0/255.0f blue:66.0/255.0f alpha:1.0] size:CGSizeMake(self.frame.size.width * 2, 100)];
-    //SKSpriteNode* headerNode = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor] size:CGSizeMake(self.frame.size.width * 2, 65)];
-    headerNode.position = CGPointMake(1, self.frame.size.height / 1.04);
-    headerNode.zPosition = 99;
-    headerNode.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(self.frame.size.width * 2, 80)];
-    headerNode.physicsBody.dynamic = NO;
-    headerNode.physicsBody.categoryBitMask = roofCategory;
-    [self addChild:headerNode];
-    
-    SKSpriteNode* bigCoin = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_STAR];
-    [bigCoin setScale:1.2];
-    bigCoin.position = CGPointMake([self deviceSize:BodyRightWall] + bigCoin.size.width / 1.8, self.frame.size.height / 1.045);
-    bigCoin.zPosition = 100;
-    
-    [self addChild:bigCoin];
-    [self addChild:[self pauseBtnNode]];
-}
-
 - (SKSpriteNode *)pauseBtnNode{
     pauseNode = [SKSpriteNode spriteNodeWithImageNamed:@"pauseBtn"];
     [pauseNode setScale:1.4];
@@ -643,7 +608,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     [scoreBG runAction:scaleScoreBG];
     
-    //_scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", (long)_score];
     _scoreLabelNode.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].score];
     _highScoreLabelNode.text = [NSString stringWithFormat:@"High: %li", [GameData sharedGameData].highScore];
     [scoreBG runAction:losingScoreAnimation];
@@ -712,8 +676,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         
         [self moveBirdCat];
        
-    }else if((contact.bodyA.categoryBitMask & shelvesCategory) == shelvesCategory || (contact.bodyB.categoryBitMask & shelvesCategory) == shelvesCategory){ // When bird hits shelves
-        onShelve = true; //Needs to be changed****
     }else if ((contact.bodyA.categoryBitMask & shelvesFloorCategory) == shelvesFloorCategory || (contact.bodyB.categoryBitMask & shelvesFloorCategory) == shelvesFloorCategory){ // when bird hits top of shelve
         flapCount = 0; // resets the flap count only when the floor is touched so that the bird can only jump twice
     }else if ( ( contact.bodyA.categoryBitMask & scoreCategory ) == scoreCategory || ( contact.bodyB.categoryBitMask & scoreCategory ) == scoreCategory ) {
@@ -728,8 +690,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
                 if (currentShelve.children.count > 4) {
                     if (currentShelve.position.y < _bird.position.y) {
                         [GameData sharedGameData].score += 1;
-                        //_score++;
-                        //_scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
                         _scoreLabelNode.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].score];
                         [_scoreLabelNode runAction:bounceScoreLabel];
                         [scoreBG runAction:bounceScoreBG];
@@ -758,7 +718,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
             pauseNode.name = @"back";
             [[GameData sharedGameData] reset];
         }
-        onShelve = false;
         lost = true;
         
         [_bird removeActionForKey:@"crying"];
@@ -876,7 +835,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     // Start crying animation when close to losing
     
     if (!lost) {
-        if (_bird.position.y < 250) {
+        if (_bird.position.y < 300) {
             [_bird runAction:_cry withKey:@"crying"];
         }else{
             [_bird removeActionForKey:@"crying"];

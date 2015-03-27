@@ -8,6 +8,8 @@
 
 #import "CreditsScene.h"
 #import "MainMenu.h"
+#define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
+
 
 @implementation SKScene (Unarchive)
 
@@ -66,11 +68,25 @@
     [self addChild:backBtn];
     
     SKSpriteNode* background = [SKSpriteNode spriteNodeWithImageNamed:@"creditsScene"];
-    [background setScale:1.2];
+    [background setScale:[self deviceSize]];
     background.position = CGPointMake(self.size.width / 2, self.size.height / 2);
     background.zPosition = -20;
     [self addChild:background];
     
+}
+
+#pragma Device Type/Size methods
+
+- (float)deviceSize{
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        return 1.2;
+        
+    } else {
+        return 1.6;
+    }
+    
+    return 0;
 }
 
 

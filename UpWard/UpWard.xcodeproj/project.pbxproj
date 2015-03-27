@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		811081CD1AB5E32C004E0C12 /* PhysicsContainerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 811081CC1AB5E32C004E0C12 /* PhysicsContainerNode.m */; };
 		811081D61AB62279004E0C12 /* Sprites.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = 811081D41AB62279004E0C12 /* Sprites.atlasc */; };
 		812C33F01ABF883F00BE675C /* LevelSprites.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = 812C33EE1ABF883F00BE675C /* LevelSprites.atlasc */; };
 		8143A9F91AA54D6E000C951E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8143A9F81AA54D6E000C951E /* main.m */; };
@@ -38,8 +37,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		811081CB1AB5E32C004E0C12 /* PhysicsContainerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhysicsContainerNode.h; sourceTree = "<group>"; };
-		811081CC1AB5E32C004E0C12 /* PhysicsContainerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhysicsContainerNode.m; sourceTree = "<group>"; };
 		811081D41AB62279004E0C12 /* Sprites.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sprites.atlasc; sourceTree = "<group>"; };
 		811081D51AB62279004E0C12 /* Sprites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sprites.h; sourceTree = "<group>"; };
 		812C33EE1ABF883F00BE675C /* LevelSprites.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = LevelSprites.atlasc; sourceTree = "<group>"; };
@@ -126,16 +123,10 @@
 				8143AA051AA54D6E000C951E /* Main.storyboard */,
 				8143AA081AA54D6E000C951E /* Images.xcassets */,
 				8143A9F61AA54D6E000C951E /* Supporting Files */,
-				811081CB1AB5E32C004E0C12 /* PhysicsContainerNode.h */,
-				811081CC1AB5E32C004E0C12 /* PhysicsContainerNode.m */,
-				817696751AC38CF700330D2F /* GameData.h */,
-				817696761AC38CF700330D2F /* GameData.m */,
-				8176967A1AC4B75600330D2F /* MainMenu.h */,
-				8176967B1AC4B75600330D2F /* MainMenu.m */,
-				8176967D1AC4C84C00330D2F /* CreditsScene.h */,
-				8176967E1AC4C84C00330D2F /* CreditsScene.m */,
-				817696801AC4DF6A00330D2F /* TutorialScene.h */,
-				817696811AC4DF6A00330D2F /* TutorialScene.m */,
+				817696861AC4F41800330D2F /* GameData */,
+				817696851AC4F41000330D2F /* MainMenu */,
+				817696841AC4F40600330D2F /* Credits */,
+				817696831AC4F3FB00330D2F /* Tutorial */,
 			);
 			path = UpWard;
 			sourceTree = "<group>";
@@ -164,6 +155,42 @@
 				8143AA161AA54D6E000C951E /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		817696831AC4F3FB00330D2F /* Tutorial */ = {
+			isa = PBXGroup;
+			children = (
+				817696801AC4DF6A00330D2F /* TutorialScene.h */,
+				817696811AC4DF6A00330D2F /* TutorialScene.m */,
+			);
+			name = Tutorial;
+			sourceTree = "<group>";
+		};
+		817696841AC4F40600330D2F /* Credits */ = {
+			isa = PBXGroup;
+			children = (
+				8176967D1AC4C84C00330D2F /* CreditsScene.h */,
+				8176967E1AC4C84C00330D2F /* CreditsScene.m */,
+			);
+			name = Credits;
+			sourceTree = "<group>";
+		};
+		817696851AC4F41000330D2F /* MainMenu */ = {
+			isa = PBXGroup;
+			children = (
+				8176967A1AC4B75600330D2F /* MainMenu.h */,
+				8176967B1AC4B75600330D2F /* MainMenu.m */,
+			);
+			name = MainMenu;
+			sourceTree = "<group>";
+		};
+		817696861AC4F41800330D2F /* GameData */ = {
+			isa = PBXGroup;
+			children = (
+				817696751AC38CF700330D2F /* GameData.h */,
+				817696761AC38CF700330D2F /* GameData.m */,
+			);
+			name = GameData;
 			sourceTree = "<group>";
 		};
 		818EF2841AABD8E50005D758 /* Music and FX */ = {
@@ -289,7 +316,6 @@
 				8176967F1AC4C84C00330D2F /* CreditsScene.m in Sources */,
 				817696821AC4DF6A00330D2F /* TutorialScene.m in Sources */,
 				8143A9F91AA54D6E000C951E /* main.m in Sources */,
-				811081CD1AB5E32C004E0C12 /* PhysicsContainerNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

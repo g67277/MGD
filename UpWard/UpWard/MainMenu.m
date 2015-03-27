@@ -12,6 +12,9 @@
 #import "CreditsScene.h"
 #import "TutorialScene.h"
 
+#define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
+
+
 @implementation SKScene (Unarchive)
 
 + (instancetype)unarchiveFromFile:(NSString *)file {
@@ -101,7 +104,7 @@
     [self addChild:tutorialBtn];
     
     SKSpriteNode* background = [SKSpriteNode spriteNodeWithImageNamed:@"introPic"];
-    [background setScale:1.3];
+    [background setScale:[self deviceSize]];
     background.position = CGPointMake(self.size.width / 2, self.size.height / 2);
     background.zPosition = -20;
     [self addChild:background];
@@ -118,5 +121,20 @@
     scallingForever = [SKAction repeatActionForever:repeatScalling];
     
 }
+
+#pragma Device Type/Size methods
+
+- (float)deviceSize{
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        return 1.3;
+        
+    } else {
+        return 1.6;
+    }
+    
+    return 0;
+}
+
 
 @end
