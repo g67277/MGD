@@ -10,6 +10,7 @@
 #import "Sprites.h"
 #import "LevelSprites.h"
 #import "GameData.h"
+#import "MainMenu.h"
 
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
@@ -17,6 +18,24 @@
 
 @end
 
+@implementation SKScene (Unarchive)
+
++ (instancetype)unarchiveFromFile:(NSString *)file {
+    /* Retrieve scene file path from the application bundle */
+    NSString *nodePath = [[NSBundle mainBundle] pathForResource:file ofType:@"sks"];
+    /* Unarchive the file to an SKScene object */
+    NSData *data = [NSData dataWithContentsOfFile:nodePath
+                                          options:NSDataReadingMappedIfSafe
+                                            error:nil];
+    NSKeyedUnarchiver *arch = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    [arch setClass:self forClassName:@"SKScene"];
+    SKScene *scene = [arch decodeObjectForKey:NSKeyedArchiveRootObjectKey];
+    [arch finishDecoding];
+    
+    return scene;
+}
+
+@end
 
 @implementation GameScene
 
@@ -48,7 +67,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     initialDelay = 1.7;
     shelveDelay = 1.5;
     kHorizontalShelveGap = [self deviceSize:HorizontalShelveGap];
-
+    
     //Initializing refrence array
     shelvesReference = [[NSMutableArray alloc] init];
     
@@ -74,13 +93,14 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [_moving addChild:_shelves];
     
 
-    // **[self playMusic:@"BGMusic" withLoop:YES];
+    [self playMusic:@"BGMusic" withLoop:YES];
     //Adding the container
     [self physicsContainer];
     [self createScene];
     //Adding header
     [self addHeader];
     [self createIntro];
+    [self playLevel];
 }
 
 
@@ -125,8 +145,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self moveScene];
     [self scoreLabel];
     [self moveBirdCat];
-    //_highScore.text = [NSString stringWithFormat:@"High: %li pt", [RWGameData sharedGameData].highScore];
-
 }
 
 -(void) createIntro{
@@ -136,14 +154,13 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     titleBanner.zPosition = -15;
     [_moving addChild:titleBanner];
     
-    playBtn = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_PLAYBTN];
-    playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2.5 -5);
-    playBtn.zPosition = 1;
-    playBtn.name = @"playBtn";
+    playBtn = [SKSpriteNode spriteNodeWithColor:[UIColor whiteColor] size:CGSizeMake(300, 100)];
+    playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height / 2 );
+    playBtn.zPosition = -14;
     [_moving addChild:playBtn];
+    [self highScorelabel];
     
     _titleMove = [SKAction moveByX:0 y:-titleBanner.size.height * 2 duration:.1 * titleBanner.size.height*2];
-    
     
 }
 
@@ -322,21 +339,23 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _fight = [SKAction repeatActionForever:fightAnim];
         
     // Scale losing background, change font size and color
-    scaleScoreBG = [SKAction scaleTo:1.8 duration:.1];
+    scaleScoreBG = [SKAction scaleTo:3.5 duration:.1];
     losingScoreAnimation = [SKAction runBlock:(dispatch_block_t)^(){
         scoreBG.zPosition = 100;
+        scoreBG.position = CGPointMake( CGRectGetMidX( self.frame ), CGRectGetMidY(self.frame) + 50);
         scoreBG.fillColor = [UIColor colorWithWhite:1.0f alpha:1.0f];
         _scoreLabelNode.fontSize = 100;
         _scoreLabelNode.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 100);
         _scoreLabelNode.zPosition = 101;
         _scoreLabelNode.fontColor = [UIColor grayColor];
+        
+        _highScoreLabelNode.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 180);
+        _highScoreLabelNode.zPosition = 101;
     }];
     
     // Score feedback and animation
     bounceScoreLabel = [SKAction sequence:@[[SKAction scaleTo:1.5 duration:0.1], [SKAction scaleTo:1.0 duration:0.1]]];
     bounceScoreBG = [SKAction sequence:@[[SKAction scaleTo:0.8 duration:0.1], [SKAction scaleTo:1.0 duration:0.1]]];
-    
-    
 }
 
 // Creating a ground and sides physics container dummy which will be replaced once shelves are added
@@ -563,7 +582,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 }
 
 - (SKSpriteNode *)pauseBtnNode{
-    SKSpriteNode* pauseNode = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_PAUSEBTN];
+    pauseNode = [SKSpriteNode spriteNodeWithImageNamed:@"pauseBtn"];
     [pauseNode setScale:1.4];
     pauseNode.position = CGPointMake(CGRectGetMidX( self.frame ), self.frame.size.height / 1.045 );
     pauseNode.name = @"pauseBtn";//how the node is identified later
@@ -574,37 +593,50 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 -(void) scoreLabel{
     
-    scoreBG = [SKShapeNode shapeNodeWithCircleOfRadius:150];
-    scoreBG.fillColor = [UIColor colorWithWhite:1.0f alpha:0.8f];
-    scoreBG.position = CGPointMake( CGRectGetMidX( self.frame ), CGRectGetMidY(self.frame));
+    scoreBG = [SKShapeNode shapeNodeWithCircleOfRadius:80];
+    scoreBG.fillColor = [UIColor colorWithWhite:0.2f alpha:0.65f];
+    scoreBG.position = CGPointMake( CGRectGetMidX( self.frame ), CGRectGetMidY(self.frame) + 250);
+    scoreBG.name = @"restart";
     scoreBG.zPosition = -2;
     
     // Initialize label and create a label which holds the score
     _score = 0;
     _scoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
-    _scoreLabelNode.fontColor = [UIColor lightGrayColor];
-    _scoreLabelNode.fontSize = 120;
-    _scoreLabelNode.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 35);
+    _scoreLabelNode.fontColor = [UIColor whiteColor];
+    _scoreLabelNode.fontSize = 100;
+    _scoreLabelNode.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 39);
     _scoreLabelNode.zPosition = -1;
     _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", (long)_score];
     [self addChild:_scoreLabelNode];
     [self addChild:scoreBG];
+
+}
+
+-(void) highScorelabel{
     
     _highScoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
-    _highScoreLabelNode.fontColor = [UIColor redColor];
+    _highScoreLabelNode.fontColor = [UIColor grayColor];
     _highScoreLabelNode.fontSize = 40;
-    _highScoreLabelNode.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2.5 -5);
+    _highScoreLabelNode.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2.1);
     _highScoreLabelNode.zPosition = -1;
     _highScoreLabelNode.text = [NSString stringWithFormat:@"High Score: %li", [GameData sharedGameData].highScore];
-
+    [_moving addChild:_highScoreLabelNode];
 }
 
 -(void) losingLabel{
     
+    restartLabel = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
+    restartLabel.fontColor = [UIColor grayColor];
+    restartLabel.fontSize = 40;
+    restartLabel.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame));
+    restartLabel.zPosition = 101;
+    restartLabel.text= @"Tap to Restart";
+    [self addChild:restartLabel];
+    
     gameOver = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
     gameOver.fontColor = [UIColor grayColor];
     gameOver.fontSize = 85;
-    gameOver.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) + 30);
+    gameOver.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 100 );
     gameOver.zPosition = 101;
     gameOver.text = @"Game Over!";
     [self addChild:gameOver];
@@ -613,18 +645,20 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     //_scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", (long)_score];
     _scoreLabelNode.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].score];
-
+    _highScoreLabelNode.text = [NSString stringWithFormat:@"High: %li", [GameData sharedGameData].highScore];
     [scoreBG runAction:losingScoreAnimation];
-
 }
 
 -(void) pauseGame{
     if(!_sceneSize.paused){
-        _sceneSize.paused = YES;
+        pauseNode.texture = [SKTexture textureWithImageNamed:@"unpause"];
         [player pause];
+        _sceneSize.paused = YES;
+        
     }else{
         _sceneSize.paused = NO;
         [player play];
+        pauseNode.texture = [SKTexture textureWithImageNamed:@"pauseBtn"];
     }
 }
 
@@ -638,12 +672,10 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     CGPoint location = [touch locationInNode:self];
     SKNode* node = [self nodeAtPoint:location];
     
+    
     if (_moving.speed > 0) {
         if ([node.name isEqualToString:@"pauseBtn"]) {
             [self pauseGame];
-        }else if([node.name isEqualToString:@"playBtn"]){
-            [self playLevel];
-            playBtn.zPosition = -14;
         }else{
             // Tap to jump
             if (flapCount < 2) {
@@ -654,8 +686,22 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
                 flapCount++;
             }
         }
+    }else if([node.name isEqualToString:@"back"]){
+        
+        SKView * skView = (SKView *)self.view;
+        
+        MainMenu *scene = [MainMenu unarchiveFromFile:@"GameScene"];
+        scene.scaleMode = SKSceneScaleModeAspectFill;
+        
+        [player stop];
+        [self removeAllChildren];
+        // Present the scene.
+        [skView presentScene:scene transition:[SKTransition crossFadeWithDuration: .5]];
+        
     }else if (lost){ //Lost game
-        [self resetScene];
+        if ([node.name isEqualToString:@"restart"]) {
+            [self resetScene];
+        }
     }
     
 }
@@ -670,25 +716,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         onShelve = true; //Needs to be changed****
     }else if ((contact.bodyA.categoryBitMask & shelvesFloorCategory) == shelvesFloorCategory || (contact.bodyB.categoryBitMask & shelvesFloorCategory) == shelvesFloorCategory){ // when bird hits top of shelve
         flapCount = 0; // resets the flap count only when the floor is touched so that the bird can only jump twice
-    }else if ((contact.bodyA.categoryBitMask & roofCategory) == roofCategory || (contact.bodyB.categoryBitMask & roofCategory) == roofCategory){
-        
-        //Increase dificulty when the roof is touched
-        //Work in progress......
-        /*
-         if (_touchedTop) {
-         _touchedTop = false;
-         worldSpeed = worldSpeed + 0.1;
-         _moving.speed = worldSpeed;
-         shelveDelay = shelveDelay - 0.15;
-         [self removeActionForKey:@"spawnThenDelayForever"];
-         SKAction* initShelves = [SKAction performSelector:@selector(initShelves) onTarget:self];
-         SKAction* delay = [SKAction waitForDuration:shelveDelay - 0.5];
-         [self runAction:[SKAction sequence:@[delay, initShelves]]];
-         }else{
-         _touchedTop = true;
-         }
-         */
-        
     }else if ( ( contact.bodyA.categoryBitMask & scoreCategory ) == scoreCategory || ( contact.bodyB.categoryBitMask & scoreCategory ) == scoreCategory ) {
         // Bird has contact with score entity
         // Checking the shelves refrence to count up the score only for jumping new shelves
@@ -727,12 +754,15 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
             [_bird removeActionForKey:@"birdMoving"];
             [self removeActionForKey:@"spawnThenDelayForever"];
             [self losingLabel];
+            pauseNode.texture = [SKTexture textureWithImageNamed:@"backMain"];
+            pauseNode.name = @"back";
             [[GameData sharedGameData] reset];
         }
         onShelve = false;
         lost = true;
         
         [_bird removeActionForKey:@"crying"];
+        [_bird removeActionForKey:@"birdMoving"];
         [self startFight];
 
     }
@@ -750,14 +780,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 -(void) resetBackGround{
     titleBanner.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2 - 5);
     [titleBanner removeActionForKey:@"BGAnim"];
-    [playBtn removeFromParent];
-    [_highScoreLabelNode removeFromParent];
-    playBtn = [SKSpriteNode spriteNodeWithColor:[UIColor whiteColor] size:CGSizeMake(400, 100)];
-    playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2.5 -5);
-    playBtn.zPosition = -14;
-    playBtn.name = @"NplayBtn";
-    [_moving addChild:_highScoreLabelNode];
-    [_moving addChild:playBtn];
+    playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height / 2 );
     [playBtn removeActionForKey:@"BGAnim"];
     [_highScoreLabelNode removeActionForKey:@"BGAnim"];
     grass.position = CGPointMake(grass.size.width /2 , grass.size.height / 2);
@@ -788,6 +811,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [largeMount1 removeActionForKey:@"BGAnim"];
     largeMount2.position = CGPointMake(self.frame.size.width / 3, smallMount1.size.height * 5);
     [largeMount2 removeActionForKey:@"BGAnim"];
+    
 }
 
 -(void) resetScene{
@@ -818,9 +842,15 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     // remove lose label and recreating score label
     [_scoreLabelNode removeFromParent];
+    [_highScoreLabelNode removeFromParent];
     [scoreBG removeFromParent];
     [gameOver removeFromParent];
+    [restartLabel removeFromParent];
     [self scoreLabel];
+    [self highScorelabel];
+    [_highScoreLabelNode runAction:_titleMove];
+    pauseNode.texture = [SKTexture textureWithImageNamed:@"pauseBtn"];
+    pauseNode.name = @"pauseBtn";
 
     flapCount = 0; // This needs to be changed**
     

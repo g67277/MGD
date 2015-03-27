@@ -23,6 +23,7 @@
     SKSpriteNode* playBtn;
     SKAction* _titleMove;
     SKAction* _playBtnMove;
+    SKSpriteNode* pauseNode;
     
     //Scene SkSpriteNodes
     SKSpriteNode* grass;
@@ -88,6 +89,7 @@
     SKLabelNode* _highScoreLabelNode;
     NSInteger _score;
     SKLabelNode* gameOver; // Need to change;
+    SKLabelNode* restartLabel;
     
     NSInteger kHorizontalShelveGap;
     
