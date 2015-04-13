@@ -64,6 +64,7 @@
     SKAction* moveCatRight;
     SKAction* scaleScoreBG;
     SKAction* losingScoreAnimation;
+    SKLabelNode* coinsCollectedLabel;
     SKAction* bounceScoreLabel;
     SKAction* bounceScoreBG;
     SKView* _sceneSize;
@@ -79,6 +80,7 @@
     SKShapeNode* scoreBG;
     // Array to keep a reference to all the shelves
     NSMutableArray* shelvesReference;
+    NSMutableArray* coinsReference;
     
     //Score label and counting integer
     SKLabelNode* _scoreLabelNode;
@@ -90,6 +92,7 @@
     NSInteger kHorizontalShelveGap;
     
     int flapCount;
+    int shelveCount;
     float worldSpeed;
     float initialDelay;
     float shelveDelay;

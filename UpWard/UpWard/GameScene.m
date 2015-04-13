@@ -66,10 +66,12 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     kHorizontalShelveGap = [self deviceSize:HorizontalShelveGap];
     //Initializing refrence array
     shelvesReference = [[NSMutableArray alloc] init];
+    coinsReference = [[NSMutableArray alloc]init];
     //Change the world gravity
     self.physicsWorld.gravity = CGVectorMake( 0.0, -6.0 );
     self.physicsWorld.contactDelegate = self;
     _sceneSize = (SKView *)self.view;
+    shelveCount = 0;
     
     //Background for the level
         _background = [SKColor colorWithRed:113.0/225.0 green:197.0/255.0 blue:207.0/255.0 alpha:1.0];
@@ -77,6 +79,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     //Creating the shelves texture here
     _mountShevlesTexture = [SKTexture textureWithImageNamed:@"mountShelve"];
+    
     
     _moving = [SKNode node];
     [self addChild:_moving];
@@ -88,7 +91,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     //Adding the container
     [self physicsContainer];
     [self createScene];
-    [self addChild:[self pauseBtnNode]];
+    [self createHeader];
     [self createIntro];
     [self playLevel];
 }
@@ -411,6 +414,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 //-----------------------This method spawn shelves regularly-----------------------------------------
 -(void) spawnShelves: (BOOL) started yPosition:(CGFloat) yPosition{
     
+    shelveCount += 1;
+    
     shelvePair = [SKNode node];
     if (!started) { // Create the scene by adding shelves manually
         shelvePair.position = CGPointMake(0, yPosition);
@@ -466,6 +471,17 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     topORightShelve.physicsBody.dynamic = NO;
     [shelvePair addChild:topORightShelve];  // ** Maybe I need to change this to SKNode
     
+    if (shelveCount == 3 && started) {
+        SKSpriteNode* coin = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_STAR];
+        coin.position = CGPointMake([self randomFloatBetween:150 and:600], 90);
+        coin.name = @"coinTouched";
+        coin.zPosition = 0;
+        [coinsReference addObject:coin];
+        [shelvePair addChild:coin];
+    }else if (shelveCount > 3){
+        shelveCount = 0;
+    }
+    
     [shelvesReference addObject:shelvePair];
     
     [shelvePair runAction:_moveAndRemoveShelves];
@@ -479,6 +495,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     float diff = bigNumber - smallNumber;
     return (((float) (arc4random() % ((unsigned)RAND_MAX + 1)) / RAND_MAX) * diff) + smallNumber;
 }
+
 //______________________________________________________________________________________________________
 
 #pragma Music Methods
@@ -546,12 +563,39 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 #pragma HUD Methods
 
+-(void) createHeader{
+    
+    SKSpriteNode* headerBG = [SKSpriteNode spriteNodeWithColor:[UIColor brownColor] size:CGSizeMake(self.frame.size.width, 80)];
+    headerBG.position = CGPointMake(290, self.frame.size.height / 1.04 );
+    headerBG.zPosition = 100;
+    headerBG.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:headerBG.size];
+    headerBG.physicsBody.dynamic = NO;
+    headerBG.physicsBody.categoryBitMask = roofCategory;
+    [self addChild:headerBG];
+    
+    SKSpriteNode* headerCoin = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_STAR];
+    headerCoin.position = CGPointMake(140, self.frame.size.height / 1.04);
+    headerCoin.zPosition = 101;
+    [self addChild:headerCoin];
+    
+    coinsCollectedLabel = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
+    coinsCollectedLabel.fontColor = [UIColor whiteColor];
+    coinsCollectedLabel.fontSize = 60;
+    coinsCollectedLabel.position = CGPointMake(headerCoin.position.x + headerCoin.size.width + 30, self.frame.size.height / 1.065);
+    coinsCollectedLabel.zPosition = 101;
+    coinsCollectedLabel.text = [NSString stringWithFormat:@"%ld", [GameData sharedGameData].coinsCollected];
+    [self addChild:coinsCollectedLabel];
+    
+    
+    [self addChild:[self pauseBtnNode]];
+}
+
 - (SKSpriteNode *)pauseBtnNode{
     pauseNode = [SKSpriteNode spriteNodeWithImageNamed:@"pauseBtn"];
-    [pauseNode setScale:1.4];
-    pauseNode.position = CGPointMake(CGRectGetMidX( self.frame ), self.frame.size.height / 1.045 );
+    [pauseNode setScale:.9];
+    pauseNode.position = CGPointMake(CGRectGetMidX( self.frame ), self.frame.size.height / 1.04 );
     pauseNode.name = @"pauseBtn";//how the node is identified later
-    pauseNode.zPosition = 100;
+    pauseNode.zPosition = 101;
     
     return pauseNode;
 }
@@ -627,6 +671,9 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 }
 
 
+
+
+
 #pragma Touch and Collision detection
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -636,8 +683,22 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     CGPoint location = [touch locationInNode:self];
     SKNode* node = [self nodeAtPoint:location];
     
-    
-    if (_moving.speed > 0) {
+    if(_moving.speed > 0 && [node.name isEqualToString:@"coinTouched"]){
+        
+        int i = 0;
+        while (i < coinsReference.count) {
+            SKSpriteNode* tappedCoin = coinsReference[i];
+            
+            if (tappedCoin.position.x == node.position.x) {
+                [tappedCoin removeFromParent];
+                [coinsReference removeObject:tappedCoin];
+                [GameData sharedGameData].coinsCollected += 1;
+                coinsCollectedLabel.text = [NSString stringWithFormat:@"%ld", [GameData sharedGameData].coinsCollected];
+            }
+            i++;
+        }
+        
+    }else if (_moving.speed > 0) {
         if ([node.name isEqualToString:@"pauseBtn"]) {
             [self pauseGame];
         }else{
@@ -667,7 +728,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
             [self resetScene];
         }
     }
-    
 }
 
 - (void)didBeginContact:(SKPhysicsContact *)contact {
@@ -792,6 +852,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     // Clearing all refrences
     [_shelves removeAllChildren];
     [shelvesReference removeAllObjects];
+    [coinsReference removeAllObjects];
+    shelveCount = 0;
     
     // Reset game status
     lost = false;
