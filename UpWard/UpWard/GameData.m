@@ -13,12 +13,14 @@
 static NSString* const GameDataHighScoreKey = @"highScore";
 static NSString* const GameDataCoinsKey = @"coins";
 static NSString* const GameDataChicksKey = @"chicks";
+static NSString* const GameDataBirdKey = @"birds";
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [encoder encodeDouble:self.highScore forKey: GameDataHighScoreKey];
     [encoder encodeDouble:self.coinsCollected forKey:GameDataCoinsKey];
     [encoder encodeDouble:self.chicksCollected forKey:GameDataChicksKey];
+    [encoder encodeInt:self.birdSelected forKey:GameDataBirdKey];
 
 }
 
@@ -29,6 +31,7 @@ static NSString* const GameDataChicksKey = @"chicks";
         _highScore = [decoder decodeDoubleForKey: GameDataHighScoreKey];
         _coinsCollected = [decoder decodeDoubleForKey:GameDataCoinsKey];
         _chicksCollected = [decoder decodeDoubleForKey:GameDataChicksKey];
+        _birdSelected = [decoder decodeIntForKey:GameDataBirdKey];
     }
     return self;
 }

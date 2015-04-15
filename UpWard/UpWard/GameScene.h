@@ -100,6 +100,14 @@
     Boolean lost;
     Boolean goingLeft;
     AVAudioPlayer* player;
+    
+    //Testing:
+    
+    SKTexture* birdTexture;
+    SKTexture* birdLeft;
+    SKTexture* birdRight;
+    SKTexture* birdCrying;
+    NSArray* birdFight;
 }
 
 @end

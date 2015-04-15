@@ -11,6 +11,7 @@
 #import "LevelSprites.h"
 #import "CreditsScene.h"
 #import "TutorialScene.h"
+#import "BirdsSelection.h"
 
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
@@ -73,6 +74,13 @@
         
         // Present the scene.
         [skView presentScene:scene transition:[SKTransition crossFadeWithDuration: .5]];
+    }else if ([node.name isEqualToString:@"birds"]){
+        
+        BirdsSelection *scene = [BirdsSelection unarchiveFromFile:@"GameScene"];
+        scene.scaleMode = SKSceneScaleModeAspectFill;
+        
+        // Present the scene.
+        [skView presentScene:scene transition:[SKTransition crossFadeWithDuration: .5]];
     }
 }
 
@@ -95,6 +103,16 @@
     creditsBtn.zPosition = 100;
     creditsBtn.name = @"credits";
     [self addChild:creditsBtn];
+    
+    //Testing
+    
+    SKSpriteNode* selectionBtn = [SKSpriteNode spriteNodeWithImageNamed:@"credits"];
+    [selectionBtn setScale:.5];
+    selectionBtn.position = CGPointMake(CGRectGetMidX(self.frame), self.size.height - 50);
+    selectionBtn.zPosition = 100;
+    selectionBtn.name = @"birds";
+    [self addChild:selectionBtn];
+    
     
     SKSpriteNode* tutorialBtn = [SKSpriteNode spriteNodeWithImageNamed:@"tutorialIcon"];
     [tutorialBtn setScale:.5];

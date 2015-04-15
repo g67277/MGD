@@ -66,7 +66,7 @@
 // ----------
 // animations
 // ----------
-#define LEVELSPRITES_ANIM_FIGHT @[ \
+#define LEVELSPRITES_ANIM_ELLAFIGHT @[ \
         [SKTexture textureWithImageNamed:@"fight_01"], \
         [SKTexture textureWithImageNamed:@"fight_02"], \
         [SKTexture textureWithImageNamed:@"fight_03"], \

@@ -27,30 +27,10 @@
 // --------
 // textures
 // --------
-#define SPRITES_TEX_ELLA_BLINK     [SKTexture textureWithImageNamed:@"ella_blink"]
-#define SPRITES_TEX_ELLA_FLAPDOWN  [SKTexture textureWithImageNamed:@"ella_flapDown"]
-#define SPRITES_TEX_ELLA_FLAPUP    [SKTexture textureWithImageNamed:@"ella_flapUp"]
-#define SPRITES_TEX_ELLA_LOOKLEFT  [SKTexture textureWithImageNamed:@"ella_lookLeft"]
-#define SPRITES_TEX_ELLA_LOOKRIGHT [SKTexture textureWithImageNamed:@"ella_lookRight"]
-#define SPRITES_TEX_ELLA_TEAR1     [SKTexture textureWithImageNamed:@"ella_tear1"]
-#define SPRITES_TEX_ELLA_TEAR2     [SKTexture textureWithImageNamed:@"ella_tear2"]
+#define SPRITES_TEX_ELLA  [SKTexture textureWithImageNamed:@"ella_flapDown"]
+#define SPRITES_TEX_ELLALEFT  [SKTexture textureWithImageNamed:@"ella_lookLeft"]
+#define SPRITES_TEX_ELLARIGHT [SKTexture textureWithImageNamed:@"ella_lookRight"]
+#define SPRITES_TEX_ELLACRYING     [SKTexture textureWithImageNamed:@"ella_tear1"]
 
-// ----------
-// animations
-// ----------
-#define SPRITES_ANIM_ELLA_TEAR @[ \
-        [SKTexture textureWithImageNamed:@"ella_tear1"], \
-        [SKTexture textureWithImageNamed:@"ella_tear2"]  \
-    ]
-
-#define SPRITES_ANIM_ELLA_FLAP @[ \
-        [SKTexture textureWithImageNamed:@"ella_flapDown"], \
-        [SKTexture textureWithImageNamed:@"ella_flapUp"]  \
-    ]
-
-#define SPRITES_ANIM_ELLA_BLINK @[ \
-        [SKTexture textureWithImageNamed:@"ella_flapDown"], \
-        [SKTexture textureWithImageNamed:@"ella_blink"]  \
-    ]
 
 #endif // __SPRITES_ATLAS__

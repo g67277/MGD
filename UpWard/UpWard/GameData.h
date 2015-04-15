@@ -14,6 +14,7 @@
 @property (assign, nonatomic) long highScore;
 @property (assign, nonatomic) long coinsCollected;
 @property (assign, nonatomic) long chicksCollected;
+@property (assign, nonatomic) int birdSelected;
 
 +(instancetype)sharedGameData;
 -(void)reset;

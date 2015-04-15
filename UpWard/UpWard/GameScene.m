@@ -8,6 +8,7 @@
 
 #import "GameScene.h"
 #import "Sprites.h"
+#import "BirdsSprite.h"
 #import "LevelSprites.h"
 #import "GameData.h"
 #import "MainMenu.h"
@@ -156,8 +157,15 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 -(void) createBird{
     //Bird displayed
-    _bird = [SKSpriteNode spriteNodeWithTexture:SPRITES_TEX_ELLA_FLAPDOWN];
-    [_bird setScale:1.3];
+    [self selectedBird];
+    _bird = [SKSpriteNode spriteNodeWithTexture:birdTexture];
+    
+    //for now this will change*****************
+    if ([GameData sharedGameData].birdSelected <= 1) {
+        [_bird setScale:1.3];
+    }else{
+        [_bird setScale:.2];
+    }
     _bird.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height / 1.7);
     _bird.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:_bird.size.height / 2];
     _bird.physicsBody.dynamic = YES;
@@ -167,11 +175,30 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _bird.physicsBody.contactTestBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory | catCategory;
     [self addChild:_bird];
     
-    // Might need to move somewhere else
-    SKAction* flap = [SKAction animateWithTextures:SPRITES_ANIM_ELLA_FLAP timePerFrame:.1];
-    SKAction* tears = [SKAction animateWithTextures:SPRITES_ANIM_ELLA_TEAR timePerFrame:.75];
-    _fly = [SKAction repeatAction:flap count:3];
-    _cry = [SKAction repeatActionForever:tears];
+}
+
+-(void) selectedBird{
+    
+    int selected = [GameData sharedGameData].birdSelected;
+    if (selected <= 1) {
+        birdTexture = SPRITES_TEX_ELLA;
+        birdLeft = SPRITES_TEX_ELLALEFT;
+        birdRight = SPRITES_TEX_ELLARIGHT;
+        birdCrying = SPRITES_TEX_ELLACRYING;
+        birdFight = LEVELSPRITES_ANIM_ELLAFIGHT;
+    }else if(selected == 2){
+        birdTexture =  BIRDSSPRITE_TEX_DEX;
+        birdLeft = BIRDSSPRITE_TEX_DEXLEFT;
+        birdRight = BIRDSSPRITE_TEX_DEXRIGHT;
+        birdCrying = BIRDSSPRITE_TEX_DEXCRYING;
+        birdFight = BIRDSSPRITE_ANIM_DEXFIGHT;
+    }else if(selected == 3){
+        birdTexture =  BIRDSSPRITE_TEX_HERB;
+        birdLeft = BIRDSSPRITE_TEX_HERBLEFT;
+        birdRight = BIRDSSPRITE_TEX_HERBRIGHT;
+        birdCrying = BIRDSSPRITE_TEX_HERBCRYING;
+        birdFight = BIRDSSPRITE_ANIM_HERBFIGHT;
+    }
 }
 
 -(void) createCat{
@@ -324,7 +351,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     SKAction* birdMoveLeft = [SKAction moveByX:-_bird.size.width * 3 y:0 duration:.003 * _bird.size.width * 3];
     moveUntilCollisionL = [SKAction repeatActionForever:birdMoveLeft];
     
-    SKAction* fightAnim = [SKAction animateWithTextures:LEVELSPRITES_ANIM_FIGHT timePerFrame:.1];
+    SKAction* fightAnim = [SKAction animateWithTextures:birdFight timePerFrame:.1];
     _fight = [SKAction repeatActionForever:fightAnim];
         
     // Scale losing background, change font size and color
@@ -541,7 +568,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     //adding motion to the bird
     if (!goingLeft) {
         if (!lost) {
-            _bird.texture = SPRITES_TEX_ELLA_LOOKLEFT;
+            _bird.texture = birdLeft;
         }
         [_bird removeActionForKey:@"birdMoving"];
         [_bird runAction:moveUntilCollisionR withKey:@"birdMoving"];
@@ -550,7 +577,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         goingLeft = true;
     }else{
         if (!lost) {
-            _bird.texture = SPRITES_TEX_ELLA_LOOKRIGHT;
+            _bird.texture = birdRight;
         }
         [_bird removeActionForKey:@"birdMoving"];
         [_bird runAction:moveUntilCollisionL withKey:@"birdMoving"];
@@ -707,7 +734,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
                 _bird.physicsBody.velocity = CGVectorMake(0, 0);
                 [_bird.physicsBody applyImpulse:CGVectorMake(0, 120)];
                 [self runAction:_flapSound];
-                [_bird runAction:_fly];
                 flapCount++;
             }
         }
@@ -791,7 +817,12 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     _cat.hidden = true;
     [_bird runAction:_fight withKey:@"fightScene"];
-    [_bird setScale:2.5];
+    //for now this will change*****************
+    if ([GameData sharedGameData].birdSelected <= 1) {
+        [_bird setScale:2.5];
+    }else{
+        [_bird setScale:.5];
+    }
 }
 
 #pragma Reset Scene
@@ -838,7 +869,13 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     // Moving bird to original position
     _bird.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height / 1.7);
     _bird.physicsBody.velocity = CGVectorMake(0, 0);
-    [_bird setScale:1.3];
+    
+    //for now this will change*****************
+    if ([GameData sharedGameData].birdSelected <= 1) {
+        [_bird setScale:1.3];
+    }else{
+        [_bird setScale:.2];
+    }
     [_bird removeActionForKey:@"fightScene"];
     [_bird removeActionForKey:@"crying"];
     
@@ -886,7 +923,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self moveBirdCat];
     
     // Reset bird texture
-    _bird.texture = SPRITES_TEX_ELLA_FLAPDOWN;
+    _bird.texture = birdTexture;
     
 }
 
@@ -898,9 +935,9 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     if (!lost) {
         if (_bird.position.y < 300) {
-            [_bird runAction:_cry withKey:@"crying"];
+            _bird.texture = birdCrying;
         }else{
-            [_bird removeActionForKey:@"crying"];
+            //_bird.texture = birdTexture;
         }
     }
 }

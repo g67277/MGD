@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		811081D61AB62279004E0C12 /* Sprites.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = 811081D41AB62279004E0C12 /* Sprites.atlasc */; };
+		811CDF791ADEEFD50039A6FC /* birdsSprite.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = 811CDF771ADEEFD50039A6FC /* birdsSprite.atlasc */; };
+		811CDF841ADF053E0039A6FC /* BirdsSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 811CDF831ADF053E0039A6FC /* BirdsSelection.m */; };
 		812C33F01ABF883F00BE675C /* LevelSprites.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = 812C33EE1ABF883F00BE675C /* LevelSprites.atlasc */; };
 		8143A9F91AA54D6E000C951E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8143A9F81AA54D6E000C951E /* main.m */; };
 		8143A9FC1AA54D6E000C951E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8143A9FB1AA54D6E000C951E /* AppDelegate.m */; };
@@ -24,6 +26,7 @@
 		818EF2831AABD8DF0005D758 /* BGMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2821AABD8DF0005D758 /* BGMusic.mp3 */; };
 		818EF2861AABDDCA0005D758 /* flap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2851AABDDCA0005D758 /* flap.mp3 */; };
 		818EF2881AABDDE20005D758 /* losing.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2871AABDDE20005D758 /* losing.mp3 */; };
+		81CBFAAC1ADF1E3600BD5A7F /* Outfits.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CBFAAB1ADF1E3600BD5A7F /* Outfits.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +42,10 @@
 /* Begin PBXFileReference section */
 		811081D41AB62279004E0C12 /* Sprites.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sprites.atlasc; sourceTree = "<group>"; };
 		811081D51AB62279004E0C12 /* Sprites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sprites.h; sourceTree = "<group>"; };
+		811CDF771ADEEFD50039A6FC /* birdsSprite.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; name = birdsSprite.atlasc; path = ../birdsSprite.atlasc; sourceTree = "<group>"; };
+		811CDF781ADEEFD50039A6FC /* BirdsSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BirdsSprite.h; path = ../BirdsSprite.h; sourceTree = "<group>"; };
+		811CDF821ADF053E0039A6FC /* BirdsSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BirdsSelection.h; sourceTree = "<group>"; };
+		811CDF831ADF053E0039A6FC /* BirdsSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BirdsSelection.m; sourceTree = "<group>"; };
 		812C33EE1ABF883F00BE675C /* LevelSprites.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = LevelSprites.atlasc; sourceTree = "<group>"; };
 		812C33EF1ABF883F00BE675C /* LevelSprites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSprites.h; sourceTree = "<group>"; };
 		8143A9F31AA54D6E000C951E /* UpWard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UpWard.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,6 +74,8 @@
 		818EF2821AABD8DF0005D758 /* BGMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BGMusic.mp3; sourceTree = "<group>"; };
 		818EF2851AABDDCA0005D758 /* flap.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = flap.mp3; sourceTree = "<group>"; };
 		818EF2871AABDDE20005D758 /* losing.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = losing.mp3; sourceTree = "<group>"; };
+		81CBFAAA1ADF1E3600BD5A7F /* Outfits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Outfits.h; sourceTree = "<group>"; };
+		81CBFAAB1ADF1E3600BD5A7F /* Outfits.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Outfits.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +117,8 @@
 		8143A9F51AA54D6E000C951E /* UpWard */ = {
 			isa = PBXGroup;
 			children = (
+				811CDF771ADEEFD50039A6FC /* birdsSprite.atlasc */,
+				811CDF781ADEEFD50039A6FC /* BirdsSprite.h */,
 				812C33EE1ABF883F00BE675C /* LevelSprites.atlasc */,
 				812C33EF1ABF883F00BE675C /* LevelSprites.h */,
 				811081D41AB62279004E0C12 /* Sprites.atlasc */,
@@ -127,6 +138,10 @@
 				817696851AC4F41000330D2F /* MainMenu */,
 				817696841AC4F40600330D2F /* Credits */,
 				817696831AC4F3FB00330D2F /* Tutorial */,
+				811CDF821ADF053E0039A6FC /* BirdsSelection.h */,
+				811CDF831ADF053E0039A6FC /* BirdsSelection.m */,
+				81CBFAAA1ADF1E3600BD5A7F /* Outfits.h */,
+				81CBFAAB1ADF1E3600BD5A7F /* Outfits.m */,
 			);
 			path = UpWard;
 			sourceTree = "<group>";
@@ -286,6 +301,7 @@
 				818EF2831AABD8DF0005D758 /* BGMusic.mp3 in Resources */,
 				818EF2881AABDDE20005D758 /* losing.mp3 in Resources */,
 				8143AA091AA54D6E000C951E /* Images.xcassets in Resources */,
+				811CDF791ADEEFD50039A6FC /* birdsSprite.atlasc in Resources */,
 				812C33F01ABF883F00BE675C /* LevelSprites.atlasc in Resources */,
 				8143AA011AA54D6E000C951E /* GameScene.sks in Resources */,
 				8143AA071AA54D6E000C951E /* Main.storyboard in Resources */,
@@ -309,8 +325,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8176967C1AC4B75600330D2F /* MainMenu.m in Sources */,
+				811CDF841ADF053E0039A6FC /* BirdsSelection.m in Sources */,
 				8143AA041AA54D6E000C951E /* GameViewController.m in Sources */,
 				8143A9FC1AA54D6E000C951E /* AppDelegate.m in Sources */,
+				81CBFAAC1ADF1E3600BD5A7F /* Outfits.m in Sources */,
 				8143A9FF1AA54D6E000C951E /* GameScene.m in Sources */,
 				817696771AC38CF700330D2F /* GameData.m in Sources */,
 				8176967F1AC4C84C00330D2F /* CreditsScene.m in Sources */,
