@@ -14,6 +14,18 @@ static NSString* const GameDataHighScoreKey = @"highScore";
 static NSString* const GameDataCoinsKey = @"coins";
 static NSString* const GameDataChicksKey = @"chicks";
 static NSString* const GameDataBirdKey = @"birds";
+static NSString* const GameDataAccessoryKey = @"accessory";
+
+static NSString* const GameDataDexKey = @"dex";
+static NSString* const GameDataHerbKey = @"herb";
+
+static NSString* const GameDataGreenKey = @"green";
+static NSString* const GameDataPurpleKey = @"purple";
+static NSString* const GameDataRedKey = @"red";
+static NSString* const GameDataFancyKey = @"fancy";
+static NSString* const GameDataMustachKey = @"mustach";
+static NSString* const GameDataHelmetKey = @"helmet";
+
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
@@ -21,6 +33,18 @@ static NSString* const GameDataBirdKey = @"birds";
     [encoder encodeDouble:self.coinsCollected forKey:GameDataCoinsKey];
     [encoder encodeDouble:self.chicksCollected forKey:GameDataChicksKey];
     [encoder encodeInt:self.birdSelected forKey:GameDataBirdKey];
+    [encoder encodeInt:self.accessorySelected forKey:GameDataAccessoryKey];
+    
+    [encoder encodeBool:self.dexBought forKey:GameDataDexKey];
+    [encoder encodeBool:self.herbBought forKey:GameDataHerbKey];
+
+    [encoder encodeBool:self.greenBought forKey:GameDataGreenKey];
+    [encoder encodeBool:self.purpleBought forKey:GameDataPurpleKey];
+    [encoder encodeBool:self.redBought forKey:GameDataRedKey];
+    [encoder encodeBool:self.fancyBought forKey:GameDataFancyKey];
+    [encoder encodeBool:self.mustachBought forKey:GameDataMustachKey];
+    [encoder encodeBool:self.helmetBought forKey:GameDataHelmetKey];
+
 
 }
 
@@ -32,6 +56,19 @@ static NSString* const GameDataBirdKey = @"birds";
         _coinsCollected = [decoder decodeDoubleForKey:GameDataCoinsKey];
         _chicksCollected = [decoder decodeDoubleForKey:GameDataChicksKey];
         _birdSelected = [decoder decodeIntForKey:GameDataBirdKey];
+        _accessorySelected = [decoder decodeIntForKey:GameDataAccessoryKey];
+        
+        _dexBought = [decoder decodeBoolForKey:GameDataDexKey];
+        _herbBought = [decoder decodeBoolForKey:GameDataHerbKey];
+        
+        _greenBought = [decoder decodeBoolForKey:GameDataGreenKey];
+        _purpleBought = [decoder decodeBoolForKey:GameDataPurpleKey];
+        _redBought = [decoder decodeBoolForKey:GameDataRedKey];
+        _fancyBought = [decoder decodeBoolForKey:GameDataFancyKey];
+        _mustachBought = [decoder decodeBoolForKey:GameDataMustachKey];
+        _helmetBought = [decoder decodeBoolForKey:GameDataHelmetKey];
+
+
     }
     return self;
 }

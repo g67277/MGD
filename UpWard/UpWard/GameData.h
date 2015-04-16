@@ -15,6 +15,20 @@
 @property (assign, nonatomic) long coinsCollected;
 @property (assign, nonatomic) long chicksCollected;
 @property (assign, nonatomic) int birdSelected;
+@property (assign, nonatomic) int accessorySelected;
+
+
+@property (assign, nonatomic) bool dexBought;
+@property (assign, nonatomic) bool herbBought;
+
+
+@property (assign, nonatomic) bool greenBought;
+@property (assign, nonatomic) bool purpleBought;
+@property (assign, nonatomic) bool redBought;
+@property (assign, nonatomic) bool fancyBought;
+@property (assign, nonatomic) bool mustachBought;
+@property (assign, nonatomic) Boolean helmetBought;
+
 
 +(instancetype)sharedGameData;
 -(void)reset;

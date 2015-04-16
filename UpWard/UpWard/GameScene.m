@@ -174,6 +174,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _bird.physicsBody.collisionBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory | catCategory;
     _bird.physicsBody.contactTestBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory | catCategory;
     [self addChild:_bird];
+    [self addAccessories];
     
 }
 
@@ -200,6 +201,146 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         birdFight = BIRDSSPRITE_ANIM_HERBFIGHT;
     }
 }
+
+-(void) addAccessories{
+    
+    int selected = [GameData sharedGameData].birdSelected;
+    int item = [GameData sharedGameData].accessorySelected;
+    
+    switch (selected) {
+        case 1:
+            [self ellaCustom:item];
+            break;
+        case 2:
+            [self dexCustom:item];
+            break;
+        case 3:
+            [self herbCustom:item];
+            break;
+            
+        default:
+            break;
+    }
+    
+}
+
+-(void) ellaCustom:(int) item{
+    
+    if (item == 1) {
+        SKSpriteNode* greenGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_GREENGLASS];
+        greenGlass.position = CGPointMake(0,-10);
+        greenGlass.zPosition = 100;
+        [_bird addChild:greenGlass];
+    }else if(item == 2){
+        SKSpriteNode* purpleGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_PURPLEGLASS];
+        purpleGlass.position = CGPointMake(0,-10);
+        purpleGlass.zPosition = 100;
+        [_bird addChild:purpleGlass];
+    }else if (item == 3){
+        SKSpriteNode* redGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_REDGLASS];
+        redGlass.position = CGPointMake(0,-10);
+        redGlass.zPosition = 100;
+        [_bird addChild:redGlass];
+    }else if (item == 4){
+        SKSpriteNode* mustach = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_MUSTASH];
+        mustach.position = CGPointMake(0,-20);
+        mustach.zPosition = 100;
+        [_bird addChild:mustach];
+    }else if (item == 5){
+        SKSpriteNode* fancyGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_FANCYGLASS];
+        fancyGlass.position = CGPointMake(19,-10);
+        fancyGlass.zPosition = 100;
+        [_bird addChild:fancyGlass];
+    }else if (item == 6){
+        SKSpriteNode* helmet = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_HELMET];
+        helmet.position = CGPointMake(0,19);
+        helmet.zPosition = 100;
+        [_bird addChild:helmet];
+    }
+    
+}
+
+-(void) dexCustom:(int) item{
+    if (item == 1) {
+        SKSpriteNode* greenGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_GREENGLASS];
+        [greenGlass setScale:2.3];
+        greenGlass.position = CGPointMake(-18,-29);
+        greenGlass.zPosition = 100;
+        [_bird addChild:greenGlass];
+    }else if(item == 2){
+        SKSpriteNode* purpleGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_PURPLEGLASS];
+        [purpleGlass setScale:7];
+        purpleGlass.position = CGPointMake(-18,-29);
+        purpleGlass.zPosition = 100;
+        [_bird addChild:purpleGlass];
+    }else if (item == 3){
+        SKSpriteNode* redGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_REDGLASS];
+        [redGlass setScale:7.5];
+        redGlass.position = CGPointMake(-18,-29);
+        redGlass.zPosition = 100;
+        [_bird addChild:redGlass];
+    }else if (item == 4){
+        SKSpriteNode* mustach = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_MUSTASH];
+        [mustach setScale:2.3];
+        mustach.position = CGPointMake(-25,-110);
+        mustach.zPosition = 100;
+        [_bird addChild:mustach];
+    }else if (item == 5){
+        SKSpriteNode* fancyGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_FANCYGLASS];
+        [fancyGlass setScale:7];
+        fancyGlass.position = CGPointMake(160,-35);
+        fancyGlass.zPosition = 100;
+        [_bird addChild:fancyGlass];
+    }else if (item == 6){
+        SKSpriteNode* helmet = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_HELMET];
+        [helmet setScale:7];
+        helmet.position = CGPointMake(-20,180);
+        helmet.zPosition = 100;
+        [_bird addChild:helmet];
+    }
+}
+
+-(void) herbCustom:(int) item{
+    if (item == 1) {
+        SKSpriteNode* greenGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_GREENGLASS];
+        [greenGlass setScale:7];
+        greenGlass.position = CGPointMake(-5,-18);
+        greenGlass.zPosition = 100;
+        [_bird addChild:greenGlass];
+    }else if(item == 2){
+        SKSpriteNode* purpleGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_PURPLEGLASS];
+        [purpleGlass setScale:7];
+        purpleGlass.position = CGPointMake(-5,-22);
+        purpleGlass.zPosition = 100;
+        [_bird addChild:purpleGlass];
+    }else if (item == 3){
+        SKSpriteNode* redGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_REDGLASS];
+        [redGlass setScale:7.5];
+        redGlass.position = CGPointMake(-5,-22);
+        redGlass.zPosition = 100;
+        [_bird addChild:redGlass];
+    }else if (item == 4){
+        SKSpriteNode* mustach = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_MUSTASH];
+        [mustach setScale:7];
+        mustach.position = CGPointMake(-10,-110);
+        mustach.zPosition = 100;
+        [_bird addChild:mustach];
+    }else if (item == 5){
+        SKSpriteNode* fancyGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_FANCYGLASS];
+        [fancyGlass setScale:7];
+        fancyGlass.position = CGPointMake(120,-5);
+        fancyGlass.zPosition = 100;
+        [_bird addChild:fancyGlass];
+    }else if (item == 6){
+        SKSpriteNode* helmet = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_HELMET];
+        [helmet setScale:7];
+        helmet.position = CGPointMake(0,180);
+        helmet.zPosition = 100;
+        [_bird addChild:helmet];
+    }
+    
+}
+
 
 -(void) createCat{
     //Create Evil Cat
@@ -815,7 +956,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 -(void) startFight{
     
-    _cat.hidden = true;
+    [_cat removeFromParent];
+    [_bird removeAllChildren];
     [_bird runAction:_fight withKey:@"fightScene"];
     //for now this will change*****************
     if ([GameData sharedGameData].birdSelected <= 1) {
@@ -876,11 +1018,12 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     }else{
         [_bird setScale:.2];
     }
+    [self addAccessories];
     [_bird removeActionForKey:@"fightScene"];
     [_bird removeActionForKey:@"crying"];
     
-    _cat.hidden = false;
-
+    [self createCat];
+    
     // Reseting the scene
     [self resetBackGround];
     [self moveScene];

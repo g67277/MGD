@@ -65,18 +65,98 @@
         
         BirdsSelection *scene = [BirdsSelection unarchiveFromFile:@"GameScene"];
         scene.scaleMode = SKSceneScaleModeAspectFill;
-        
         // Present the scene.
         [skView presentScene:scene transition:[SKTransition crossFadeWithDuration: .5]];
         //[skView presentScene:scene];
         
-    }else if([node.name isEqualToString:@"ella"]){
-        [GameData sharedGameData].birdSelected = 1;
-    }else if([node.name isEqualToString:@"dex"]){
-        [GameData sharedGameData].birdSelected = 2;
-    }else if([node.name isEqualToString:@"herb"]){
-        [GameData sharedGameData].birdSelected = 3;
+    }else if([node.name isEqualToString:@"start"]){
+        GameScene * scene = [GameScene unarchiveFromFile:@"GameScene"];
+        scene.scaleMode = SKSceneScaleModeAspectFill;
+        [skView presentScene:scene transition:[SKTransition crossFadeWithDuration:.5]];
+    }else if ([node.name isEqualToString:@"clear"]){
+        [GameData sharedGameData].accessorySelected = 0;
+        [bird removeAllChildren];
+        birdLabel.text = @"Ella";
+        birdLabel.fontSize = 110;
+    }else if([node.name isEqualToString:@"greenGlass"]){
+        if (![GameData sharedGameData].greenBought) {
+            accessorySelected = 1;
+            [self createAlert:20];
+        }else{
+            accessorySelected = 1;
+            [self mergeTextures:1];
+        }
+    }else if([node.name isEqualToString:@"purpleGlass"]){
+        if (![GameData sharedGameData].purpleBought) {
+            accessorySelected = 2;
+            [self createAlert:25];
+        }else{
+            accessorySelected = 2;
+            [self mergeTextures:2];
+        }
+        
+    }else if([node.name isEqualToString:@"redGlass"]){
+        if (![GameData sharedGameData].redBought) {
+            accessorySelected = 3;
+            [self createAlert:30];
+        }else{
+            accessorySelected = 3;
+            [self mergeTextures:3];
+        }
+    }else if([node.name isEqualToString:@"mustach"]){
+        if (![GameData sharedGameData].mustachBought) {
+            accessorySelected = 4;
+            [self createAlert:50];
+        }else{
+            accessorySelected = 4;
+            [self mergeTextures:4];
+        }
+    }else if([node.name isEqualToString:@"fancyGlass"]){
+        if (![GameData sharedGameData].fancyBought) {
+            accessorySelected = 5;
+            [self createAlert:40];
+        }else{
+            accessorySelected = 5;
+            [self mergeTextures:5];
+        }
+        
+    }else if([node.name isEqualToString:@"helmet"]){
+        NSLog(@"%hhu", [GameData sharedGameData].helmetBought);
+        if (![GameData sharedGameData].helmetBought) {
+            accessorySelected = 6;
+            [self createAlert:10];
+        }else{
+            accessorySelected = 6;
+            [self mergeTextures:6];
+        }
+        
     }
+}
+
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    
+    
+    if (buttonIndex == 0) {//Cancel
+        
+    }else if (buttonIndex == 1){
+        [GameData sharedGameData].coinsCollected -= alertView.tag;
+        [GameData sharedGameData].accessorySelected = accessorySelected;
+        [self mergeTextures:accessorySelected];
+    }
+    
+}
+
+-(void) createAlert:(int) amount{
+    
+    if (amount > [GameData sharedGameData].coinsCollected) {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Insufficient Funds" message:nil delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
+        [alert show];
+    }else{
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Buy?" message:[NSString stringWithFormat:@"Are you sure you want to spend %i coins?", amount] delegate:self cancelButtonTitle:@"Nevermind" otherButtonTitles:@"Yes", nil];
+        alert.tag = amount;
+        [alert show];
+    }
+
 }
 
 -(void) createIntro{
@@ -85,7 +165,7 @@
     
     self.backgroundColor = background;
     
-    int birdSelected = [GameData sharedGameData].birdSelected;
+    birdSelected = [GameData sharedGameData].birdSelected;
     
     if (birdSelected == 1) {
         birdTexture = SPRITES_TEX_ELLA;
@@ -94,14 +174,14 @@
     }else if(birdSelected == 2){
         birdTexture = BIRDSSPRITE_TEX_DEX;
         birdName = @"Dex";
-        scale = .7;
+        scale = .6;
     }else if (birdSelected == 3){
         birdTexture = BIRDSSPRITE_TEX_HERB;
         birdName = @"Herb";
-        scale = .7;
+        scale = .6;
     }
     
-    SKSpriteNode* bird = [SKSpriteNode spriteNodeWithTexture:birdTexture];
+    bird = [SKSpriteNode spriteNodeWithTexture:birdTexture];
     [bird setScale:scale];
     bird.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 250);
     [self addChild:bird];
@@ -111,6 +191,11 @@
     birdLabel.fontSize = 110;
     [self addChild:birdLabel];
 
+    currentCoin = [SKLabelNode labelNodeWithText:[NSString stringWithFormat:@"%ld", [GameData sharedGameData].coinsCollected]];
+    currentCoin.position = CGPointMake(150, bird.position.y);
+    currentCoin.fontSize = 110;
+    currentCoin.fontColor = [UIColor yellowColor];
+    [self addChild:currentCoin];
     
     SKSpriteNode* tutorialBtn = [SKSpriteNode spriteNodeWithImageNamed:@"back"];
     [tutorialBtn setScale:.5];
@@ -126,6 +211,13 @@
     playBtn.name = @"start";
     [self addChild:playBtn];
     
+    SKSpriteNode* clearBtn = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_PLAYBTN];
+    [clearBtn setScale:.5];
+    clearBtn.position = CGPointMake(CGRectGetMidX(self.frame), self.size.height - 50);
+    clearBtn.zPosition = 100;
+    clearBtn.name = @"clear";
+    [self addChild:clearBtn];
+    
     [self createStore];
     
     [self initActions];
@@ -140,11 +232,29 @@
     greenGlass.name = @"greenGlass";
     [self addChild:greenGlass];
     
+    SKLabelNode* greenPrice = [SKLabelNode labelNodeWithText:@"20 Coins"];
+    greenPrice.position = CGPointMake(0, -40);
+    greenPrice.fontColor = [UIColor yellowColor];
+    greenPrice.fontSize = 20;
+    if ([GameData sharedGameData].greenBought) {
+        greenPrice.text = @"Purchased!";
+    }
+    [greenGlass addChild:greenPrice];
+    
     SKSpriteNode* purpleGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_PURPLEGLASS];
     [purpleGlass setScale:2.2];
     purpleGlass.position = CGPointMake(greenGlass.position.x + greenGlass.size.width + 30, 400);
-    purpleGlass.name = @"blackGlass";
+    purpleGlass.name = @"purpleGlass";
     [self addChild:purpleGlass];
+    
+    SKLabelNode* purplePrice = [SKLabelNode labelNodeWithText:@"25 Coins"];
+    purplePrice.position = CGPointMake(0, -40);
+    purplePrice.fontColor = [UIColor yellowColor];
+    purplePrice.fontSize = 20;
+    if ([GameData sharedGameData].purpleBought) {
+        purplePrice.text = @"Purchased!";
+    }
+    [purpleGlass addChild:purplePrice];
     
     SKSpriteNode* redGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_REDGLASS];
     [redGlass setScale:2.2];
@@ -152,24 +262,270 @@
     redGlass.name = @"redGlass";
     [self addChild:redGlass];
     
+    SKLabelNode* redPrice = [SKLabelNode labelNodeWithText:@"30 Coins"];
+    redPrice.position = CGPointMake(0, -40);
+    redPrice.fontColor = [UIColor yellowColor];
+    redPrice.fontSize = 20;
+    if ([GameData sharedGameData].redBought) {
+        redPrice.text = @"Purchased!";
+    }
+    [redGlass addChild:redPrice];
+    
     SKSpriteNode* mustach = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_MUSTASH];
     [mustach setScale:2.2];
-    mustach.position = CGPointMake(self.size.width / 3.8, greenGlass.position.y - 100);
+    mustach.position = CGPointMake(self.size.width / 3.8, greenGlass.position.y - 200);
     mustach.name = @"mustach";
     [self addChild:mustach];
     
+    SKLabelNode* mustachPrice = [SKLabelNode labelNodeWithText:@"50 Coins"];
+    mustachPrice.position = CGPointMake(0, -40);
+    mustachPrice.fontColor = [UIColor yellowColor];
+    mustachPrice.fontSize = 20;
+    if ([GameData sharedGameData].mustachBought) {
+        mustachPrice.text = @"Purchased!";
+    }
+    [mustach addChild:mustachPrice];
+    
     SKSpriteNode* fancyGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_FANCYGLASS];
     [fancyGlass setScale:2.2];
-    fancyGlass.position = CGPointMake(greenGlass.position.x + greenGlass.size.width + 30, greenGlass.position.y - 100);
+    fancyGlass.position = CGPointMake(greenGlass.position.x + greenGlass.size.width + 30, mustach.position.y);
     fancyGlass.name = @"fancyGlass";
     [self addChild:fancyGlass];
     
+    SKLabelNode* fancyPrice = [SKLabelNode labelNodeWithText:@"40 Coins"];
+    fancyPrice.position = CGPointMake(0, -40);
+    fancyPrice.fontColor = [UIColor yellowColor];
+    fancyPrice.fontSize = 20;
+    if ([GameData sharedGameData].fancyBought) {
+        fancyPrice.text = @"Purchased!";
+    }
+    [fancyGlass addChild:fancyPrice];
+    
     SKSpriteNode* helmet = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_HELMET];
     [helmet setScale:2.2];
-    helmet.position = CGPointMake(purpleGlass.position.x + purpleGlass.size.width + 30, greenGlass.position.y - 100);
+    helmet.position = CGPointMake(purpleGlass.position.x + purpleGlass.size.width + 30, mustach.position.y);
     helmet.name = @"helmet";
     [self addChild:helmet];
+    
+    SKLabelNode* helmetPrice = [SKLabelNode labelNodeWithText:@"10 Coins"];
+    helmetPrice.position = CGPointMake(0, -40);
+    helmetPrice.fontColor = [UIColor yellowColor];
+    helmetPrice.fontSize = 20;
+    if ([GameData sharedGameData].helmetBought) {
+        helmetPrice.text = @"Purchased!";
+    }
+    [helmet addChild:helmetPrice];
 }
+
+// Need to change**
+-(void) mergeTextures:(int) item{
+    
+    [bird removeAllChildren];
+    
+    switch (birdSelected) {
+        case 1:
+            [self ellaCustom: item];
+            break;
+        case 2:
+            [self dexCustom: item];
+            break;
+        case 3:
+            [self herbCustom: item];
+            break;
+        default:
+            break;
+    }
+}
+
+
+-(void) ellaCustom:(int) item{
+    
+    if (item == 1) {
+        SKSpriteNode* greenGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_GREENGLASS];
+        greenGlass.position = CGPointMake(0,-10);
+        greenGlass.zPosition = 100;
+        [bird addChild:greenGlass];
+        birdLabel.text = @"Cool Birdie";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].greenBought = true;
+    }else if(item == 2){
+        SKSpriteNode* purpleGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_PURPLEGLASS];
+        purpleGlass.position = CGPointMake(0,-10);
+        purpleGlass.zPosition = 100;
+        [bird addChild:purpleGlass];
+        birdLabel.text = @"Hipster Ella";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].purpleBought = true;
+
+    }else if (item == 3){
+        SKSpriteNode* redGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_REDGLASS];
+        redGlass.position = CGPointMake(0,-10);
+        redGlass.zPosition = 100;
+        [bird addChild:redGlass];
+        birdLabel.text = @"Love Queen";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].redBought = true;
+
+    }else if (item == 4){
+        SKSpriteNode* mustach = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_MUSTASH];
+        mustach.position = CGPointMake(0,-20);
+        mustach.zPosition = 100;
+        [bird addChild:mustach];
+        birdLabel.text = @"Mustach Bird?!? Whaaa";
+        birdLabel.fontSize = 55;
+        [GameData sharedGameData].mustachBought = true;
+
+    }else if (item == 5){
+        SKSpriteNode* fancyGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_FANCYGLASS];
+        fancyGlass.position = CGPointMake(19,-10);
+        fancyGlass.zPosition = 100;
+        [bird addChild:fancyGlass];
+        birdLabel.text = @"Ms. Fancy";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].fancyBought = true;
+
+    }else if (item == 6){
+        SKSpriteNode* helmet = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_HELMET];
+        helmet.position = CGPointMake(0,19);
+        helmet.zPosition = 100;
+        [bird addChild:helmet];
+        birdLabel.text = @"Head gear required!";
+        birdLabel.fontSize = 70;
+        [GameData sharedGameData].helmetBought = true;
+
+    }
+    
+}
+
+-(void) dexCustom:(int) item{
+    if (item == 1) {
+        SKSpriteNode* greenGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_GREENGLASS];
+        [greenGlass setScale:7];
+        greenGlass.position = CGPointMake(-18,-29);
+        greenGlass.zPosition = 100;
+        [bird addChild:greenGlass];
+        birdLabel.text = @"Cool Birdie";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].greenBought = true;
+
+    }else if(item == 2){
+        SKSpriteNode* purpleGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_PURPLEGLASS];
+        [purpleGlass setScale:7];
+        purpleGlass.position = CGPointMake(-18,-29);
+        purpleGlass.zPosition = 100;
+        [bird addChild:purpleGlass];
+        birdLabel.text = @"Hipster Dex";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].purpleBought = true;
+
+    }else if (item == 3){
+        SKSpriteNode* redGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_REDGLASS];
+        [redGlass setScale:7.5];
+        redGlass.position = CGPointMake(-18,-29);
+        redGlass.zPosition = 100;
+        [bird addChild:redGlass];
+        birdLabel.text = @"Love King";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].redBought = true;
+
+    }else if (item == 4){
+        SKSpriteNode* mustach = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_MUSTASH];
+        [mustach setScale:7];
+        mustach.position = CGPointMake(-25,-110);
+        mustach.zPosition = 100;
+        [bird addChild:mustach];
+        birdLabel.text = @"Mustach Bird?!? Whaaa";
+        birdLabel.fontSize = 55;
+        [GameData sharedGameData].mustachBought = true;
+
+    }else if (item == 5){
+        SKSpriteNode* fancyGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_FANCYGLASS];
+        [fancyGlass setScale:7];
+        fancyGlass.position = CGPointMake(160,-35);
+        fancyGlass.zPosition = 100;
+        [bird addChild:fancyGlass];
+        birdLabel.text = @"Mr. Fancy";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].fancyBought = true;
+
+    }else if (item == 6){
+        SKSpriteNode* helmet = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_HELMET];
+        [helmet setScale:7];
+        helmet.position = CGPointMake(-20,180);
+        helmet.zPosition = 100;
+        [bird addChild:helmet];
+        birdLabel.text = @"Head gear required!";
+        birdLabel.fontSize = 70;
+        [GameData sharedGameData].helmetBought = true;
+
+    }
+}
+
+-(void) herbCustom:(int) item{
+    if (item == 1) {
+        SKSpriteNode* greenGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_GREENGLASS];
+        [greenGlass setScale:7];
+        greenGlass.position = CGPointMake(-5,-18);
+        greenGlass.zPosition = 100;
+        [bird addChild:greenGlass];
+        birdLabel.text = @"Cool Birdie";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].greenBought = true;
+
+    }else if(item == 2){
+        SKSpriteNode* purpleGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_PURPLEGLASS];
+        [purpleGlass setScale:7];
+        purpleGlass.position = CGPointMake(-5,-22);
+        purpleGlass.zPosition = 100;
+        [bird addChild:purpleGlass];
+        birdLabel.text = @"Hipster Dex";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].purpleBought = true;
+
+    }else if (item == 3){
+        SKSpriteNode* redGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_REDGLASS];
+        [redGlass setScale:7.5];
+        redGlass.position = CGPointMake(-5,-22);
+        redGlass.zPosition = 100;
+        [bird addChild:redGlass];
+        birdLabel.text = @"Love King";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].redBought = true;
+
+    }else if (item == 4){
+        SKSpriteNode* mustach = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_MUSTASH];
+        [mustach setScale:7];
+        mustach.position = CGPointMake(-10,-110);
+        mustach.zPosition = 100;
+        [bird addChild:mustach];
+        birdLabel.text = @"Mustach Bird?!? Whaaa";
+        birdLabel.fontSize = 55;
+        [GameData sharedGameData].mustachBought = true;
+
+    }else if (item == 5){
+        SKSpriteNode* fancyGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_FANCYGLASS];
+        [fancyGlass setScale:7];
+        fancyGlass.position = CGPointMake(120,-5);
+        fancyGlass.zPosition = 100;
+        [bird addChild:fancyGlass];
+        birdLabel.text = @"Mr. Fancy";
+        birdLabel.fontSize = 110;
+        [GameData sharedGameData].fancyBought = true;
+
+    }else if (item == 6){
+        SKSpriteNode* helmet = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_HELMET];
+        [helmet setScale:7];
+        helmet.position = CGPointMake(0,180);
+        helmet.zPosition = 100;
+        [bird addChild:helmet];
+        birdLabel.text = @"Head gear required!";
+        birdLabel.fontSize = 70;
+        [GameData sharedGameData].helmetBought = true;
+
+    }
+
+}
+
 
 -(void) initActions{
     

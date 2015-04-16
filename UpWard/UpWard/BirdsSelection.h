@@ -8,6 +8,9 @@
 
 #import <SpriteKit/SpriteKit.h>
 
-@interface BirdsSelection : SKScene
+@interface BirdsSelection : SKScene{
+    bool dexBought;
+    bool herbBought;
+}
 
 @end

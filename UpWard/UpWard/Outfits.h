@@ -8,12 +8,16 @@
 
 #import <SpriteKit/SpriteKit.h>
 
-@interface Outfits : SKScene{
+@interface Outfits : SKScene <UIAlertViewDelegate>{
     
     SKLabelNode* birdLabel;
     SKTexture* birdTexture;
     NSString* birdName;
     float scale;
+    int birdSelected;
+    int accessorySelected;
+    SKSpriteNode* bird;
+    SKLabelNode* currentCoin;
 }
 
 @end
