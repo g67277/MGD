@@ -7,15 +7,6 @@
 //
 
 #import "Outfits.h"
-//
-//  BirdsSelection.m
-//  UpWard
-//
-//  Created by Nazir Shuqair on 4/15/15.
-//  Copyright (c) 2015 Me Time Studios. All rights reserved.
-//
-//
-
 #import "GameScene.h"
 #import "BirdsSelection.h"
 #import "Sprites.h"
@@ -76,7 +67,7 @@
     }else if ([node.name isEqualToString:@"clear"]){
         [GameData sharedGameData].accessorySelected = 0;
         [bird removeAllChildren];
-        birdLabel.text = @"Ella";
+        birdLabel.text = birdName;
         birdLabel.fontSize = 110;
     }else if([node.name isEqualToString:@"greenGlass"]){
         if (![GameData sharedGameData].greenBought) {
@@ -142,6 +133,7 @@
         [GameData sharedGameData].coinsCollected -= alertView.tag;
         [GameData sharedGameData].accessorySelected = accessorySelected;
         [self mergeTextures:accessorySelected];
+        currentCoin.text = [NSString stringWithFormat:@"%ld", [GameData sharedGameData].coinsCollected];
     }
     
 }
@@ -188,12 +180,14 @@
     
     birdLabel = [SKLabelNode labelNodeWithText:birdName];
     birdLabel.position = CGPointMake(CGRectGetMidX(self.frame), bird.position.y -250);
+    birdLabel.fontName = @"AppleSDGothicNeo-Bold";
     birdLabel.fontSize = 110;
     [self addChild:birdLabel];
 
     currentCoin = [SKLabelNode labelNodeWithText:[NSString stringWithFormat:@"%ld", [GameData sharedGameData].coinsCollected]];
-    currentCoin.position = CGPointMake(150, bird.position.y);
-    currentCoin.fontSize = 110;
+    currentCoin.position = CGPointMake(160, bird.position.y);
+    currentCoin.fontName = @"AppleSDGothicNeo-Bold";
+    currentCoin.fontSize = 70;
     currentCoin.fontColor = [UIColor yellowColor];
     [self addChild:currentCoin];
     
@@ -235,7 +229,8 @@
     SKLabelNode* greenPrice = [SKLabelNode labelNodeWithText:@"20 Coins"];
     greenPrice.position = CGPointMake(0, -40);
     greenPrice.fontColor = [UIColor yellowColor];
-    greenPrice.fontSize = 20;
+    greenPrice.fontName = @"AppleSDGothicNeo-Bold";
+    greenPrice.fontSize = 15;
     if ([GameData sharedGameData].greenBought) {
         greenPrice.text = @"Purchased!";
     }
@@ -250,7 +245,8 @@
     SKLabelNode* purplePrice = [SKLabelNode labelNodeWithText:@"25 Coins"];
     purplePrice.position = CGPointMake(0, -40);
     purplePrice.fontColor = [UIColor yellowColor];
-    purplePrice.fontSize = 20;
+    purplePrice.fontName = @"AppleSDGothicNeo-Bold";
+    purplePrice.fontSize = 15;
     if ([GameData sharedGameData].purpleBought) {
         purplePrice.text = @"Purchased!";
     }
@@ -265,7 +261,8 @@
     SKLabelNode* redPrice = [SKLabelNode labelNodeWithText:@"30 Coins"];
     redPrice.position = CGPointMake(0, -40);
     redPrice.fontColor = [UIColor yellowColor];
-    redPrice.fontSize = 20;
+    redPrice.fontName = @"AppleSDGothicNeo-Bold";
+    redPrice.fontSize = 15;
     if ([GameData sharedGameData].redBought) {
         redPrice.text = @"Purchased!";
     }
@@ -280,7 +277,8 @@
     SKLabelNode* mustachPrice = [SKLabelNode labelNodeWithText:@"50 Coins"];
     mustachPrice.position = CGPointMake(0, -40);
     mustachPrice.fontColor = [UIColor yellowColor];
-    mustachPrice.fontSize = 20;
+    mustachPrice.fontName = @"AppleSDGothicNeo-Bold";
+    mustachPrice.fontSize = 15;
     if ([GameData sharedGameData].mustachBought) {
         mustachPrice.text = @"Purchased!";
     }
@@ -295,7 +293,8 @@
     SKLabelNode* fancyPrice = [SKLabelNode labelNodeWithText:@"40 Coins"];
     fancyPrice.position = CGPointMake(0, -40);
     fancyPrice.fontColor = [UIColor yellowColor];
-    fancyPrice.fontSize = 20;
+    fancyPrice.fontName = @"AppleSDGothicNeo-Bold";
+    fancyPrice.fontSize = 15;
     if ([GameData sharedGameData].fancyBought) {
         fancyPrice.text = @"Purchased!";
     }
@@ -310,7 +309,8 @@
     SKLabelNode* helmetPrice = [SKLabelNode labelNodeWithText:@"10 Coins"];
     helmetPrice.position = CGPointMake(0, -40);
     helmetPrice.fontColor = [UIColor yellowColor];
-    helmetPrice.fontSize = 20;
+    helmetPrice.fontName = @"AppleSDGothicNeo-Bold";
+    helmetPrice.fontSize = 15;
     if ([GameData sharedGameData].helmetBought) {
         helmetPrice.text = @"Purchased!";
     }
@@ -380,7 +380,7 @@
         fancyGlass.position = CGPointMake(19,-10);
         fancyGlass.zPosition = 100;
         [bird addChild:fancyGlass];
-        birdLabel.text = @"Ms. Fancy";
+        birdLabel.text = @"Call me Fancy";
         birdLabel.fontSize = 110;
         [GameData sharedGameData].fancyBought = true;
 
@@ -444,7 +444,7 @@
         fancyGlass.position = CGPointMake(160,-35);
         fancyGlass.zPosition = 100;
         [bird addChild:fancyGlass];
-        birdLabel.text = @"Mr. Fancy";
+        birdLabel.text = @"Call me Fancy";
         birdLabel.fontSize = 110;
         [GameData sharedGameData].fancyBought = true;
 
@@ -508,8 +508,8 @@
         fancyGlass.position = CGPointMake(120,-5);
         fancyGlass.zPosition = 100;
         [bird addChild:fancyGlass];
-        birdLabel.text = @"Mr. Fancy";
-        birdLabel.fontSize = 110;
+        birdLabel.text = @"Call me Fancy";
+        birdLabel.fontSize = 90;
         [GameData sharedGameData].fancyBought = true;
 
     }else if (item == 6){

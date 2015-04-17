@@ -27,6 +27,8 @@
 		818EF2861AABDDCA0005D758 /* flap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2851AABDDCA0005D758 /* flap.mp3 */; };
 		818EF2881AABDDE20005D758 /* losing.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2871AABDDE20005D758 /* losing.mp3 */; };
 		81CBFAAC1ADF1E3600BD5A7F /* Outfits.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CBFAAB1ADF1E3600BD5A7F /* Outfits.m */; };
+		81CBFAB01AE02F3A00BD5A7F /* LevelSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CBFAAF1AE02F3A00BD5A7F /* LevelSelection.m */; };
+		81CBFAB31AE0392500BD5A7F /* spaceLevel.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = 81CBFAB11AE0392500BD5A7F /* spaceLevel.atlasc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +78,10 @@
 		818EF2871AABDDE20005D758 /* losing.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = losing.mp3; sourceTree = "<group>"; };
 		81CBFAAA1ADF1E3600BD5A7F /* Outfits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Outfits.h; sourceTree = "<group>"; };
 		81CBFAAB1ADF1E3600BD5A7F /* Outfits.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Outfits.m; sourceTree = "<group>"; };
+		81CBFAAE1AE02F3A00BD5A7F /* LevelSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSelection.h; sourceTree = "<group>"; };
+		81CBFAAF1AE02F3A00BD5A7F /* LevelSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelSelection.m; sourceTree = "<group>"; };
+		81CBFAB11AE0392500BD5A7F /* spaceLevel.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = spaceLevel.atlasc; sourceTree = "<group>"; };
+		81CBFAB21AE0392500BD5A7F /* SpaceLevelSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceLevelSprite.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +123,8 @@
 		8143A9F51AA54D6E000C951E /* UpWard */ = {
 			isa = PBXGroup;
 			children = (
+				81CBFAB11AE0392500BD5A7F /* spaceLevel.atlasc */,
+				81CBFAB21AE0392500BD5A7F /* SpaceLevelSprite.h */,
 				811CDF771ADEEFD50039A6FC /* birdsSprite.atlasc */,
 				811CDF781ADEEFD50039A6FC /* BirdsSprite.h */,
 				812C33EE1ABF883F00BE675C /* LevelSprites.atlasc */,
@@ -138,10 +146,8 @@
 				817696851AC4F41000330D2F /* MainMenu */,
 				817696841AC4F40600330D2F /* Credits */,
 				817696831AC4F3FB00330D2F /* Tutorial */,
-				811CDF821ADF053E0039A6FC /* BirdsSelection.h */,
-				811CDF831ADF053E0039A6FC /* BirdsSelection.m */,
-				81CBFAAA1ADF1E3600BD5A7F /* Outfits.h */,
-				81CBFAAB1ADF1E3600BD5A7F /* Outfits.m */,
+				81CBFAAD1AE02F1F00BD5A7F /* Bird Selection */,
+				81CBFAB41AE09C2800BD5A7F /* Level Selection */,
 			);
 			path = UpWard;
 			sourceTree = "<group>";
@@ -216,6 +222,26 @@
 				818EF2821AABD8DF0005D758 /* BGMusic.mp3 */,
 			);
 			name = "Music and FX";
+			sourceTree = "<group>";
+		};
+		81CBFAAD1AE02F1F00BD5A7F /* Bird Selection */ = {
+			isa = PBXGroup;
+			children = (
+				811CDF821ADF053E0039A6FC /* BirdsSelection.h */,
+				811CDF831ADF053E0039A6FC /* BirdsSelection.m */,
+				81CBFAAA1ADF1E3600BD5A7F /* Outfits.h */,
+				81CBFAAB1ADF1E3600BD5A7F /* Outfits.m */,
+			);
+			name = "Bird Selection";
+			sourceTree = "<group>";
+		};
+		81CBFAB41AE09C2800BD5A7F /* Level Selection */ = {
+			isa = PBXGroup;
+			children = (
+				81CBFAAE1AE02F3A00BD5A7F /* LevelSelection.h */,
+				81CBFAAF1AE02F3A00BD5A7F /* LevelSelection.m */,
+			);
+			name = "Level Selection";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -299,6 +325,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				818EF2831AABD8DF0005D758 /* BGMusic.mp3 in Resources */,
+				81CBFAB31AE0392500BD5A7F /* spaceLevel.atlasc in Resources */,
 				818EF2881AABDDE20005D758 /* losing.mp3 in Resources */,
 				8143AA091AA54D6E000C951E /* Images.xcassets in Resources */,
 				811CDF791ADEEFD50039A6FC /* birdsSprite.atlasc in Resources */,
@@ -334,6 +361,7 @@
 				8176967F1AC4C84C00330D2F /* CreditsScene.m in Sources */,
 				817696821AC4DF6A00330D2F /* TutorialScene.m in Sources */,
 				8143A9F91AA54D6E000C951E /* main.m in Sources */,
+				81CBFAB01AE02F3A00BD5A7F /* LevelSelection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

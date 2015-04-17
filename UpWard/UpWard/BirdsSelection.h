@@ -8,9 +8,14 @@
 
 #import <SpriteKit/SpriteKit.h>
 
-@interface BirdsSelection : SKScene{
+@interface BirdsSelection : SKScene <UIAlertViewDelegate>{
     bool dexBought;
     bool herbBought;
+    int birdSelected;
+    
+    SKLabelNode* dexLabel;
+    SKLabelNode* herbLabel;
+    SKLabelNode* chicksCountLabel;
 }
 
 @end

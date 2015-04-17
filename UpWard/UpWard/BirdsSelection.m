@@ -63,19 +63,72 @@
         //[skView presentScene:scene];
         
     }else{
-        if([node.name isEqualToString:@"ella"]){
-            [GameData sharedGameData].birdSelected = 1;
-        }else if([node.name isEqualToString:@"dex"]){
-            [GameData sharedGameData].birdSelected = 2;
-        }else if([node.name isEqualToString:@"herb"]){
-            [GameData sharedGameData].birdSelected = 3;
-        }
         
         Outfits *scene = [Outfits unarchiveFromFile:@"GameScene"];
         scene.scaleMode = SKSceneScaleModeAspectFill;
-        [skView presentScene:scene transition:[SKTransition crossFadeWithDuration:.5]];
+        
+        if([node.name isEqualToString:@"ella"]){
+            [GameData sharedGameData].birdSelected = 1;
+            [skView presentScene:scene transition:[SKTransition crossFadeWithDuration:.5]];
+        }else if([node.name isEqualToString:@"dex"]){
+            if (![GameData sharedGameData].dexBought) {
+                birdSelected = 2;
+                [self createAlert:10];
+                //update label
+            }else{
+                [GameData sharedGameData].birdSelected = 2;
+                [skView presentScene:scene transition:[SKTransition crossFadeWithDuration:.5]];
+            }
+        }else if([node.name isEqualToString:@"herb"]){
+            if (![GameData sharedGameData].herbBought) {
+                birdSelected = 3;
+                [self createAlert:15];
+                //update label
+            }else{
+                [GameData sharedGameData].birdSelected = 3;
+                [skView presentScene:scene transition:[SKTransition crossFadeWithDuration:.5]];
+            }
+        }
     }
 }
+
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    
+    
+    if (buttonIndex == 0) {//Cancel
+        
+    }else if (buttonIndex == 1){
+        [GameData sharedGameData].chicksCollected -= alertView.tag;
+        [GameData sharedGameData].birdSelected = birdSelected;
+        if (birdSelected == 2) {
+            [GameData sharedGameData].dexBought = true;
+            dexLabel.text = @"Dex";
+            dexLabel.fontSize = 90;
+        }else if(birdSelected == 3){
+            [GameData sharedGameData].herbBought = true;
+            herbLabel.text = @"Herb";
+            herbLabel.fontSize = 90;
+        }
+        NSLog(@"%d", [GameData sharedGameData].dexBought);
+
+        chicksCountLabel.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].chicksCollected];
+    }
+    
+}
+
+-(void) createAlert:(int) amount{
+    
+    if (amount > [GameData sharedGameData].chicksCollected) {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Not Enough Chicks" message:@"Save more chicks to unlock this bird" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
+        [alert show];
+    }else{
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Buy?" message:[NSString stringWithFormat:@"Are you sure you want to spend %i chicks?", amount] delegate:self cancelButtonTitle:@"Nevermind" otherButtonTitles:@"Yes", nil];
+        alert.tag = amount;
+        [alert show];
+    }
+    
+}
+
 
 -(void) createIntro{
     
@@ -95,7 +148,8 @@
     
     SKLabelNode* ellaLabel = [SKLabelNode labelNodeWithText:@"Ella"];
     ellaLabel.position = CGPointMake(ella.size.width + 30, -40);
-    ellaLabel.fontSize = 110;
+    ellaLabel.fontName = @"AppleSDGothicNeo-Bold";
+    ellaLabel.fontSize = 90;
     ellaLabel.name = @"ella";
     [ellaNode addChild:ellaLabel];
     
@@ -111,10 +165,15 @@
     dex.name = @"dex";
     [dexNode addChild:dex];
     
-    SKLabelNode* dexLabel = [SKLabelNode labelNodeWithText:@"Dex"];
+    dexLabel = [SKLabelNode labelNodeWithText:@"Dex"];
     dexLabel.position = CGPointMake(ella.size.width + 30, 0);
-    dexLabel.fontSize = 110;
+    dexLabel.fontName = @"AppleSDGothicNeo-Bold";
+    dexLabel.fontSize = 90;
     dexLabel.name = @"dex";
+    if (![GameData sharedGameData].dexBought) {
+        dexLabel.text = @"10 Chicks";
+        dexLabel.fontSize = 40;
+    }
     [dexNode addChild:dexLabel];
     
     [self addChild:dexNode];
@@ -129,13 +188,25 @@
     herb.name = @"herb";
     [herbNode addChild:herb];
     
-    SKLabelNode* herbLabel = [SKLabelNode labelNodeWithText:@"Herb"];
+    herbLabel = [SKLabelNode labelNodeWithText:@"Herb"];
     herbLabel.position = CGPointMake(ella.size.width + 30, 0);
-    herbLabel.fontSize = 110;
+    herbLabel.fontName = @"AppleSDGothicNeo-Bold";
+    herbLabel.fontSize = 90;
     herbLabel.name = @"herb";
+    if (![GameData sharedGameData].herbBought) {
+        herbLabel.text = @"15 Chicks";
+        herbLabel.fontSize = 40;
+    }
     [herbNode addChild:herbLabel];
     
     [self addChild:herbNode];
+    
+    chicksCountLabel = [SKLabelNode labelNodeWithText:[NSString stringWithFormat:@"%li", [GameData sharedGameData].chicksCollected]];
+    chicksCountLabel.position = CGPointMake(CGRectGetMidX(self.frame), self.size.height - 90);
+    chicksCountLabel.zPosition = 101;
+    chicksCountLabel.fontName = @"AppleSDGothicNeo-Bold";
+    chicksCountLabel.fontSize = 70;
+    [self addChild:chicksCountLabel];
     
     SKSpriteNode* tutorialBtn = [SKSpriteNode spriteNodeWithImageNamed:@"back"];
     [tutorialBtn setScale:.5];

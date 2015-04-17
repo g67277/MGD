@@ -65,6 +65,7 @@
     SKAction* scaleScoreBG;
     SKAction* losingScoreAnimation;
     SKLabelNode* coinsCollectedLabel;
+    SKLabelNode* chicksCollectedLabel;
     SKAction* bounceScoreLabel;
     SKAction* bounceScoreBG;
     SKView* _sceneSize;
@@ -81,6 +82,24 @@
     // Array to keep a reference to all the shelves
     NSMutableArray* shelvesReference;
     NSMutableArray* coinsReference;
+    NSMutableArray* chicksReference;
+
+    
+    //Space level--------------------------------
+    
+    SKSpriteNode* starsBG;
+    SKSpriteNode* neptune;
+    SKSpriteNode* jupiter;
+    SKSpriteNode* saturn;
+    SKSpriteNode* venus;
+    
+    SKAction* keepStars;
+    SKAction* keepJupiter;
+    SKAction* keepNeptune;
+    SKAction* keepVenus;
+    SKAction* keepSaturn;
+    
+    //-------------------------------------------
     
     //Score label and counting integer
     SKLabelNode* _scoreLabelNode;
@@ -93,12 +112,14 @@
     
     int flapCount;
     int shelveCount;
+    int shelveCountChicks;
     float worldSpeed;
     float initialDelay;
     float shelveDelay;
     
     Boolean lost;
     Boolean goingLeft;
+    int levelSelected;
     AVAudioPlayer* player;
     
     //Testing:

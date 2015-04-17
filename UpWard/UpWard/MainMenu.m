@@ -12,6 +12,8 @@
 #import "CreditsScene.h"
 #import "TutorialScene.h"
 #import "BirdsSelection.h"
+#import "LevelSelection.h"
+#import "GameData.h"
 
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
@@ -38,6 +40,11 @@
 @implementation MainMenu
 
 -(void)didMoveToView:(SKView *)view {
+    
+    //**************Cheats for grading (Uncomment to activate)***********************
+    [GameData sharedGameData].coinsCollected = 100;
+    [GameData sharedGameData].chicksCollected = 100;
+    //**************Cheats for grading***********************
     
     [self createIntro];
     
@@ -81,6 +88,13 @@
         
         // Present the scene.
         [skView presentScene:scene transition:[SKTransition crossFadeWithDuration: .5]];
+    }else if ([node.name isEqualToString:@"levels"]){
+        
+        LevelSelection *scene = [LevelSelection unarchiveFromFile:@"GameScene"];
+        scene.scaleMode = SKSceneScaleModeAspectFill;
+        
+        // Present the scene.
+        [skView presentScene:scene transition:[SKTransition crossFadeWithDuration: .5]];
     }
 }
 
@@ -104,14 +118,19 @@
     creditsBtn.name = @"credits";
     [self addChild:creditsBtn];
     
-    //Testing
-    
     SKSpriteNode* selectionBtn = [SKSpriteNode spriteNodeWithImageNamed:@"credits"];
     [selectionBtn setScale:.5];
     selectionBtn.position = CGPointMake(CGRectGetMidX(self.frame), self.size.height - 50);
     selectionBtn.zPosition = 100;
     selectionBtn.name = @"birds";
     [self addChild:selectionBtn];
+    
+    SKSpriteNode* levelSelection = [SKSpriteNode spriteNodeWithImageNamed:@"credits"];
+    [levelSelection setScale:.5];
+    levelSelection.position = CGPointMake(CGRectGetMidX(self.frame), self.size.height - 250);
+    levelSelection.zPosition = 100;
+    levelSelection.name = @"levels";
+    [self addChild:levelSelection];
     
     
     SKSpriteNode* tutorialBtn = [SKSpriteNode spriteNodeWithImageNamed:@"tutorialIcon"];

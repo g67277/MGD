@@ -16,6 +16,8 @@
 @property (assign, nonatomic) long chicksCollected;
 @property (assign, nonatomic) int birdSelected;
 @property (assign, nonatomic) int accessorySelected;
+@property (assign, nonatomic) int levelSelected;
+@property (assign, nonatomic) Boolean spaceLevelBought;
 
 
 @property (assign, nonatomic) bool dexBought;

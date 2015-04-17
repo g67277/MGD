@@ -15,6 +15,9 @@ static NSString* const GameDataCoinsKey = @"coins";
 static NSString* const GameDataChicksKey = @"chicks";
 static NSString* const GameDataBirdKey = @"birds";
 static NSString* const GameDataAccessoryKey = @"accessory";
+static NSString* const GameDataLevelKey = @"level";
+static NSString* const GameDataSpaceKey = @"space";
+
 
 static NSString* const GameDataDexKey = @"dex";
 static NSString* const GameDataHerbKey = @"herb";
@@ -34,6 +37,9 @@ static NSString* const GameDataHelmetKey = @"helmet";
     [encoder encodeDouble:self.chicksCollected forKey:GameDataChicksKey];
     [encoder encodeInt:self.birdSelected forKey:GameDataBirdKey];
     [encoder encodeInt:self.accessorySelected forKey:GameDataAccessoryKey];
+    [encoder encodeInt:self.levelSelected forKey:GameDataLevelKey];
+    [encoder encodeBool:self.spaceLevelBought forKey:GameDataSpaceKey];
+
     
     [encoder encodeBool:self.dexBought forKey:GameDataDexKey];
     [encoder encodeBool:self.herbBought forKey:GameDataHerbKey];
@@ -57,6 +63,8 @@ static NSString* const GameDataHelmetKey = @"helmet";
         _chicksCollected = [decoder decodeDoubleForKey:GameDataChicksKey];
         _birdSelected = [decoder decodeIntForKey:GameDataBirdKey];
         _accessorySelected = [decoder decodeIntForKey:GameDataAccessoryKey];
+        _levelSelected = [decoder decodeIntForKey:GameDataLevelKey];
+        _spaceLevelBought = [decoder decodeBoolForKey:GameDataSpaceKey];
         
         _dexBought = [decoder decodeBoolForKey:GameDataDexKey];
         _herbBought = [decoder decodeBoolForKey:GameDataHerbKey];

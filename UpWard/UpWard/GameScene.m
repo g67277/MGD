@@ -12,6 +12,7 @@
 #import "LevelSprites.h"
 #import "GameData.h"
 #import "MainMenu.h"
+#import "SpaceLevelSprite.h"
 
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
@@ -48,6 +49,7 @@ static const uint32_t shelvesFloorCategory = 1 << 4;
 static const uint32_t roofCategory = 1 << 5;
 static const uint32_t scoreCategory = 1 << 6;
 static const uint32_t catCategory = 1 << 7;
+static const uint32_t chickCategory = 1 << 8;
 
 NSString *const BodyRightWall = @"bodyRightWall";
 NSString *const BodyLeftWall = @"bodyLeftWall";
@@ -56,6 +58,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 
 -(void)didMoveToView:(SKView *)view {
+    
     /* Setup your scene here */
     //Game Setup
     goingLeft = false;
@@ -68,18 +71,25 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     //Initializing refrence array
     shelvesReference = [[NSMutableArray alloc] init];
     coinsReference = [[NSMutableArray alloc]init];
+    chicksReference = [[NSMutableArray alloc] init];
     //Change the world gravity
     self.physicsWorld.gravity = CGVectorMake( 0.0, -6.0 );
     self.physicsWorld.contactDelegate = self;
     _sceneSize = (SKView *)self.view;
     shelveCount = 0;
+    shelveCountChicks = 0;
     
-    //Background for the level
-        _background = [SKColor colorWithRed:113.0/225.0 green:197.0/255.0 blue:207.0/255.0 alpha:1.0];
-    self.backgroundColor = _background;
+  
+    
+    //Code needs refactoring***
+    levelSelected = [GameData sharedGameData].levelSelected;
     
     //Creating the shelves texture here
-    _mountShevlesTexture = [SKTexture textureWithImageNamed:@"mountShelve"];
+    if (levelSelected < 2) {
+        _mountShevlesTexture = [SKTexture textureWithImageNamed:@"mountShelve"];
+    }else{
+        _mountShevlesTexture = [SKTexture textureWithImageNamed:@"spaceShelve"];
+    }
     
     
     _moving = [SKNode node];
@@ -91,10 +101,22 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self playMusic:@"BGMusic" withLoop:YES];
     //Adding the container
     [self physicsContainer];
-    [self createScene];
+    //Creating the shelves texture here
+    if (levelSelected < 2) {
+        _background = [SKColor colorWithRed:113.0/225.0 green:197.0/255.0 blue:207.0/255.0 alpha:1.0];
+        _mountShevlesTexture = [SKTexture textureWithImageNamed:@"mountShelve"];
+        [self createForrestScene];
+    }else{
+        _background = [SKColor colorWithRed:42.0/225.0 green:52.0/255.0 blue:56.0/255.0 alpha:1.0];
+        _mountShevlesTexture = [SKTexture textureWithImageNamed:@"spaceShelve"];
+        [self createSpaceScene];
+    }
     [self createHeader];
     [self createIntro];
     [self playLevel];
+    
+    //Background for the level
+    self.backgroundColor = _background;
 }
 
 #pragma Device Type/Size methods
@@ -134,7 +156,11 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self createCat];
     [self populateShelves];
     [self initAllActions];
-    [self moveScene];
+    if (levelSelected < 2) {   // Fix this**
+        [self moveForrestScene];
+    }else if(levelSelected == 2){
+        [self moveSpaceScene];
+    }
     [self scoreLabel];
     [self moveBirdCat];
 }
@@ -171,8 +197,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _bird.physicsBody.dynamic = YES;
     _bird.physicsBody.allowsRotation = NO;
     _bird.physicsBody.categoryBitMask = birdCategory;
-    _bird.physicsBody.collisionBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory | catCategory;
-    _bird.physicsBody.contactTestBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory | catCategory;
+    _bird.physicsBody.collisionBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory | catCategory | chickCategory;
+    _bird.physicsBody.contactTestBitMask = sidesCategory | floorCategory | shelvesCategory | shelvesFloorCategory | roofCategory | catCategory | chickCategory;
     [self addChild:_bird];
     [self addAccessories];
     
@@ -355,7 +381,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self addChild:_cat];
 }
 
--(void) createScene{
+-(void) createForrestScene{
     //Parallax background
     //Grass background
     grass = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:98/255.0f green:204/255.0f blue:103/255.0f alpha:1.0f] size:CGSizeMake(self.frame.size.width, self.frame.size.height / 1.5)];
@@ -481,6 +507,56 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
 }
 
+-(void) createSpaceScene{
+    
+    SKTexture* starsTextures = [SKTexture textureWithImageNamed:@"starsBG"];
+    starsBG = [SKSpriteNode spriteNodeWithTexture: starsTextures];
+    [starsBG setScale:.9];
+    starsBG.position = CGPointMake(CGRectGetMidX(self.frame), 10);
+    starsBG.zPosition = -50;
+    [_moving addChild:starsBG];
+    
+    SKAction* starsMove = [SKAction moveByX:0 y:-starsBG.size.height + 200 duration:2 * starsBG.size.height];
+    keepStars = [SKAction repeatActionForever:starsMove];
+    
+    saturn = [SKSpriteNode spriteNodeWithTexture:SPACELEVEL_TEX_SATURN];
+    [saturn setScale:.8];
+    saturn.position = CGPointMake(600, 500);
+    saturn.zPosition = -30;
+    [_moving addChild:saturn];
+    
+    SKAction* saturnMove = [SKAction moveByX:80 y:-saturn.size.height * 2 duration:.55 * saturn.size.height * 2];
+    keepSaturn = [SKAction repeatActionForever:saturnMove];
+    
+    jupiter = [SKSpriteNode spriteNodeWithTexture:SPACELEVEL_TEX_JUPITER];
+    [jupiter setScale:.8];
+    jupiter.position = CGPointMake(200, 1000);
+    jupiter.zPosition = -29;
+    [_moving addChild:jupiter];
+    
+    SKAction* jupiterMove = [SKAction moveByX:-180 y:-jupiter.size.height * 2 duration:.55 * jupiter.size.height * 2];
+    keepJupiter = [SKAction repeatActionForever:jupiterMove];
+    
+    venus = [SKSpriteNode spriteNodeWithTexture:SPACELEVEL_TEX_VENUS];
+    [venus setScale:.8];
+    venus.position = CGPointMake(300, 1300);
+    venus.zPosition = -29;
+    [_moving addChild:venus];
+    
+    SKAction* venusMove = [SKAction moveByX:0 y:-venus.size.height * 2 duration:.55 * venus.size.height * 2];
+    keepVenus = [SKAction repeatActionForever:venusMove];
+    
+    neptune = [SKSpriteNode spriteNodeWithTexture:SPACELEVEL_TEX_NEPTUNE];
+    [neptune setScale:.8];
+    neptune.position = CGPointMake(100, 1600);
+    neptune.zPosition = -29;
+    [_moving addChild:neptune];
+    
+    SKAction* neptuneMove = [SKAction moveByX:-180 y:-neptune.size.height * 2 duration:.55 * neptune.size.height * 2];
+    keepNeptune = [SKAction repeatActionForever:neptuneMove];
+    
+}
+
 -(void) initAllActions{
     // Flap sound action
     _flapSound = [SKAction playSoundFileNamed:@"flap.mp3" waitForCompletion:NO];
@@ -583,6 +659,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 -(void) spawnShelves: (BOOL) started yPosition:(CGFloat) yPosition{
     
     shelveCount += 1;
+    shelveCountChicks += 1;
     
     shelvePair = [SKNode node];
     if (!started) { // Create the scene by adding shelves manually
@@ -639,6 +716,19 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     topORightShelve.physicsBody.dynamic = NO;
     [shelvePair addChild:topORightShelve];  // ** Maybe I need to change this to SKNode
     
+    if (shelveCountChicks == 1 && started) { //Change here
+        SKSpriteNode* chick = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_CHICK];
+        chick.position = CGPointMake(140, 20); // Change this to update the chicks position
+        chick.zPosition = 0;
+        chick.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:chick.size.height / 2];
+        chick.physicsBody.dynamic = NO;
+        chick.physicsBody.categoryBitMask = chickCategory;
+        [chicksReference addObject:chick];
+        [shelvePair addChild:chick];
+    }else if (shelveCountChicks > 6){
+        shelveCountChicks = 0;
+    }
+    
     if (shelveCount == 3 && started) {
         SKSpriteNode* coin = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_STAR];
         coin.position = CGPointMake([self randomFloatBetween:150 and:600], 90);
@@ -683,7 +773,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 #pragma Movement Methods
 
 // Moves scene
--(void) moveScene{
+-(void) moveForrestScene{
     
     [titleBanner runAction:_titleMove withKey:@"BGAnim"];
     [playBtn runAction:_titleMove withKey:@"BGAnim"];
@@ -702,6 +792,19 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [largeMount2 runAction:keepLM2 withKey:@"BGAnim"];
     [grass runAction:keepGM withKey:@"BGAnim"];
     [_highScoreLabelNode runAction:_titleMove withKey:@"BGAnim"];
+}
+
+-(void) moveSpaceScene{
+    
+    [titleBanner runAction:_titleMove withKey:@"BGAnim"];
+    [playBtn runAction:_titleMove withKey:@"BGAnim"];
+    [_highScoreLabelNode runAction:_titleMove withKey:@"BGAnim"];
+    [starsBG runAction:keepStars withKey:@"BGAnim"];
+    [saturn runAction:keepSaturn withKey:@"BGAnim"];
+    [venus runAction:keepVenus withKey:@"BGAnim"];
+    [jupiter runAction:keepJupiter withKey:@"BGAnim"];
+    [neptune runAction:keepNeptune withKey:@"BGAnim"];
+    
 }
 
 //-----------------------Moves bird left to right--------------------------------------------------------
@@ -739,6 +842,9 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     headerBG.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:headerBG.size];
     headerBG.physicsBody.dynamic = NO;
     headerBG.physicsBody.categoryBitMask = roofCategory;
+    if (levelSelected == 2) {
+        headerBG.color = [UIColor whiteColor];
+    }
     [self addChild:headerBG];
     
     SKSpriteNode* headerCoin = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_STAR];
@@ -748,11 +854,31 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     coinsCollectedLabel = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
     coinsCollectedLabel.fontColor = [UIColor whiteColor];
+    if (levelSelected == 2) {
+        coinsCollectedLabel.fontColor = [UIColor grayColor];
+    }
     coinsCollectedLabel.fontSize = 60;
     coinsCollectedLabel.position = CGPointMake(headerCoin.position.x + headerCoin.size.width + 30, self.frame.size.height / 1.065);
     coinsCollectedLabel.zPosition = 101;
     coinsCollectedLabel.text = [NSString stringWithFormat:@"%ld", [GameData sharedGameData].coinsCollected];
     [self addChild:coinsCollectedLabel];
+    
+    SKSpriteNode* headerChick = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_CHICK];
+    headerChick.position = CGPointMake(500, self.frame.size.height / 1.04);
+    headerChick.zPosition = 101;
+    [headerChick setScale:1.6];
+    [self addChild:headerChick];
+    
+    chicksCollectedLabel = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
+    chicksCollectedLabel.fontColor = [UIColor whiteColor];
+    if (levelSelected == 2) {
+        chicksCollectedLabel.fontColor = [UIColor grayColor];
+    }
+    chicksCollectedLabel.fontSize = 60;
+    chicksCollectedLabel.position = CGPointMake(headerChick.position.x + headerChick.size.width + 30, self.frame.size.height / 1.065);
+    chicksCollectedLabel.zPosition = 101;
+    chicksCollectedLabel.text = [NSString stringWithFormat:@"%ld", [GameData sharedGameData].chicksCollected];
+    [self addChild:chicksCollectedLabel];
     
     
     [self addChild:[self pauseBtnNode]];
@@ -813,7 +939,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     gameOver = [SKLabelNode labelNodeWithFontNamed:@"AppleSDGothicNeo-Bold"];
     gameOver.fontColor = [UIColor grayColor];
     gameOver.fontSize = 85;
-    gameOver.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 100 );
+    gameOver.position = CGPointMake(CGRectGetMidX(scoreBG.frame), CGRectGetMidY(scoreBG.frame) - 150 );
     gameOver.zPosition = 101;
     gameOver.text = @"Game Over!";
     [self addChild:gameOver];
@@ -837,9 +963,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         pauseNode.texture = [SKTexture textureWithImageNamed:@"pauseBtn"];
     }
 }
-
-
-
 
 
 #pragma Touch and Collision detection
@@ -951,6 +1074,39 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         [_bird removeActionForKey:@"birdMoving"];
         [self startFight];
 
+    }else if(( contact.bodyA.categoryBitMask & chickCategory) == chickCategory || ( contact.bodyB.categoryBitMask & chickCategory) == chickCategory){
+        
+        int i = 0;
+        while (i < chicksReference.count) {
+            SKSpriteNode* currentChick = chicksReference[i];
+            if (currentChick.position.y < 0) {
+                [chicksReference removeObject:currentChick];
+            }else{
+                
+                if (currentChick.position.y < _bird.position.y + 30) {
+                    [GameData sharedGameData].chicksCollected += 1;
+                    chicksCollectedLabel.text = [NSString stringWithFormat:@"%ld", [GameData sharedGameData].chicksCollected];
+                    [chicksReference removeObject:currentChick];
+                    [currentChick removeFromParent];
+                    //More customization here
+                }else{
+                    i++;
+                }
+//                if (currentChick.children.count > 4) {
+//                    if (currentChick.position.y < _bird.position.y) {
+//                        [GameData sharedGameData].score += 1;
+//                        _scoreLabelNode.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].score];
+//                        [_scoreLabelNode runAction:bounceScoreLabel];
+//                        [scoreBG runAction:bounceScoreBG];
+//                        [shelvesReference removeObject:currentChick];
+//                    }else{
+//                        i++;
+//                    }
+//                }else{
+//                    i++;
+//                }
+            }
+        }
     }
 }
 
@@ -1006,6 +1162,30 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
 }
 
+-(void) resetSpaceBackground{
+    titleBanner.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2 - 5);
+    [titleBanner removeActionForKey:@"BGAnim"];
+    playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height / 2 );
+    [playBtn removeActionForKey:@"BGAnim"];
+    [_highScoreLabelNode removeActionForKey:@"BGAnim"];
+    
+    
+    starsBG.position = CGPointMake(CGRectGetMidX(self.frame), 10);
+    [starsBG removeActionForKey:@"BGAnim"];
+    
+    saturn.position = CGPointMake(600, 500);
+    [saturn removeActionForKey:@"BGAnim"];
+    
+    jupiter.position = CGPointMake(200, 1000);
+    [jupiter removeActionForKey:@"BGAnim"];
+    
+    venus.position = CGPointMake(300, 1300);
+    [venus removeActionForKey:@"BGAnim"];
+    
+    neptune.position = CGPointMake(100, 1600);
+    [neptune removeActionForKey:@"BGAnim"];
+}
+
 -(void) resetScene{
     
     // Moving bird to original position
@@ -1025,8 +1205,13 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [self createCat];
     
     // Reseting the scene
-    [self resetBackGround];
-    [self moveScene];
+    if (levelSelected < 2) {
+        [self resetBackGround];
+        [self moveForrestScene];
+    }else if(levelSelected == 2){
+        [self resetSpaceBackground];
+        [self moveSpaceScene];
+    }
     
     // Removing all shelves to repopulate screen
     // Clearing all refrences
@@ -1034,6 +1219,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     [shelvesReference removeAllObjects];
     [coinsReference removeAllObjects];
     shelveCount = 0;
+    shelveCountChicks = 0;
     
     // Reset game status
     lost = false;
