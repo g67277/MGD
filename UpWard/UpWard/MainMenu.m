@@ -42,8 +42,8 @@
 -(void)didMoveToView:(SKView *)view {
     
     //**************Cheats for grading (Uncomment to activate)***********************
-    [GameData sharedGameData].coinsCollected = 100;
-    [GameData sharedGameData].chicksCollected = 100;
+    //[GameData sharedGameData].coinsCollected = 100;
+    //[GameData sharedGameData].chicksCollected = 100;
     //**************Cheats for grading***********************
     
     [self createIntro];
