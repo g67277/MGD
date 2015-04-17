@@ -118,15 +118,15 @@
     creditsBtn.name = @"credits";
     [self addChild:creditsBtn];
     
-    SKSpriteNode* selectionBtn = [SKSpriteNode spriteNodeWithImageNamed:@"credits"];
-    [selectionBtn setScale:.5];
+    SKSpriteNode* selectionBtn = [SKSpriteNode spriteNodeWithImageNamed:@"birdsBtn"];
+    [selectionBtn setScale:.3];
     selectionBtn.position = CGPointMake(CGRectGetMidX(self.frame), self.size.height - 50);
     selectionBtn.zPosition = 100;
     selectionBtn.name = @"birds";
     [self addChild:selectionBtn];
     
-    SKSpriteNode* levelSelection = [SKSpriteNode spriteNodeWithImageNamed:@"credits"];
-    [levelSelection setScale:.5];
+    SKSpriteNode* levelSelection = [SKSpriteNode spriteNodeWithImageNamed:@"LevelsBtn"];
+    [levelSelection setScale:.3];
     levelSelection.position = CGPointMake(CGRectGetMidX(self.frame), self.size.height - 250);
     levelSelection.zPosition = 100;
     levelSelection.name = @"levels";
