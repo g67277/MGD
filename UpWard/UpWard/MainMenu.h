@@ -16,6 +16,8 @@
     SKAction* scallingForever;
     AppDelegate* appDelegate;
     
+    SKLabelNode* name;
+    NSMutableArray* incomingScores;
 }
 
 @property (nonatomic) GameViewController* gameVC;

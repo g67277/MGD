@@ -139,6 +139,8 @@
     //Testing
     NSMutableArray* scoresArray;
     NSMutableArray* incomingScoresArray;
+    NSMutableArray* highScoreArray;
+    NSMutableArray* incomingHighScoreArray;
 
 }
 

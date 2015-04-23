@@ -69,10 +69,13 @@
             if ([GKLocalPlayer localPlayer].authenticated) {
                 _gameCenterEnabled = YES;
                 [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"loggedIn"];
+                [[NSUserDefaults standardUserDefaults] setValue:[GKLocalPlayer localPlayer].alias forKey:@"username"];
+                [[NSUserDefaults standardUserDefaults] setValue:[GKLocalPlayer localPlayer].alias forKey:@"gcalies"];
                 
             }else{
                 _gameCenterEnabled = NO;
                 [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"loggedIn"];
+                [[NSUserDefaults standardUserDefaults] setValue:@"player" forKey:@"username"];
             }
         }
     };

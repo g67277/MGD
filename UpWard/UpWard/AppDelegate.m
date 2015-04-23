@@ -23,7 +23,16 @@
     if ([userDefaults arrayForKey:@"scores"] != nil){
         
     }
+    if ([userDefaults arrayForKey:@"highscore"] != nil){
+        
+    }
     if ([userDefaults boolForKey:@"loggedIn"]) {
+        
+    }
+    if ([userDefaults stringForKey:@"username"]) {
+        
+    }
+    if ([userDefaults stringForKey:@"gcalias"]) {
         
     }
     

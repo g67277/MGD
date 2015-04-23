@@ -62,7 +62,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 -(void)didMoveToView:(SKView *)view {
     
     //Testing
-    username = @"Nazir";
+    username = [[NSUserDefaults standardUserDefaults] valueForKey:@"username"];
     scoresArray = [[NSMutableArray alloc] init];
     incomingScoresArray = [[NSMutableArray alloc] init];
     
@@ -1084,9 +1084,24 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         [GameData sharedGameData].highScore = MAX([GameData sharedGameData].score,
                                                     [GameData sharedGameData].highScore); //Updating the highscore if the current score is higher
         [[GameData sharedGameData] save];  // Save all changes to the sharedGameData
+        
+        //Score checking and reporting to game center----------
+        
+        NSLog(@"score: %li, high: %li", [GameData sharedGameData].score , [GameData sharedGameData].highScore);
+        
+        ScoreData* highScoreObject = [[ScoreData alloc] init];
+        highScoreObject.alies = [[NSUserDefaults standardUserDefaults] valueForKey:@"alies"];
+        highScoreObject.score = (int)[GameData sharedGameData].score;
+        
+        NSData* highScoreData = [NSKeyedArchiver archivedDataWithRootObject:highScoreObject];
+        [[NSUserDefaults standardUserDefaults] setObject:highScoreData forKey:@"highscore"];
+        
+        
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"loggedIn"]) {
             [self reportScore]; //Reports score to Game Center
         }
+        
+        //------------------------------------------------------
         
         
         if ([[[NSUserDefaults standardUserDefaults] arrayForKey:@"scores"] mutableCopy]) { //Checks if the saved array is empty
@@ -1094,6 +1109,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         }
         ScoreData* scoreData = [[ScoreData alloc] init]; // Creates a new object
         scoreData.username = username;
+        scoreData.alies = [[NSUserDefaults standardUserDefaults] valueForKey:@"gcalies"];
         scoreData.score = (int)[GameData sharedGameData].score;
         scoreData.date = [self currentDate];
         
@@ -1162,13 +1178,18 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 -(void)reportScore{
     
    GKScore *score = [[GKScore alloc] initWithLeaderboardIdentifier: _leaderboardIdentifier];
-    score.value = [GameData sharedGameData].highScore; // push highscore to GC
+    ScoreData* decodedHighScore = [NSKeyedUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] objectForKey:@"highscore"]];
     
-    [GKScore reportScores:@[score] withCompletionHandler:^(NSError *error) {
-        if (error != nil) {
-            NSLog(@"%@", [error localizedDescription]);
-        }
-    }];
+    NSLog(@"saved username: %@, alies: %@", decodedHighScore.alies, [[NSUserDefaults standardUserDefaults] valueForKey:@"gcalies"]);
+    if ([decodedHighScore.alies isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"gcalies"]]) {
+        score.value = decodedHighScore.score; // push highscore to GC
+        
+        [GKScore reportScores:@[score] withCompletionHandler:^(NSError *error) {
+            if (error != nil) {
+                NSLog(@"%@", [error localizedDescription]);
+            }
+        }];
+    }
     
 }
 

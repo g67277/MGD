@@ -15,6 +15,7 @@
 @interface ScoreData : NSObject
 
 @property (nonatomic, retain) NSString* username;
+@property (nonatomic, retain) NSString* alies;
 @property (nonatomic, retain) NSString* date;
 @property (nonatomic, readwrite) int score;
 

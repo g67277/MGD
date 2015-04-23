@@ -212,8 +212,8 @@
     playBtn.name = @"start";
     [self addChild:playBtn];
     
-    SKSpriteNode* clearBtn = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_PLAYBTN];
-    [clearBtn setScale:.5];
+    SKSpriteNode* clearBtn = [SKSpriteNode spriteNodeWithImageNamed:@"cancelbtn"];
+    [clearBtn setScale:.3];
     clearBtn.position = CGPointMake(CGRectGetMidX(self.frame), self.size.height - 50);
     clearBtn.zPosition = 100;
     clearBtn.name = @"clear";

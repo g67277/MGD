@@ -15,11 +15,13 @@
 #import "LevelSelection.h"
 #import "GameData.h"
 #import "LocalLeaderBoardViewController.h"
+#include<unistd.h>
+#include<netdb.h>
 
 
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
-
+//Need to find a better way for this method
 @implementation SKScene (Unarchive)
 
 + (instancetype)unarchiveFromFile:(NSString *)file {
@@ -44,15 +46,17 @@
 -(void)didMoveToView:(SKView *)view {
     
     //**************Cheats for grading (Uncomment to activate)***********************
-    [GameData sharedGameData].coinsCollected = 100;
-    [GameData sharedGameData].chicksCollected = 100;
+    //[GameData sharedGameData].coinsCollected = 100;
+    //[GameData sharedGameData].chicksCollected = 100;
     //**************Cheats for grading***********************
-    
-    appDelegate = [[AppDelegate alloc] init]; //Testing
-    _gameVC = [[GameViewController alloc] init];// Testing
   
-    [self createIntro];
+    [self createIntro];  // Creates main screen intro
     
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"loggedIn"] || ![self isNetworkAvailable]) {
+        [self welcomeMessage]; // If user is not logged in, or if there is no connection, show the welcome message
+    }else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"loggedIn"] && [self isNetworkAvailable]){
+        [self syncScores];
+    }
 }
 
 - (void)dealloc
@@ -63,9 +67,11 @@
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     UITouch *touch = [touches anyObject];
-    CGPoint location = [touch locationInNode:self];
-    SKNode *node = [self nodeAtPoint:location];
-    SKView * skView = (SKView *)self.view;
+    CGPoint location = [touch locationInNode:self]; // location of the touch
+    SKNode *node = [self nodeAtPoint:location];  // node touched
+    SKView * skView = (SKView *)self.view; // current skview
+    
+    
     
     // if next button touched, start transition to next scene
     if ([node.name isEqualToString:@"playBtn"]) {
@@ -76,7 +82,7 @@
         // Present the scene.
         [skView presentScene:scene transition:[SKTransition crossFadeWithDuration: .5]];
         //[skView presentScene:scene];
-
+        
     }else if ([node.name isEqualToString:@"credits"]){
         
         CreditsScene *scene = [CreditsScene unarchiveFromFile:@"GameScene"];
@@ -105,16 +111,92 @@
         
         // Present the scene.
         [skView presentScene:scene transition:[SKTransition crossFadeWithDuration: .5]];
+        
     }else if ([node.name isEqualToString:@"leaderboard"]){
                 
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"loggedIn"]) {
-            [self showLeaderboardAndAchievements:YES]; //Show Gamecenter leader board if network is availabe, otherwise, show local
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"loggedIn"] && [self isNetworkAvailable]) {
+            [self showLeaderboardAndAchievements:YES]; //Show Gamecenter leaderboard if network is availabe, otherwise, show local
         }else{
             [self showLocalLeaderBoard];
         }
-        
+    }else if ([node.name isEqualToString:@"change"]){
 
+        [self showAlertWithTextField];  // Display alertview with uitextfield for name input
+        
     }
+}
+
+-(void)showAlertWithTextField{  // Display alertview with uitextfield for name input
+    
+    UIAlertView* dialog = [[UIAlertView alloc] initWithTitle:@"Enter Name" message:@"" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Add", nil];
+    [dialog setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    
+    [dialog show];
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex == 1)
+        [[NSUserDefaults standardUserDefaults] setValue:[[alertView textFieldAtIndex:0] text] forKey:@"username"];
+        name.text = [NSString stringWithFormat:@"Welcome back %@", [[alertView textFieldAtIndex:0] text]];
+}
+
+-(BOOL)isNetworkAvailable
+{
+    char *hostname;
+    struct hostent *hostinfo;
+    hostname = "google.com";
+    hostinfo = gethostbyname (hostname);
+    if (hostinfo == NULL){
+        NSLog(@"-> no connection!\n");
+        return NO;
+    }
+    else{
+        NSLog(@"-> connection established!\n");
+        return YES;
+    }
+}
+
+-(void) syncScores{
+    
+    if ([[[NSUserDefaults standardUserDefaults] arrayForKey:@"scores"] mutableCopy]) {
+        NSMutableArray* sortedScores = [[NSMutableArray alloc] init];
+        incomingScores = [self decodeData:[[[NSUserDefaults standardUserDefaults] arrayForKey:@"scores"] mutableCopy]];
+        
+        for (ScoreData* scoreData in incomingScores){
+            if ([scoreData.alies isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"gcalies"]]) {
+                [sortedScores addObject:scoreData];
+            }
+        }
+        
+        NSSortDescriptor *sorter = [[NSSortDescriptor alloc] initWithKey:@"score" ascending:NO];
+        [sortedScores sortUsingDescriptors:[NSArray arrayWithObject:sorter]];
+        [incomingScores removeAllObjects];
+        incomingScores = sortedScores;
+        if (incomingScores[0]) {
+            ScoreData* scoreData = incomingScores[0];
+            GKScore *score = [[GKScore alloc] initWithLeaderboardIdentifier: @"leader_1.0"];
+            if ([scoreData.alies isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"gcalies"]]) {
+                score.value = scoreData.score; // push highscore to GC
+                [GKScore reportScores:@[score] withCompletionHandler:^(NSError *error) {
+                    if (error != nil) {
+                        NSLog(@"%@", [error localizedDescription]);
+                    }
+                }];
+            }
+        }
+    }
+    
+}
+
+- (NSMutableArray*) decodeData: (NSMutableArray*) encodedArray{
+    
+    NSMutableArray* decodedObjects = [[NSMutableArray alloc] init];
+    ScoreData* scoreData = [[ScoreData alloc] init];
+    for (int i = 0; i < encodedArray.count; i++) {
+        scoreData = [NSKeyedUnarchiver unarchiveObjectWithData:encodedArray[i]];
+        [decodedObjects addObject:scoreData];
+    }
+    return decodedObjects;
 }
 
 -(void) showLocalLeaderBoard{
@@ -183,7 +265,7 @@
     levelSelection.name = @"levels";
     [self addChild:levelSelection];
     
-    SKSpriteNode* leaderboard = [SKSpriteNode spriteNodeWithImageNamed:@"LevelsBtn"];
+    SKSpriteNode* leaderboard = [SKSpriteNode spriteNodeWithImageNamed:@"leaderboard"];
     [leaderboard setScale:.3];
     leaderboard.position = CGPointMake(CGRectGetMidX(self.frame), self.size.height - 350);
     leaderboard.zPosition = 100;
@@ -206,6 +288,47 @@
     
     [self initActions];
     [playBtn runAction:scallingForever];
+    
+}
+
+-(void) welcomeMessage{
+    
+    SKSpriteNode* footerBG = [SKSpriteNode spriteNodeWithColor:[UIColor whiteColor] size:CGSizeMake(self.size.width, 100)];
+    footerBG.alpha = .9;
+    footerBG.position = CGPointMake(CGRectGetMidX(self.frame), -10);
+    footerBG.zPosition = 50;
+    [self addChild:footerBG];
+    
+    name = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Regular"];
+    name.fontColor = [UIColor darkGrayColor];
+    name.fontSize = 28;
+    name.text = [NSString stringWithFormat:@"Welcome back %@", [[NSUserDefaults standardUserDefaults] valueForKey:@"username"]];
+    name.position = CGPointMake(-100, -10);
+    [footerBG addChild:name];
+    
+    SKSpriteNode* changeBG = [SKSpriteNode spriteNodeWithColor:[UIColor lightGrayColor] size:CGSizeMake(130, footerBG.size.height)];
+    changeBG.alpha = .4;
+    changeBG.position = CGPointMake(225, 0);
+    changeBG.zPosition = 10;
+    changeBG.name = @"change";
+    [footerBG addChild:changeBG];
+    
+    SKLabelNode* changeName = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Regular"];
+    changeName.fontSize = 20;
+    changeName.fontColor = [UIColor blueColor];
+    changeName.text = @"Change";
+    changeName.position = CGPointMake(220, -10);
+    changeName.zPosition = 20;
+    changeName.name = @"change";
+    [footerBG addChild:changeName];
+    
+    SKAction* moveFooterUP = [SKAction moveByX:0 y:footerBG.size.height duration:.3];
+    moveFooterUP.timingMode = SKActionTimingEaseOut;
+    SKAction* moveDownBounce = [SKAction moveByX:0 y:-footerBG.size.height / 2 duration:.3];
+    moveDownBounce.timingMode = SKActionTimingEaseOut;
+    SKAction* sequence = [SKAction sequence:@[moveFooterUP, moveDownBounce]];
+    [footerBG runAction:sequence];
+    
     
 }
 

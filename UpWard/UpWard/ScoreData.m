@@ -9,11 +9,12 @@
 #import "ScoreData.h"
 
 @implementation ScoreData
-@synthesize username = _username, score = _score, date = _date;
+@synthesize username = _username, alies = _alies, score = _score, date = _date;
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     if (self = [super init]) {
         self.username = [aDecoder decodeObjectForKey:@"username"];
+        self.alies = [aDecoder decodeObjectForKey:@"alies"];
         self.score = [aDecoder decodeIntForKey:@"score"];
         self.date = [aDecoder decodeObjectForKey:@"date"];
         }
@@ -23,6 +24,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     
     [aCoder encodeObject:_username forKey:@"username"];
+    [aCoder encodeObject:_alies forKey:@"alies"];
     [aCoder encodeObject:_date forKey:@"date"];
     [aCoder encodeInt:_score forKey:@"score"];
     
