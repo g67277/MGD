@@ -89,6 +89,8 @@
                 [skView presentScene:scene transition:[SKTransition crossFadeWithDuration:.5]];
             }
         }
+        [[GameData sharedGameData] save];
+
     }
 }
 
@@ -112,6 +114,7 @@
         NSLog(@"%d", [GameData sharedGameData].dexBought);
 
         chicksCountLabel.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].chicksCollected];
+        [[GameData sharedGameData] save];
     }
     
 }

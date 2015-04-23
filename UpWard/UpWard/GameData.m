@@ -29,6 +29,9 @@ static NSString* const GameDataFancyKey = @"fancy";
 static NSString* const GameDataMustachKey = @"mustach";
 static NSString* const GameDataHelmetKey = @"helmet";
 
+//Testing leaderboard
+static NSString* const GameDataForrestLeaderKey = @"forrestleader";
+
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
@@ -39,7 +42,6 @@ static NSString* const GameDataHelmetKey = @"helmet";
     [encoder encodeInt:self.accessorySelected forKey:GameDataAccessoryKey];
     [encoder encodeInt:self.levelSelected forKey:GameDataLevelKey];
     [encoder encodeBool:self.spaceLevelBought forKey:GameDataSpaceKey];
-
     
     [encoder encodeBool:self.dexBought forKey:GameDataDexKey];
     [encoder encodeBool:self.herbBought forKey:GameDataHerbKey];
@@ -50,6 +52,8 @@ static NSString* const GameDataHelmetKey = @"helmet";
     [encoder encodeBool:self.fancyBought forKey:GameDataFancyKey];
     [encoder encodeBool:self.mustachBought forKey:GameDataMustachKey];
     [encoder encodeBool:self.helmetBought forKey:GameDataHelmetKey];
+    
+    [encoder encodeObject:self.forrestLeaderboard forKey:GameDataForrestLeaderKey];
 
 
 }
@@ -75,7 +79,11 @@ static NSString* const GameDataHelmetKey = @"helmet";
         _fancyBought = [decoder decodeBoolForKey:GameDataFancyKey];
         _mustachBought = [decoder decodeBoolForKey:GameDataMustachKey];
         _helmetBought = [decoder decodeBoolForKey:GameDataHelmetKey];
-
+        
+        _forrestLeaderboard = [[decoder decodeObjectForKey:GameDataForrestLeaderKey] mutableCopy];
+        if (_forrestLeaderboard) {
+            _forrestLeaderboard = [[NSMutableArray alloc] init];
+        }
 
     }
     return self;
@@ -94,6 +102,7 @@ static NSString* const GameDataHelmetKey = @"helmet";
 
 +(NSString*)filePath
 {
+    
     static NSString* filePath = nil;
     if (!filePath) {
         filePath =

@@ -31,6 +31,9 @@
 @property (assign, nonatomic) bool mustachBought;
 @property (assign, nonatomic) Boolean helmetBought;
 
+//Testing leaderboard
+@property (nonatomic, strong) NSMutableArray* forrestLeaderboard;
+
 
 +(instancetype)sharedGameData;
 -(void)reset;

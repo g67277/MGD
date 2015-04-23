@@ -17,6 +17,16 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] init];
+    
+    if ([userDefaults arrayForKey:@"scores"] != nil){
+        
+    }
+    if ([userDefaults boolForKey:@"loggedIn"]) {
+        
+    }
+    
     return YES;
 }
 

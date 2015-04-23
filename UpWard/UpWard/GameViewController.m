@@ -7,8 +7,12 @@
 //
 
 #import "GameViewController.h"
-#import "GameScene.h"
 #import "MainMenu.h"
+@import GameKit;
+
+@interface GameViewController()
+
+@end
 
 @implementation SKScene (Unarchive)
 
@@ -34,6 +38,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self authenticateLocalPlayer];
 
     // Configure the view.
     SKView * skView = (SKView *)self.view;
@@ -41,7 +46,6 @@
     //skView.showsNodeCount = YES;
     /* Sprite Kit applies additional optimizations to improve rendering performance */
     skView.ignoresSiblingOrder = YES;
-    
     // Create and configure the scene.
     //GameScene *scene = [GameScene unarchiveFromFile:@"GameScene"];
     //scene.scaleMode = SKSceneScaleModeAspectFill;
@@ -51,6 +55,27 @@
     
     // Present the scene.
     [skView presentScene:menuScene];
+    
+}
+
+-(void)authenticateLocalPlayer{
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+        
+    localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error){
+        if (viewController != nil) {
+            [self presentViewController:viewController animated:YES completion:nil];
+        }
+        else{
+            if ([GKLocalPlayer localPlayer].authenticated) {
+                _gameCenterEnabled = YES;
+                [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"loggedIn"];
+                
+            }else{
+                _gameCenterEnabled = NO;
+                [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"loggedIn"];
+            }
+        }
+    };
 }
 
 - (BOOL)shouldAutorotate

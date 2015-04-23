@@ -75,6 +75,7 @@
             [self createAlert:20];
         }else{
             accessorySelected = 1;
+            [GameData sharedGameData].accessorySelected = 1;
             [self mergeTextures:1];
         }
     }else if([node.name isEqualToString:@"purpleGlass"]){
@@ -83,6 +84,7 @@
             [self createAlert:25];
         }else{
             accessorySelected = 2;
+            [GameData sharedGameData].accessorySelected = 2;
             [self mergeTextures:2];
         }
         
@@ -92,6 +94,7 @@
             [self createAlert:30];
         }else{
             accessorySelected = 3;
+            [GameData sharedGameData].accessorySelected = 3;
             [self mergeTextures:3];
         }
     }else if([node.name isEqualToString:@"mustach"]){
@@ -100,6 +103,7 @@
             [self createAlert:50];
         }else{
             accessorySelected = 4;
+            [GameData sharedGameData].accessorySelected = 4;
             [self mergeTextures:4];
         }
     }else if([node.name isEqualToString:@"fancyGlass"]){
@@ -108,6 +112,7 @@
             [self createAlert:40];
         }else{
             accessorySelected = 5;
+            [GameData sharedGameData].accessorySelected = 5;
             [self mergeTextures:5];
         }
         
@@ -118,10 +123,12 @@
             [self createAlert:10];
         }else{
             accessorySelected = 6;
+            [GameData sharedGameData].accessorySelected = 6;
             [self mergeTextures:6];
         }
         
     }
+    [[GameData sharedGameData] save];
 }
 
 -(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
@@ -395,6 +402,8 @@
 
     }
     
+    [[GameData sharedGameData] save];
+    
 }
 
 -(void) dexCustom:(int) item{
@@ -459,6 +468,8 @@
         [GameData sharedGameData].helmetBought = true;
 
     }
+    
+    [[GameData sharedGameData] save];
 }
 
 -(void) herbCustom:(int) item{
@@ -523,6 +534,8 @@
         [GameData sharedGameData].helmetBought = true;
 
     }
+    
+    [[GameData sharedGameData] save];
 
 }
 

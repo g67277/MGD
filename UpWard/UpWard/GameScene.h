@@ -8,6 +8,9 @@
 
 #import <SpriteKit/SpriteKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import "ScoreData.h"
+#import "GameViewController.h"
+
 
 @interface GameScene : SKScene <SKPhysicsContactDelegate>{
     
@@ -122,13 +125,21 @@
     int levelSelected;
     AVAudioPlayer* player;
     
-    //Testing:
+    NSString* username;
     
     SKTexture* birdTexture;
     SKTexture* birdLeft;
     SKTexture* birdRight;
     SKTexture* birdCrying;
     NSArray* birdFight;
+    
+    // Leaderboard identifier
+    NSString* _leaderboardIdentifier;
+    
+    //Testing
+    NSMutableArray* scoresArray;
+    NSMutableArray* incomingScoresArray;
+
 }
 
 @end

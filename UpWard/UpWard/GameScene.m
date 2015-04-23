@@ -13,11 +13,14 @@
 #import "GameData.h"
 #import "MainMenu.h"
 #import "SpaceLevelSprite.h"
+#import "GameViewController.h"
+@import GameKit;
 
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
 @interface GameScene()
 
+    -(void)reportScore;
 @end
 
 @implementation SKScene (Unarchive)
@@ -56,11 +59,18 @@ NSString *const BodyLeftWall = @"bodyLeftWall";
 NSString *const SolidShelvePosition = @"solidShelvePosition";
 NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
-
 -(void)didMoveToView:(SKView *)view {
     
+    //Testing
+    username = @"Nazir";
+    scoresArray = [[NSMutableArray alloc] init];
+    incomingScoresArray = [[NSMutableArray alloc] init];
+    
+
     /* Setup your scene here */
     //Game Setup
+    [self getLeaderIdentifier];
+
     goingLeft = false;
     lost = false;
     flapCount = 0;
@@ -79,8 +89,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     shelveCount = 0;
     shelveCountChicks = 0;
     
-  
-    
     //Code needs refactoring***
     levelSelected = [GameData sharedGameData].levelSelected;
     
@@ -90,7 +98,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     }else{
         _mountShevlesTexture = [SKTexture textureWithImageNamed:@"spaceShelve"];
     }
-    
     
     _moving = [SKNode node];
     [self addChild:_moving];
@@ -117,6 +124,26 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     //Background for the level
     self.backgroundColor = _background;
+}
+
+-(void) getLeaderIdentifier{
+    if ([GKLocalPlayer localPlayer].authenticated) {
+        
+        NSLog(@"%@", [GKLocalPlayer localPlayer].alias); // Name to display in local leaderboard
+
+        
+        // Get the default leaderboard identifier.
+        [[GKLocalPlayer localPlayer] loadDefaultLeaderboardIdentifierWithCompletionHandler:^(NSString *leaderboardIdentifier, NSError *error) {
+            
+            if (error != nil) {
+                NSLog(@"%@", [error localizedDescription]);
+            }
+            else{
+                _leaderboardIdentifier = leaderboardIdentifier;
+                NSLog(@"%@", _leaderboardIdentifier);
+            }
+        }];
+    }
 }
 
 #pragma Device Type/Size methods
@@ -1055,24 +1082,46 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     }else if(( contact.bodyA.categoryBitMask & catCategory) == catCategory || ( contact.bodyB.categoryBitMask & catCategory) == catCategory){
         
         [GameData sharedGameData].highScore = MAX([GameData sharedGameData].score,
-                                                    [GameData sharedGameData].highScore);
-        [[GameData sharedGameData] save];
-        [player stop];
-        [self playMusic:@"losing" withLoop:NO];
-        if (_moving.speed > 0) {
-            _moving.speed = 0;
-            [_bird removeActionForKey:@"birdMoving"];
-            [self removeActionForKey:@"spawnThenDelayForever"];
-            [self losingLabel];
-            pauseNode.texture = [SKTexture textureWithImageNamed:@"backMain"];
-            pauseNode.name = @"back";
-            [[GameData sharedGameData] reset];
+                                                    [GameData sharedGameData].highScore); //Updating the highscore if the current score is higher
+        [[GameData sharedGameData] save];  // Save all changes to the sharedGameData
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"loggedIn"]) {
+            [self reportScore]; //Reports score to Game Center
         }
-        lost = true;
         
-        [_bird removeActionForKey:@"crying"];
-        [_bird removeActionForKey:@"birdMoving"];
-        [self startFight];
+        
+        if ([[[NSUserDefaults standardUserDefaults] arrayForKey:@"scores"] mutableCopy]) { //Checks if the saved array is empty
+            scoresArray = [[[NSUserDefaults standardUserDefaults] arrayForKey:@"scores"] mutableCopy]; //assigns saved array to                      scoresArray
+        }
+        ScoreData* scoreData = [[ScoreData alloc] init]; // Creates a new object
+        scoreData.username = username;
+        scoreData.score = (int)[GameData sharedGameData].score;
+        scoreData.date = [self currentDate];
+        
+        NSData* scoreDataObject = [NSKeyedArchiver archivedDataWithRootObject:scoreData]; // Encodes the object and creates an NSData out of it
+        [scoresArray addObject:scoreDataObject]; // Add nsdata object to mutable array
+        
+        NSArray* scoresToSave = scoresArray; // Assign mutable array to nsarray since we can't save mutable arrays to userdefaults
+        
+        [[NSUserDefaults standardUserDefaults] setObject: scoresToSave forKey:@"scores"]; // Save the nsarray
+        [[NSUserDefaults standardUserDefaults] synchronize]; //synchronize the data
+        
+        
+        [player stop]; // Stop the music
+        [self playMusic:@"losing" withLoop:NO]; // Play losing sound
+        if (_moving.speed > 0) {
+            _moving.speed = 0; // Stop the scene from moving
+            [_bird removeActionForKey:@"birdMoving"]; // Remove bird movement action
+            [self removeActionForKey:@"spawnThenDelayForever"]; // Remove shevles spawning action
+            [self losingLabel]; // Display losing label
+            pauseNode.texture = [SKTexture textureWithImageNamed:@"backMain"]; // Update the pause button to the back button
+            pauseNode.name = @"back"; // update the pause node name
+            [[GameData sharedGameData] reset]; // Reseting the score
+        }
+        lost = true; // Setting current status of the game
+        
+        [_bird removeActionForKey:@"crying"]; // Remvoing crying action of the bird
+        [_bird removeActionForKey:@"birdMoving"]; // Not sure why this is here again, check back**
+        [self startFight]; // Start fight animation
 
     }else if(( contact.bodyA.categoryBitMask & chickCategory) == chickCategory || ( contact.bodyB.categoryBitMask & chickCategory) == chickCategory){
         
@@ -1092,22 +1141,35 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
                 }else{
                     i++;
                 }
-//                if (currentChick.children.count > 4) {
-//                    if (currentChick.position.y < _bird.position.y) {
-//                        [GameData sharedGameData].score += 1;
-//                        _scoreLabelNode.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].score];
-//                        [_scoreLabelNode runAction:bounceScoreLabel];
-//                        [scoreBG runAction:bounceScoreBG];
-//                        [shelvesReference removeObject:currentChick];
-//                    }else{
-//                        i++;
-//                    }
-//                }else{
-//                    i++;
-//                }
             }
         }
     }
+}
+
+-(NSString*) currentDate{
+    NSDate *date = [NSDate date];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:(NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear) fromDate:date];
+    NSInteger day = [components day];
+    NSInteger month = [components month];
+    NSInteger year = [components year];
+    NSLog(@"%ld, %ld, %ld", (long)day, (long)month, (long)year);
+    NSString* scoreDate = [NSString stringWithFormat:@"%ld, %ld, %ld", (long)day, (long)month, (long)year];
+
+    return scoreDate;
+}
+
+-(void)reportScore{
+    
+   GKScore *score = [[GKScore alloc] initWithLeaderboardIdentifier: _leaderboardIdentifier];
+    score.value = [GameData sharedGameData].highScore; // push highscore to GC
+    
+    [GKScore reportScores:@[score] withCompletionHandler:^(NSError *error) {
+        if (error != nil) {
+            NSLog(@"%@", [error localizedDescription]);
+        }
+    }];
+    
 }
 
 -(void) startFight{

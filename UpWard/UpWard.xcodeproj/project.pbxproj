@@ -19,16 +19,22 @@
 		8143AA071AA54D6E000C951E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8143AA051AA54D6E000C951E /* Main.storyboard */; };
 		8143AA091AA54D6E000C951E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8143AA081AA54D6E000C951E /* Images.xcassets */; };
 		8143AA181AA54D6E000C951E /* UpWardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8143AA171AA54D6E000C951E /* UpWardTests.m */; };
+		8167F0EF1AE57FA000F72FB9 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8167F0EE1AE57FA000F72FB9 /* GameKit.framework */; };
 		817696771AC38CF700330D2F /* GameData.m in Sources */ = {isa = PBXBuildFile; fileRef = 817696761AC38CF700330D2F /* GameData.m */; };
 		8176967C1AC4B75600330D2F /* MainMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 8176967B1AC4B75600330D2F /* MainMenu.m */; };
 		8176967F1AC4C84C00330D2F /* CreditsScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 8176967E1AC4C84C00330D2F /* CreditsScene.m */; };
 		817696821AC4DF6A00330D2F /* TutorialScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 817696811AC4DF6A00330D2F /* TutorialScene.m */; };
+		817F31DA1AE8510B0063AEAE /* LocalLeaderBoardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 817F31D91AE8510B0063AEAE /* LocalLeaderBoardViewController.m */; };
+		817F31DD1AE85D6F0063AEAE /* ScoreTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 817F31DC1AE85D6F0063AEAE /* ScoreTableViewCell.m */; };
+		817F31E31AE876AF0063AEAE /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 817F31E21AE876AF0063AEAE /* Social.framework */; };
+		817F31E51AE877160063AEAE /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 817F31E41AE877160063AEAE /* Accounts.framework */; };
 		818EF2831AABD8DF0005D758 /* BGMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2821AABD8DF0005D758 /* BGMusic.mp3 */; };
 		818EF2861AABDDCA0005D758 /* flap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2851AABDDCA0005D758 /* flap.mp3 */; };
 		818EF2881AABDDE20005D758 /* losing.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2871AABDDE20005D758 /* losing.mp3 */; };
 		81CBFAAC1ADF1E3600BD5A7F /* Outfits.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CBFAAB1ADF1E3600BD5A7F /* Outfits.m */; };
 		81CBFAB01AE02F3A00BD5A7F /* LevelSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CBFAAF1AE02F3A00BD5A7F /* LevelSelection.m */; };
 		81CBFAB31AE0392500BD5A7F /* spaceLevel.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = 81CBFAB11AE0392500BD5A7F /* spaceLevel.atlasc */; };
+		81DB719D1AE484C300521DD3 /* ScoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 81DB719C1AE484C300521DD3 /* ScoreData.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +71,7 @@
 		8143AA111AA54D6E000C951E /* UpWardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UpWardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8143AA161AA54D6E000C951E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8143AA171AA54D6E000C951E /* UpWardTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UpWardTests.m; sourceTree = "<group>"; };
+		8167F0EE1AE57FA000F72FB9 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		817696751AC38CF700330D2F /* GameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameData.h; sourceTree = "<group>"; };
 		817696761AC38CF700330D2F /* GameData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameData.m; sourceTree = "<group>"; };
 		8176967A1AC4B75600330D2F /* MainMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenu.h; sourceTree = "<group>"; };
@@ -73,6 +80,12 @@
 		8176967E1AC4C84C00330D2F /* CreditsScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreditsScene.m; sourceTree = "<group>"; };
 		817696801AC4DF6A00330D2F /* TutorialScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TutorialScene.h; sourceTree = "<group>"; };
 		817696811AC4DF6A00330D2F /* TutorialScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TutorialScene.m; sourceTree = "<group>"; };
+		817F31D81AE8510B0063AEAE /* LocalLeaderBoardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalLeaderBoardViewController.h; sourceTree = "<group>"; };
+		817F31D91AE8510B0063AEAE /* LocalLeaderBoardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalLeaderBoardViewController.m; sourceTree = "<group>"; };
+		817F31DB1AE85D6F0063AEAE /* ScoreTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScoreTableViewCell.h; sourceTree = "<group>"; };
+		817F31DC1AE85D6F0063AEAE /* ScoreTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScoreTableViewCell.m; sourceTree = "<group>"; };
+		817F31E21AE876AF0063AEAE /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		817F31E41AE877160063AEAE /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		818EF2821AABD8DF0005D758 /* BGMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BGMusic.mp3; sourceTree = "<group>"; };
 		818EF2851AABDDCA0005D758 /* flap.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = flap.mp3; sourceTree = "<group>"; };
 		818EF2871AABDDE20005D758 /* losing.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = losing.mp3; sourceTree = "<group>"; };
@@ -82,6 +95,8 @@
 		81CBFAAF1AE02F3A00BD5A7F /* LevelSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelSelection.m; sourceTree = "<group>"; };
 		81CBFAB11AE0392500BD5A7F /* spaceLevel.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = spaceLevel.atlasc; sourceTree = "<group>"; };
 		81CBFAB21AE0392500BD5A7F /* SpaceLevelSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceLevelSprite.h; sourceTree = "<group>"; };
+		81DB719B1AE484C300521DD3 /* ScoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScoreData.h; sourceTree = "<group>"; };
+		81DB719C1AE484C300521DD3 /* ScoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScoreData.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +104,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				817F31E51AE877160063AEAE /* Accounts.framework in Frameworks */,
+				817F31E31AE876AF0063AEAE /* Social.framework in Frameworks */,
+				8167F0EF1AE57FA000F72FB9 /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +123,9 @@
 		8143A9EA1AA54D6D000C951E = {
 			isa = PBXGroup;
 			children = (
+				817F31E41AE877160063AEAE /* Accounts.framework */,
+				817F31E21AE876AF0063AEAE /* Social.framework */,
+				8167F0EE1AE57FA000F72FB9 /* GameKit.framework */,
 				8143A9F51AA54D6E000C951E /* UpWard */,
 				8143AA141AA54D6E000C951E /* UpWardTests */,
 				8143A9F41AA54D6E000C951E /* Products */,
@@ -148,6 +169,8 @@
 				817696831AC4F3FB00330D2F /* Tutorial */,
 				81CBFAAD1AE02F1F00BD5A7F /* Bird Selection */,
 				81CBFAB41AE09C2800BD5A7F /* Level Selection */,
+				817F31DF1AE875660063AEAE /* Score Data */,
+				817F31DE1AE875590063AEAE /* Score TableView */,
 			);
 			path = UpWard;
 			sourceTree = "<group>";
@@ -212,6 +235,26 @@
 				817696761AC38CF700330D2F /* GameData.m */,
 			);
 			name = GameData;
+			sourceTree = "<group>";
+		};
+		817F31DE1AE875590063AEAE /* Score TableView */ = {
+			isa = PBXGroup;
+			children = (
+				817F31D81AE8510B0063AEAE /* LocalLeaderBoardViewController.h */,
+				817F31D91AE8510B0063AEAE /* LocalLeaderBoardViewController.m */,
+				817F31DB1AE85D6F0063AEAE /* ScoreTableViewCell.h */,
+				817F31DC1AE85D6F0063AEAE /* ScoreTableViewCell.m */,
+			);
+			name = "Score TableView";
+			sourceTree = "<group>";
+		};
+		817F31DF1AE875660063AEAE /* Score Data */ = {
+			isa = PBXGroup;
+			children = (
+				81DB719B1AE484C300521DD3 /* ScoreData.h */,
+				81DB719C1AE484C300521DD3 /* ScoreData.m */,
+			);
+			name = "Score Data";
 			sourceTree = "<group>";
 		};
 		818EF2841AABD8E50005D758 /* Music and FX */ = {
@@ -293,6 +336,12 @@
 				TargetAttributes = {
 					8143A9F21AA54D6E000C951E = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 9J676A68SR;
+						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 1;
+							};
+						};
 					};
 					8143AA101AA54D6E000C951E = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -351,12 +400,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				817F31DD1AE85D6F0063AEAE /* ScoreTableViewCell.m in Sources */,
 				8176967C1AC4B75600330D2F /* MainMenu.m in Sources */,
 				811CDF841ADF053E0039A6FC /* BirdsSelection.m in Sources */,
+				81DB719D1AE484C300521DD3 /* ScoreData.m in Sources */,
 				8143AA041AA54D6E000C951E /* GameViewController.m in Sources */,
 				8143A9FC1AA54D6E000C951E /* AppDelegate.m in Sources */,
 				81CBFAAC1ADF1E3600BD5A7F /* Outfits.m in Sources */,
 				8143A9FF1AA54D6E000C951E /* GameScene.m in Sources */,
+				817F31DA1AE8510B0063AEAE /* LocalLeaderBoardViewController.m in Sources */,
 				817696771AC38CF700330D2F /* GameData.m in Sources */,
 				8176967F1AC4C84C00330D2F /* CreditsScene.m in Sources */,
 				817696821AC4DF6A00330D2F /* TutorialScene.m in Sources */,
@@ -476,9 +528,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = UpWard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -488,9 +543,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = UpWard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

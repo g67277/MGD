@@ -11,4 +11,9 @@
 
 @interface GameViewController : UIViewController
 
+@property (nonatomic, readonly) NSString* leaderboardIdentifier;
+@property (nonatomic, readonly) bool gameCenterEnabled;
+
+-(void)authenticateLocalPlayer;
+
 @end

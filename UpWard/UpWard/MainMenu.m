@@ -14,6 +14,8 @@
 #import "BirdsSelection.h"
 #import "LevelSelection.h"
 #import "GameData.h"
+#import "LocalLeaderBoardViewController.h"
+
 
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
@@ -42,12 +44,20 @@
 -(void)didMoveToView:(SKView *)view {
     
     //**************Cheats for grading (Uncomment to activate)***********************
-    //[GameData sharedGameData].coinsCollected = 100;
-    //[GameData sharedGameData].chicksCollected = 100;
+    [GameData sharedGameData].coinsCollected = 100;
+    [GameData sharedGameData].chicksCollected = 100;
     //**************Cheats for grading***********************
     
+    appDelegate = [[AppDelegate alloc] init]; //Testing
+    _gameVC = [[GameViewController alloc] init];// Testing
+  
     [self createIntro];
     
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -95,7 +105,48 @@
         
         // Present the scene.
         [skView presentScene:scene transition:[SKTransition crossFadeWithDuration: .5]];
+    }else if ([node.name isEqualToString:@"leaderboard"]){
+                
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"loggedIn"]) {
+            [self showLeaderboardAndAchievements:YES]; //Show Gamecenter leader board if network is availabe, otherwise, show local
+        }else{
+            [self showLocalLeaderBoard];
+        }
+        
+
     }
+}
+
+-(void) showLocalLeaderBoard{
+    
+    LocalLeaderBoardViewController* localLeaderVC = [[LocalLeaderBoardViewController alloc] init];
+    UIViewController* vc = self.view.window.rootViewController;
+    [vc presentViewController: localLeaderVC animated: YES completion:nil];
+}
+
+-(void)showLeaderboardAndAchievements:(BOOL)shouldShowLeaderboard{
+    
+    GKGameCenterViewController *gcViewController = [[GKGameCenterViewController alloc] init];
+    
+    gcViewController.gameCenterDelegate = self;
+    
+    if (shouldShowLeaderboard) {
+        gcViewController.viewState = GKGameCenterViewControllerStateLeaderboards;
+        gcViewController.leaderboardIdentifier = @"leader_1.0"; //Quick Fix, need to change to make it dynamic**
+    }
+    else{
+        gcViewController.viewState = GKGameCenterViewControllerStateAchievements;
+    }
+    
+    UIViewController *vc = self.view.window.rootViewController;
+    [vc presentViewController: gcViewController animated: YES completion:nil];
+    
+}
+
+- (void)gameCenterViewControllerDidFinish:(GKGameCenterViewController *)viewController
+{
+    UIViewController *vc = self.view.window.rootViewController;
+    [vc dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void) createIntro{
@@ -131,6 +182,13 @@
     levelSelection.zPosition = 100;
     levelSelection.name = @"levels";
     [self addChild:levelSelection];
+    
+    SKSpriteNode* leaderboard = [SKSpriteNode spriteNodeWithImageNamed:@"LevelsBtn"];
+    [leaderboard setScale:.3];
+    leaderboard.position = CGPointMake(CGRectGetMidX(self.frame), self.size.height - 350);
+    leaderboard.zPosition = 100;
+    leaderboard.name = @"leaderboard";
+    [self addChild:leaderboard];
     
     
     SKSpriteNode* tutorialBtn = [SKSpriteNode spriteNodeWithImageNamed:@"tutorialIcon"];

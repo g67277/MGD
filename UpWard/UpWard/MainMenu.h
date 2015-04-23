@@ -7,10 +7,19 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+#import "AppDelegate.h"
+#import "GameViewController.h"
+@import GameKit;
 
-@interface MainMenu : SKScene{
+@interface MainMenu : SKScene <GKGameCenterControllerDelegate>{
     
     SKAction* scallingForever;
+    AppDelegate* appDelegate;
+    
 }
+
+@property (nonatomic) GameViewController* gameVC;
+
+-(void)showLeaderboardAndAchievements:(BOOL)shouldShowLeaderboard;
 
 @end
