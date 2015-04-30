@@ -10,6 +10,8 @@
 
 @interface GameData : NSObject <NSCoding>
 
+// might need to completely change this class
+
 @property (assign, nonatomic) long score;
 @property (assign, nonatomic) long highScore;
 @property (assign, nonatomic) long coinsCollected;

@@ -10,6 +10,8 @@
 #import <AVFoundation/AVFoundation.h>
 #import "ScoreData.h"
 #import "GameViewController.h"
+//testing
+#import "SpaceScene.h"
 
 
 @interface GameScene : SKScene <SKPhysicsContactDelegate>{
@@ -141,7 +143,15 @@
     NSMutableArray* incomingScoresArray;
     NSMutableArray* highScoreArray;
     NSMutableArray* incomingHighScoreArray;
+    
+    
+    
+    SpaceScene* testSpace;
+    SKNode* spaceLevel;
 
 }
+
+-(void)updateAchievements;
+
 
 @end

@@ -46,9 +46,6 @@
     //skView.showsNodeCount = YES;
     /* Sprite Kit applies additional optimizations to improve rendering performance */
     skView.ignoresSiblingOrder = YES;
-    // Create and configure the scene.
-    //GameScene *scene = [GameScene unarchiveFromFile:@"GameScene"];
-    //scene.scaleMode = SKSceneScaleModeAspectFill;
     
     MainMenu *menuScene = [MainMenu unarchiveFromFile:@"GameScene"];
     menuScene.scaleMode = SKSceneScaleModeAspectFill;
@@ -59,18 +56,18 @@
 }
 
 -(void)authenticateLocalPlayer{
-    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer]; //Creates GKplayer object
         
-    localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error){
+    localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error){ // Starts authenticating
         if (viewController != nil) {
-            [self presentViewController:viewController animated:YES completion:nil];
+            [self presentViewController:viewController animated:YES completion:nil]; // if player is not already signed in, display the controller so they can log into game center
         }
         else{
             if ([GKLocalPlayer localPlayer].authenticated) {
-                _gameCenterEnabled = YES;
-                [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"loggedIn"];
-                [[NSUserDefaults standardUserDefaults] setValue:[GKLocalPlayer localPlayer].alias forKey:@"username"];
-                [[NSUserDefaults standardUserDefaults] setValue:[GKLocalPlayer localPlayer].alias forKey:@"gcalies"];
+                _gameCenterEnabled = YES; //User is logged in
+                [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"loggedIn"]; // save the log in state
+                [[NSUserDefaults standardUserDefaults] setValue:[GKLocalPlayer localPlayer].alias forKey:@"username"]; // save entered username
+                [[NSUserDefaults standardUserDefaults] setValue:[GKLocalPlayer localPlayer].alias forKey:@"gcalies"]; // save game center alies
                 
             }else{
                 _gameCenterEnabled = NO;
@@ -80,6 +77,7 @@
         }
     };
 }
+
 
 - (BOOL)shouldAutorotate
 {

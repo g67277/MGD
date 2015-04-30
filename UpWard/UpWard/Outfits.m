@@ -13,6 +13,7 @@
 #import "BirdsSprite.h"
 #import "GameData.h"
 #import "LevelSprites.h"
+@import GameKit;
 
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
@@ -381,6 +382,8 @@
         birdLabel.text = @"Mustach Bird?!? Whaaa";
         birdLabel.fontSize = 55;
         [GameData sharedGameData].mustachBought = true;
+        [self updateAchievements]; // Achievement for buying a mustach
+
 
     }else if (item == 5){
         SKSpriteNode* fancyGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_FANCYGLASS];
@@ -446,6 +449,8 @@
         birdLabel.text = @"Mustach Bird?!? Whaaa";
         birdLabel.fontSize = 55;
         [GameData sharedGameData].mustachBought = true;
+        [self updateAchievements]; // Achievement for buying a mustach
+
 
     }else if (item == 5){
         SKSpriteNode* fancyGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_FANCYGLASS];
@@ -512,6 +517,7 @@
         birdLabel.text = @"Mustach Bird?!? Whaaa";
         birdLabel.fontSize = 55;
         [GameData sharedGameData].mustachBought = true;
+        [self updateAchievements]; // Achievement for buying a mustach
 
     }else if (item == 5){
         SKSpriteNode* fancyGlass = [SKSpriteNode spriteNodeWithTexture:BIRDSSPRITE_TEX_FANCYGLASS];
@@ -538,6 +544,26 @@
     [[GameData sharedGameData] save];
 
 }
+
+-(void)updateAchievements{
+    
+    NSString *achievementIdentifier = @"Mustache_Bought";
+    float progressPercentage = 100.0;
+    GKAchievement *completionAchievement = [[GKAchievement alloc] initWithIdentifier:achievementIdentifier];
+    completionAchievement.percentComplete = progressPercentage;
+    if (completionAchievement.percentComplete == 100.0) {
+        completionAchievement.showsCompletionBanner = true;
+    }
+    
+    NSArray *achievements = @[completionAchievement];
+    
+    [GKAchievement reportAchievements:achievements withCompletionHandler:^(NSError *error) {
+        if (error != nil) {
+            NSLog(@"%@", [error localizedDescription]);
+        }
+    }];
+}
+
 
 
 -(void) initActions{

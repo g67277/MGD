@@ -46,8 +46,8 @@
 -(void)didMoveToView:(SKView *)view {
     
     //**************Cheats for grading (Uncomment to activate)***********************
-    //[GameData sharedGameData].coinsCollected = 100;
-    //[GameData sharedGameData].chicksCollected = 100;
+    [GameData sharedGameData].coinsCollected = 100;
+    [GameData sharedGameData].chicksCollected = 100;
     //**************Cheats for grading***********************
   
     [self createIntro];  // Creates main screen intro
@@ -123,6 +123,8 @@
 
         [self showAlertWithTextField];  // Display alertview with uitextfield for name input
         
+    }else if([node.name isEqualToString:@"clearAchievement"]){
+        [self resetAchievements];
     }
 }
 
@@ -280,6 +282,14 @@
     tutorialBtn.name = @"tutorial";
     [self addChild:tutorialBtn];
     
+    //Debugging only***
+    SKSpriteNode* clearAchievement = [SKSpriteNode spriteNodeWithImageNamed:@"tutorialIcon"];
+    [clearAchievement setScale:.5];
+    clearAchievement.position = CGPointMake(self.size.width /5, self.size.height - 250);
+    clearAchievement.zPosition = 100;
+    clearAchievement.name = @"clearAchievement";
+    [self addChild:clearAchievement];
+    
     SKSpriteNode* background = [SKSpriteNode spriteNodeWithImageNamed:@"introPic"];
     [background setScale:[self deviceSize]];
     background.position = CGPointMake(self.size.width / 2, self.size.height / 2);
@@ -302,6 +312,9 @@
     name = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Regular"];
     name.fontColor = [UIColor darkGrayColor];
     name.fontSize = 28;
+    if (![[NSUserDefaults standardUserDefaults] valueForKey:@"username"]) {
+        [[NSUserDefaults standardUserDefaults] setValue:@"Player" forKey:@"username"];
+    }
     name.text = [NSString stringWithFormat:@"Welcome back %@", [[NSUserDefaults standardUserDefaults] valueForKey:@"username"]];
     name.position = CGPointMake(-100, -10);
     [footerBG addChild:name];
@@ -338,6 +351,15 @@
     
     scallingForever = [SKAction repeatActionForever:repeatScalling];
     
+}
+
+//for debugging only, take out before release*******
+-(void)resetAchievements{
+    [GKAchievement resetAchievementsWithCompletionHandler:^(NSError *error) {
+        if (error != nil) {
+            NSLog(@"%@", [error localizedDescription]);
+        }
+    }];
 }
 
 #pragma Device Type/Size methods

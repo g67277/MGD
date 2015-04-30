@@ -66,6 +66,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     scoresArray = [[NSMutableArray alloc] init];
     incomingScoresArray = [[NSMutableArray alloc] init];
     
+    
+    testSpace = [[SpaceScene alloc] init];
 
     /* Setup your scene here */
     //Game Setup
@@ -92,13 +94,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     //Code needs refactoring***
     levelSelected = [GameData sharedGameData].levelSelected;
     
-    //Creating the shelves texture here
-    if (levelSelected < 2) {
-        _mountShevlesTexture = [SKTexture textureWithImageNamed:@"mountShelve"];
-    }else{
-        _mountShevlesTexture = [SKTexture textureWithImageNamed:@"spaceShelve"];
-    }
-    
     _moving = [SKNode node];
     [self addChild:_moving];
     //Speed of the game
@@ -115,8 +110,9 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         [self createForrestScene];
     }else{
         _background = [SKColor colorWithRed:42.0/225.0 green:52.0/255.0 blue:56.0/255.0 alpha:1.0];
-        _mountShevlesTexture = [SKTexture textureWithImageNamed:@"spaceShelve"];
-        [self createSpaceScene];
+        _mountShevlesTexture = [SKTexture textureWithImageNamed:@"spaceShelve"]; // need to change this
+        [self testingSpace];
+        //[self createSpaceScene];
     }
     [self createHeader];
     [self createIntro];
@@ -129,9 +125,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 -(void) getLeaderIdentifier{
     if ([GKLocalPlayer localPlayer].authenticated) {
         
-        NSLog(@"%@", [GKLocalPlayer localPlayer].alias); // Name to display in local leaderboard
-
-        
         // Get the default leaderboard identifier.
         [[GKLocalPlayer localPlayer] loadDefaultLeaderboardIdentifierWithCompletionHandler:^(NSString *leaderboardIdentifier, NSError *error) {
             
@@ -140,11 +133,108 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
             }
             else{
                 _leaderboardIdentifier = leaderboardIdentifier;
-                NSLog(@"%@", _leaderboardIdentifier);
             }
         }];
     }
 }
+
+-(void)updateAchievements:(NSString*) type{
+    
+    float currentScore = [GameData sharedGameData].score;
+    
+    NSString *achievementIdentifier;
+    float progressPercentage = 0.0;
+    GKAchievement *scoreAchievement = nil;
+    
+    if ([type isEqualToString:@"scoreIncrease"]) {
+        if (currentScore <= 15) {
+            progressPercentage = currentScore * 100 / 15;
+            achievementIdentifier = @"15_Shelves";
+        }
+        else if (currentScore <= 30){
+            progressPercentage = currentScore * 100 / 30;
+            achievementIdentifier = @"30_Shelves";
+        }
+        else if (currentScore <= 50){
+            progressPercentage = currentScore * 100 / 50;
+            achievementIdentifier = @"50_Shelves";
+        }else if (currentScore <= 100){
+            progressPercentage = currentScore * 100 / 100;
+            achievementIdentifier = @"100_Shelves";
+        }
+    }else if ([type isEqualToString:@"gameEnded"]){
+        
+        NSMutableArray* scoreTesting = [self decodeData:[[[NSUserDefaults standardUserDefaults] arrayForKey:@"scores"] mutableCopy]];
+        NSArray* reversed = [[scoreTesting reverseObjectEnumerator] allObjects];
+        if (reversed.count > 3) {
+            ScoreData* latest = reversed[0];
+            ScoreData* second = reversed[1];
+            bool allGood = false;
+            if (latest.score > second.score) {
+                for (int i = 2 ; i >= 0; i--) {
+                    latest = reversed[i];
+                    second = reversed[i + 1];
+                    if (latest.score > second.score) {
+                        progressPercentage += i * 100.0 / 3;
+                        allGood = true;
+                        NSLog(@"good");
+                    }else{
+                        NSLog(@"Not good");
+                        allGood = false;
+                        return;
+                    }
+                }
+                achievementIdentifier = @"Score_Increased";
+            }
+            
+            latest = reversed[0];
+            if ((latest.score < 15 && reversed.count > 10) && !allGood) {
+                bool allBad = false;
+                for (int i = 9; i >= 0; i--) {
+                    latest = reversed[i];
+                    if (latest.score < 15) {
+                        allBad = true;
+                    }else{
+                        allBad = false;
+                        return;
+                    }
+                }
+                if (allBad) {
+                    progressPercentage = 100.0;
+                    achievementIdentifier = @"10_Loses";
+                }
+            }
+        }
+        
+        
+    }
+    
+    scoreAchievement = [[GKAchievement alloc] initWithIdentifier:achievementIdentifier];
+    scoreAchievement.percentComplete = progressPercentage;
+    if (scoreAchievement.percentComplete == 100.0) {
+        scoreAchievement.showsCompletionBanner = true;
+    }
+    
+    NSArray *achievements = @[scoreAchievement];
+    
+    [GKAchievement reportAchievements:achievements withCompletionHandler:^(NSError *error) {
+        if (error != nil) {
+            NSLog(@"%@", [error localizedDescription]);
+        }
+    }];
+}
+
+- (NSMutableArray*) decodeData: (NSMutableArray*) encodedArray{
+    
+    NSMutableArray* decodedObjects = [[NSMutableArray alloc] init];
+    ScoreData* scoreData = [[ScoreData alloc] init];
+    for (int i = 0; i < encodedArray.count; i++) {
+        scoreData = [NSKeyedUnarchiver unarchiveObjectWithData:encodedArray[i]];
+        [decodedObjects addObject:scoreData];
+    }
+    return decodedObjects;
+}
+
 
 #pragma Device Type/Size methods
 
@@ -579,8 +669,17 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     neptune.zPosition = -29;
     [_moving addChild:neptune];
     
-    SKAction* neptuneMove = [SKAction moveByX:-180 y:-neptune.size.height * 2 duration:.55 * neptune.size.height * 2];
+    SKAction* neptuneMove = [SKAction moveByX:-50 y:-neptune.size.height * 2 duration:.55 * neptune.size.height * 2];
     keepNeptune = [SKAction repeatActionForever:neptuneMove];
+    
+}
+
+-(void) testingSpace{
+    
+    testSpace = [[SpaceScene alloc] init];
+    spaceLevel = [testSpace createSpaceScene];
+    spaceLevel.position = CGPointMake(0, 0);
+    [_moving addChild:spaceLevel];
     
 }
 
@@ -823,14 +922,16 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 -(void) moveSpaceScene{
     
-    [titleBanner runAction:_titleMove withKey:@"BGAnim"];
-    [playBtn runAction:_titleMove withKey:@"BGAnim"];
-    [_highScoreLabelNode runAction:_titleMove withKey:@"BGAnim"];
-    [starsBG runAction:keepStars withKey:@"BGAnim"];
-    [saturn runAction:keepSaturn withKey:@"BGAnim"];
-    [venus runAction:keepVenus withKey:@"BGAnim"];
-    [jupiter runAction:keepJupiter withKey:@"BGAnim"];
-    [neptune runAction:keepNeptune withKey:@"BGAnim"];
+    [testSpace moveSpace];
+    
+//    [titleBanner runAction:_titleMove withKey:@"BGAnim"];
+//    [playBtn runAction:_titleMove withKey:@"BGAnim"];
+//    [_highScoreLabelNode runAction:_titleMove withKey:@"BGAnim"];
+//    [starsBG runAction:keepStars withKey:@"BGAnim"];
+//    [saturn runAction:keepSaturn withKey:@"BGAnim"];
+//    [venus runAction:keepVenus withKey:@"BGAnim"];
+//    [jupiter runAction:keepJupiter withKey:@"BGAnim"];
+//    [neptune runAction:keepNeptune withKey:@"BGAnim"];
     
 }
 
@@ -1070,6 +1171,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
                         _scoreLabelNode.text = [NSString stringWithFormat:@"%li", [GameData sharedGameData].score];
                         [_scoreLabelNode runAction:bounceScoreLabel];
                         [scoreBG runAction:bounceScoreBG];
+                        [self updateAchievements:@"scoreIncrease"];
                         [shelvesReference removeObject:currentShelve];
                     }else{
                         i++;
@@ -1087,8 +1189,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         
         //Score checking and reporting to game center----------
         
-        NSLog(@"score: %li, high: %li", [GameData sharedGameData].score , [GameData sharedGameData].highScore);
-        
         ScoreData* highScoreObject = [[ScoreData alloc] init];
         highScoreObject.alies = [[NSUserDefaults standardUserDefaults] valueForKey:@"alies"];
         highScoreObject.score = (int)[GameData sharedGameData].score;
@@ -1102,8 +1202,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         }
         
         //------------------------------------------------------
-        
-        
         if ([[[NSUserDefaults standardUserDefaults] arrayForKey:@"scores"] mutableCopy]) { //Checks if the saved array is empty
             scoresArray = [[[NSUserDefaults standardUserDefaults] arrayForKey:@"scores"] mutableCopy]; //assigns saved array to                      scoresArray
         }
@@ -1121,7 +1219,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         [[NSUserDefaults standardUserDefaults] setObject: scoresToSave forKey:@"scores"]; // Save the nsarray
         [[NSUserDefaults standardUserDefaults] synchronize]; //synchronize the data
         
-        
+        [self updateAchievements:@"gameEnded"]; //Updating achievements
+
         [player stop]; // Stop the music
         [self playMusic:@"losing" withLoop:NO]; // Play losing sound
         if (_moving.speed > 0) {
@@ -1169,7 +1268,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     NSInteger day = [components day];
     NSInteger month = [components month];
     NSInteger year = [components year];
-    NSLog(@"%ld, %ld, %ld", (long)day, (long)month, (long)year);
     NSString* scoreDate = [NSString stringWithFormat:@"%ld, %ld, %ld", (long)day, (long)month, (long)year];
 
     return scoreDate;
@@ -1180,7 +1278,6 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
    GKScore *score = [[GKScore alloc] initWithLeaderboardIdentifier: _leaderboardIdentifier];
     ScoreData* decodedHighScore = [NSKeyedUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] objectForKey:@"highscore"]];
     
-    NSLog(@"saved username: %@, alies: %@", decodedHighScore.alies, [[NSUserDefaults standardUserDefaults] valueForKey:@"gcalies"]);
     if ([decodedHighScore.alies isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"gcalies"]]) {
         score.value = decodedHighScore.score; // push highscore to GC
         
@@ -1246,6 +1343,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 }
 
 -(void) resetSpaceBackground{
+    
     titleBanner.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2 - 5);
     [titleBanner removeActionForKey:@"BGAnim"];
     playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height / 2 );
@@ -1292,7 +1390,11 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         [self resetBackGround];
         [self moveForrestScene];
     }else if(levelSelected == 2){
-        [self resetSpaceBackground];
+        [testSpace resetMovement];
+        [spaceLevel removeFromParent];
+        spaceLevel = [testSpace createSpaceScene];
+        [_moving addChild:spaceLevel];
+        //[self resetSpaceBackground];
         [self moveSpaceScene];
     }
     

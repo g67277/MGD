@@ -28,6 +28,7 @@
 		817F31DD1AE85D6F0063AEAE /* ScoreTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 817F31DC1AE85D6F0063AEAE /* ScoreTableViewCell.m */; };
 		817F31E31AE876AF0063AEAE /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 817F31E21AE876AF0063AEAE /* Social.framework */; };
 		817F31E51AE877160063AEAE /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 817F31E41AE877160063AEAE /* Accounts.framework */; };
+		818C1A1D1AF275CF00124118 /* SpaceScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 818C1A1C1AF275CF00124118 /* SpaceScene.m */; };
 		818EF2831AABD8DF0005D758 /* BGMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2821AABD8DF0005D758 /* BGMusic.mp3 */; };
 		818EF2861AABDDCA0005D758 /* flap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2851AABDDCA0005D758 /* flap.mp3 */; };
 		818EF2881AABDDE20005D758 /* losing.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2871AABDDE20005D758 /* losing.mp3 */; };
@@ -86,6 +87,8 @@
 		817F31DC1AE85D6F0063AEAE /* ScoreTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScoreTableViewCell.m; sourceTree = "<group>"; };
 		817F31E21AE876AF0063AEAE /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		817F31E41AE877160063AEAE /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		818C1A1B1AF275CF00124118 /* SpaceScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceScene.h; sourceTree = "<group>"; };
+		818C1A1C1AF275CF00124118 /* SpaceScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpaceScene.m; sourceTree = "<group>"; };
 		818EF2821AABD8DF0005D758 /* BGMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BGMusic.mp3; sourceTree = "<group>"; };
 		818EF2851AABDDCA0005D758 /* flap.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = flap.mp3; sourceTree = "<group>"; };
 		818EF2871AABDDE20005D758 /* losing.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = losing.mp3; sourceTree = "<group>"; };
@@ -171,6 +174,8 @@
 				81CBFAB41AE09C2800BD5A7F /* Level Selection */,
 				817F31DF1AE875660063AEAE /* Score Data */,
 				817F31DE1AE875590063AEAE /* Score TableView */,
+				818C1A1B1AF275CF00124118 /* SpaceScene.h */,
+				818C1A1C1AF275CF00124118 /* SpaceScene.m */,
 			);
 			path = UpWard;
 			sourceTree = "<group>";
@@ -407,6 +412,7 @@
 				8143AA041AA54D6E000C951E /* GameViewController.m in Sources */,
 				8143A9FC1AA54D6E000C951E /* AppDelegate.m in Sources */,
 				81CBFAAC1ADF1E3600BD5A7F /* Outfits.m in Sources */,
+				818C1A1D1AF275CF00124118 /* SpaceScene.m in Sources */,
 				8143A9FF1AA54D6E000C951E /* GameScene.m in Sources */,
 				817F31DA1AE8510B0063AEAE /* LocalLeaderBoardViewController.m in Sources */,
 				817696771AC38CF700330D2F /* GameData.m in Sources */,

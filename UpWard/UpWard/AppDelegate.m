@@ -20,19 +20,19 @@
     
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] init];
     
-    if ([userDefaults arrayForKey:@"scores"] != nil){
+    if ([userDefaults arrayForKey:@"scores"]){ // Array of scores
         
     }
-    if ([userDefaults arrayForKey:@"highscore"] != nil){
+    if ([userDefaults arrayForKey:@"highscore"]){ // Array of highscores
         
     }
-    if ([userDefaults boolForKey:@"loggedIn"]) {
+    if ([userDefaults boolForKey:@"loggedIn"]) { // stores if user is logged into Game Center
         
     }
-    if ([userDefaults stringForKey:@"username"]) {
+    if ([userDefaults stringForKey:@"username"]) { // stores username entered by user
         
     }
-    if ([userDefaults stringForKey:@"gcalias"]) {
+    if ([userDefaults stringForKey:@"gcalias"]) { // stores alies of user's Game Center account
         
     }
     
