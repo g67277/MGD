@@ -12,16 +12,11 @@
 #import "LevelSprites.h"
 #import "GameData.h"
 #import "MainMenu.h"
-#import "SpaceLevelSprite.h"
 #import "GameViewController.h"
 @import GameKit;
 
 #define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
-@interface GameScene()
-
-    -(void)reportScore;
-@end
 
 @implementation SKScene (Unarchive)
 
@@ -61,18 +56,11 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 -(void)didMoveToView:(SKView *)view {
     
-    //Testing
     username = [[NSUserDefaults standardUserDefaults] valueForKey:@"username"];
     scoresArray = [[NSMutableArray alloc] init];
     incomingScoresArray = [[NSMutableArray alloc] init];
-    
-    
-    testSpace = [[SpaceScene alloc] init];
-
-    /* Setup your scene here */
-    //Game Setup
-    [self getLeaderIdentifier];
-
+    spaceLevel = [[SpaceScene alloc] init];
+    forrestLevel = [[ForrestScene alloc] init];
     goingLeft = false;
     lost = false;
     flapCount = 0;
@@ -96,24 +84,16 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     _moving = [SKNode node];
     [self addChild:_moving];
+    
     //Speed of the game
     _moving.speed = worldSpeed;
     _shelves = [SKNode node];
     [_moving addChild:_shelves];
     [self playMusic:@"BGMusic" withLoop:YES];
+    
     //Adding the container
     [self physicsContainer];
-    //Creating the shelves texture here
-    if (levelSelected < 2) {
-        _background = [SKColor colorWithRed:113.0/225.0 green:197.0/255.0 blue:207.0/255.0 alpha:1.0];
-        _mountShevlesTexture = [SKTexture textureWithImageNamed:@"mountShelve"];
-        [self createForrestScene];
-    }else{
-        _background = [SKColor colorWithRed:42.0/225.0 green:52.0/255.0 blue:56.0/255.0 alpha:1.0];
-        _mountShevlesTexture = [SKTexture textureWithImageNamed:@"spaceShelve"]; // need to change this
-        [self testingSpace];
-        //[self createSpaceScene];
-    }
+    [self levelSelector];
     [self createHeader];
     [self createIntro];
     [self playLevel];
@@ -122,21 +102,15 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     self.backgroundColor = _background;
 }
 
--(void) getLeaderIdentifier{
-    if ([GKLocalPlayer localPlayer].authenticated) {
-        
-        // Get the default leaderboard identifier.
-        [[GKLocalPlayer localPlayer] loadDefaultLeaderboardIdentifierWithCompletionHandler:^(NSString *leaderboardIdentifier, NSError *error) {
-            
-            if (error != nil) {
-                NSLog(@"%@", [error localizedDescription]);
-            }
-            else{
-                _leaderboardIdentifier = leaderboardIdentifier;
-            }
-        }];
+-(void) levelSelector{
+    
+    if (levelSelected < 2) {
+        [self createForrestScene];
+    }else{
+        [self createSpaceScene];
     }
 }
+
 
 -(void)updateAchievements:(NSString*) type{
     
@@ -499,187 +473,21 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 }
 
 -(void) createForrestScene{
-    //Parallax background
-    //Grass background
-    grass = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:98/255.0f green:204/255.0f blue:103/255.0f alpha:1.0f] size:CGSizeMake(self.frame.size.width, self.frame.size.height / 1.5)];
-    grass.position = CGPointMake(grass.size.width /2 , grass.size.height / 2);
-    grass.zPosition = -100;
-    [_moving addChild:grass];
     
-    SKAction* grassMove = [SKAction moveByX:0 y: -grass.size.height * 2 duration:1.0 * grass.size.height * 2];
-    keepGM = [SKAction repeatActionForever:grassMove];
-    
-    //Front tree
-    frontTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_FIRSTTREE];
-    frontTree.position = CGPointMake(90, frontTree.size.height /2 );
-    frontTree.zPosition = -14;
-    [_moving addChild:frontTree];
-    
-    SKAction* frontTreeMove = [SKAction moveByX:-frontTree.size.width y: -frontTree.size.height * 2 duration:.3 * frontTree.size.height * 2];
-    keepFTM = [SKAction repeatActionForever:frontTreeMove];
-    
-    //Left Tree
-    leftTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LEFTTREE];
-    leftTree.position = CGPointMake(self.frame.size.width / 1.2, leftTree.size.height / 2 - 5);
-    leftTree.zPosition = -20;
-    [_moving addChild:leftTree];
-    
-    SKAction* leftTreeMove = [SKAction moveByX:leftTree.size.width / 2 y: -leftTree.size.height * 2 duration:.2 * leftTree.size.height * 2];
-    keepLTM = [SKAction repeatActionForever:leftTreeMove];
-    
-    //Right Tree
-    rightTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_RIGHTTREE];
-    rightTree.position = CGPointMake(120, rightTree.size.height / 1.7);
-    rightTree.zPosition = -20;
-    [_moving addChild:rightTree];
-    
-    SKAction* rightTreeMove = [SKAction moveByX:-rightTree.size.width / 2 y: -rightTree.size.height * 2 duration:.2 * rightTree.size.height * 2];
-    keepRTM = [SKAction repeatActionForever:rightTreeMove];
-    
-    //Right Mid Tree
-    rightMidTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_RIGHTMIDTREE];
-    rightMidTree.position = CGPointMake(250, rightMidTree.size.height);
-    rightMidTree.zPosition = -19;
-    [_moving addChild:rightMidTree];
-    
-    SKAction* rightMidTreeMove = [SKAction moveByX:-rightMidTree.size.width / 3 y: -rightMidTree.size.height * 2 duration:.4 * rightMidTree.size.height * 2];
-    keepRMTM = [SKAction repeatActionForever:rightMidTreeMove];
-    
-    //Left Mid Tree
-    leftMidTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LEFTMIDTREE];
-    leftMidTree.position = CGPointMake(self.frame.size.width / 1.6, leftMidTree.size.height);
-    leftMidTree.zPosition = -22;
-    [_moving addChild:leftMidTree];
-    
-    SKAction* leftMidTreeMove = [SKAction moveByX:leftMidTree.size.width / 3 y: -leftMidTree.size.height * 2 duration:.4 * leftMidTree.size.height * 2];
-    keepLMTM = [SKAction repeatActionForever:leftMidTreeMove];
-    
-    //Mid Tree
-    midTree = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_MIDTREE];
-    midTree.position = CGPointMake(self.size.width / 2, midTree.size.height * 1.13);
-    midTree.zPosition = -18;
-    [_moving addChild:midTree];
-    
-    SKAction* midTreeMove = [SKAction moveByX:0 y: -midTree.size.height * 2 duration:.4 * midTree.size.height * 2];
-    keepMTM = [SKAction repeatActionForever:midTreeMove];
-    
-    //Background trees
-    bGTrees = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_BACKGROUNDTREES];
-    [bGTrees setScale:1.1];
-    bGTrees.position = CGPointMake(430, bGTrees.size.height * 2);
-    bGTrees.zPosition = -25;
-    [_moving addChild:bGTrees];
-    
-    //Lake
-    lake = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_LAKE];
-    lake.position = CGPointMake(self.size.width / 2, lake.size.height * 4.8);
-    lake.zPosition = -40;
-    [_moving addChild:lake];
-    
-    SKAction* bGTreesNLake = [SKAction moveByX:0 y: -bGTrees.size.height * 2 duration:.4 * bGTrees.size.height * 2];
-    keepBGTL = [SKAction repeatActionForever:bGTreesNLake];
-    
-    //small Mountains
-    smallMount1 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
-    smallMount1.position = CGPointMake(self.size.width / 2, smallMount1.size.height * 3.8);
-    smallMount1.zPosition = -30;
-    [_moving addChild:smallMount1];
-    
-    SKAction* smallMount1Move = [SKAction moveByX:0 y: -smallMount1.size.height * 2 duration:.4 * smallMount1.size.height * 2];
-    keepSM1 = [SKAction repeatActionForever:smallMount1Move];
-    
-    smallMount2 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
-    smallMount2.position = CGPointMake(smallMount2.size.width / 4, smallMount1.size.height * 3.8);
-    smallMount2.zPosition = -31;
-    [_moving addChild:smallMount2];
-    
-    SKAction* smallMount2Move = [SKAction moveByX:0 y: -smallMount1.size.height * 2 duration:.45 * smallMount1.size.height * 2];
-    keepSM2 = [SKAction repeatActionForever:smallMount2Move];
-    
-    smallMount3 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_SMALLMOUNTAIN];
-    smallMount3.position = CGPointMake(smallMount3.size.width, smallMount1.size.height * 3.8);
-    smallMount3.zPosition = -31;
-    [_moving addChild:smallMount3];
-    
-    SKAction* smallMount3Move = [SKAction moveByX:0 y: -smallMount1.size.height * 2 duration:.43 * smallMount1.size.height * 2];
-    keepSM3 = [SKAction repeatActionForever:smallMount3Move];
-    
-    //Large mountains
-    largeMount1 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_BIGMOUNTAIN];
-    largeMount1.position = CGPointMake(self.frame.size.width / 1.4, smallMount1.size.height * 5);
-    largeMount1.zPosition = -34;
-    [_moving addChild:largeMount1];
-    
-    SKAction* largeMount1Move = [SKAction moveByX:0 y: -largeMount1.size.height * 2 duration:.5 * largeMount1.size.height * 2];
-    keepLM1 = [SKAction repeatActionForever:largeMount1Move];
-    
-    largeMount2 = [SKSpriteNode spriteNodeWithTexture:LEVELSPRITES_TEX_BIGMOUNTAIN];
-    [largeMount2 setScale:.8];
-    largeMount2.position = CGPointMake(self.frame.size.width / 3, smallMount1.size.height * 5);
-    largeMount2.zPosition = -35;
-    [_moving addChild:largeMount2];
-    
-    SKAction* largeMount2Move = [SKAction moveByX:0 y: -largeMount1.size.height * 2 duration:.55 * largeMount1.size.height * 2];
-    keepLM2 = [SKAction repeatActionForever:largeMount2Move];
-    
+    forrestScene = [forrestLevel createScene];
+    forrestScene.position = CGPointMake(0, 0);
+    _shevlesTexture = [forrestLevel shelveTexture];
+    _background = [SKColor colorWithRed:113.0/225.0 green:197.0/255.0 blue:207.0/255.0 alpha:1.0];
+    [_moving addChild:forrestScene];
 }
 
 -(void) createSpaceScene{
     
-    SKTexture* starsTextures = [SKTexture textureWithImageNamed:@"starsBG"];
-    starsBG = [SKSpriteNode spriteNodeWithTexture: starsTextures];
-    [starsBG setScale:.9];
-    starsBG.position = CGPointMake(CGRectGetMidX(self.frame), 10);
-    starsBG.zPosition = -50;
-    [_moving addChild:starsBG];
-    
-    SKAction* starsMove = [SKAction moveByX:0 y:-starsBG.size.height + 200 duration:2 * starsBG.size.height];
-    keepStars = [SKAction repeatActionForever:starsMove];
-    
-    saturn = [SKSpriteNode spriteNodeWithTexture:SPACELEVEL_TEX_SATURN];
-    [saturn setScale:.8];
-    saturn.position = CGPointMake(600, 500);
-    saturn.zPosition = -30;
-    [_moving addChild:saturn];
-    
-    SKAction* saturnMove = [SKAction moveByX:80 y:-saturn.size.height * 2 duration:.55 * saturn.size.height * 2];
-    keepSaturn = [SKAction repeatActionForever:saturnMove];
-    
-    jupiter = [SKSpriteNode spriteNodeWithTexture:SPACELEVEL_TEX_JUPITER];
-    [jupiter setScale:.8];
-    jupiter.position = CGPointMake(200, 1000);
-    jupiter.zPosition = -29;
-    [_moving addChild:jupiter];
-    
-    SKAction* jupiterMove = [SKAction moveByX:-180 y:-jupiter.size.height * 2 duration:.55 * jupiter.size.height * 2];
-    keepJupiter = [SKAction repeatActionForever:jupiterMove];
-    
-    venus = [SKSpriteNode spriteNodeWithTexture:SPACELEVEL_TEX_VENUS];
-    [venus setScale:.8];
-    venus.position = CGPointMake(300, 1300);
-    venus.zPosition = -29;
-    [_moving addChild:venus];
-    
-    SKAction* venusMove = [SKAction moveByX:0 y:-venus.size.height * 2 duration:.55 * venus.size.height * 2];
-    keepVenus = [SKAction repeatActionForever:venusMove];
-    
-    neptune = [SKSpriteNode spriteNodeWithTexture:SPACELEVEL_TEX_NEPTUNE];
-    [neptune setScale:.8];
-    neptune.position = CGPointMake(100, 1600);
-    neptune.zPosition = -29;
-    [_moving addChild:neptune];
-    
-    SKAction* neptuneMove = [SKAction moveByX:-50 y:-neptune.size.height * 2 duration:.55 * neptune.size.height * 2];
-    keepNeptune = [SKAction repeatActionForever:neptuneMove];
-    
-}
-
--(void) testingSpace{
-    
-    testSpace = [[SpaceScene alloc] init];
-    spaceLevel = [testSpace createSpaceScene];
-    spaceLevel.position = CGPointMake(0, 0);
-    [_moving addChild:spaceLevel];
+    spaceScene = [spaceLevel createSpaceScene];
+    spaceScene.position = CGPointMake(0, 0);
+    _shevlesTexture = [spaceLevel shelveTexture];
+    _background = [SKColor colorWithRed:42.0/225.0 green:52.0/255.0 blue:56.0/255.0 alpha:1.0];
+    [_moving addChild:spaceScene];
     
 }
 
@@ -720,13 +528,13 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 // Creating a ground and sides physics container dummy which will be replaced once shelves are added
 -(void) physicsContainer{
     
-    _leftSide = [SKNode node];
+    SKNode* _leftSide = [SKNode node];
     _leftSide.position = CGPointMake([self deviceSize:BodyLeftWall], 1);
     _leftSide.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(1, self.frame.size.height * 2)];
     _leftSide.physicsBody.dynamic = NO;
     _leftSide.physicsBody.categoryBitMask = sidesCategory;
     
-    _rightSide = [SKNode node];
+    SKNode* _rightSide = [SKNode node];
     _rightSide.position = CGPointMake([self deviceSize:BodyRightWall], 1);
     _rightSide.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(1, self.frame.size.height * 2)];
     _rightSide.physicsBody.dynamic = NO;
@@ -738,7 +546,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     _dummyFloor.physicsBody.dynamic = NO;
     _dummyFloor.physicsBody.categoryBitMask = floorCategory;
     
-    _dummyRoof = [SKNode node];
+    SKNode* _dummyRoof = [SKNode node];
     _dummyRoof.position = CGPointMake(1, self.frame.size.height);
     _dummyRoof.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(self.frame.size.width * 2, 1)];
     _dummyRoof.physicsBody.dynamic = NO;
@@ -766,7 +574,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 }
 
 -(void) setShelvesMovement{
-    CGFloat distanceToMove = self.frame.size.height + 2 * _mountShevlesTexture.size.height;
+    CGFloat distanceToMove = self.frame.size.height + 2 * _shevlesTexture.size.height;
     SKAction* moveShelves = [SKAction moveByX:0 y:-distanceToMove duration:0.03 * distanceToMove];
     SKAction* removeShelves = [SKAction removeFromParent];
     _moveAndRemoveShelves = [SKAction sequence:@[moveShelves, removeShelves]];
@@ -787,18 +595,18 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     shelveCount += 1;
     shelveCountChicks += 1;
     
-    shelvePair = [SKNode node];
+    SKNode* shelvePair = [SKNode node];
     if (!started) { // Create the scene by adding shelves manually
         shelvePair.position = CGPointMake(0, yPosition);
     }else{ // once the scene is created, create shelves automotically
-        shelvePair.position = CGPointMake(0, self.frame.size.height + _mountShevlesTexture.size.height * 2);
+        shelvePair.position = CGPointMake(0, self.frame.size.height + _shevlesTexture.size.height * 2);
     }
     shelvePair.zPosition = 0;
     
     //Random number for the left shelve
     CGFloat x = [self randomFloatBetween:-400 and:50];
 
-    SKSpriteNode* leftShelve = [SKSpriteNode spriteNodeWithTexture:_mountShevlesTexture];
+    SKSpriteNode* leftShelve = [SKSpriteNode spriteNodeWithTexture:_shevlesTexture];
     //[leftShelve setScale:2.0];
     
     if (((int)yPosition < 600 && (int)yPosition > 130) && !started) {
@@ -807,7 +615,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
         leftShelve.position = CGPointMake(x, 0);
         
         //Adding score node after the solid shelves
-        scoreContactNode = [SKNode node];
+        SKNode* scoreContactNode = [SKNode node];
         scoreContactNode.position = CGPointMake(x + leftShelve.size.width / 1.78, 60);
         scoreContactNode.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(kHorizontalShelveGap, leftShelve.size.height)];
         scoreContactNode.physicsBody.categoryBitMask = scoreCategory;
@@ -827,7 +635,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     topOLeftShelve.physicsBody.dynamic = NO;
     [shelvePair addChild:topOLeftShelve]; // ** Maybe I need to change this to SKNode
     
-    SKSpriteNode* rightShelve = [SKSpriteNode spriteNodeWithTexture:_mountShevlesTexture];
+    SKSpriteNode* rightShelve = [SKSpriteNode spriteNodeWithTexture:_shevlesTexture];
     rightShelve.position = CGPointMake(leftShelve.position.x + leftShelve.size.width + kHorizontalShelveGap, 0);
     rightShelve.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:rightShelve.size];
     rightShelve.physicsBody.dynamic = NO;
@@ -900,38 +708,21 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 // Moves scene
 -(void) moveForrestScene{
-    
+    // needs to be changed
     [titleBanner runAction:_titleMove withKey:@"BGAnim"];
     [playBtn runAction:_titleMove withKey:@"BGAnim"];
-    [frontTree runAction:keepFTM withKey:@"BGAnim"];
-    [leftTree runAction:keepLTM withKey:@"BGAnim"];
-    [rightTree runAction:keepRTM withKey:@"BGAnim"];
-    [rightMidTree runAction:keepRMTM withKey:@"BGAnim"];
-    [leftMidTree runAction:keepLMTM withKey:@"BGAnim"];
-    [midTree runAction:keepMTM withKey:@"BGAnim"];
-    [bGTrees runAction:keepBGTL withKey:@"BGAnim"];
-    [lake runAction:keepBGTL withKey:@"BGAnim"];
-    [smallMount1 runAction:keepSM1 withKey:@"BGAnim"];
-    [smallMount2 runAction:keepSM2 withKey:@"BGAnim"];
-    [smallMount3 runAction:keepSM3 withKey:@"BGAnim"];
-    [largeMount1 runAction:keepLM1 withKey:@"BGAnim"];
-    [largeMount2 runAction:keepLM2 withKey:@"BGAnim"];
-    [grass runAction:keepGM withKey:@"BGAnim"];
     [_highScoreLabelNode runAction:_titleMove withKey:@"BGAnim"];
+    //____________________________
+    [forrestLevel moveScene];
 }
 
 -(void) moveSpaceScene{
-    
-    [testSpace moveSpace];
-    
-//    [titleBanner runAction:_titleMove withKey:@"BGAnim"];
-//    [playBtn runAction:_titleMove withKey:@"BGAnim"];
-//    [_highScoreLabelNode runAction:_titleMove withKey:@"BGAnim"];
-//    [starsBG runAction:keepStars withKey:@"BGAnim"];
-//    [saturn runAction:keepSaturn withKey:@"BGAnim"];
-//    [venus runAction:keepVenus withKey:@"BGAnim"];
-//    [jupiter runAction:keepJupiter withKey:@"BGAnim"];
-//    [neptune runAction:keepNeptune withKey:@"BGAnim"];
+    // needs to be changed
+    [titleBanner runAction:_titleMove withKey:@"BGAnim"];
+    [playBtn runAction:_titleMove withKey:@"BGAnim"];
+    [_highScoreLabelNode runAction:_titleMove withKey:@"BGAnim"];
+    //____________________________
+    [spaceLevel moveSpace];
     
 }
 
@@ -1275,7 +1066,7 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
 
 -(void)reportScore{
     
-   GKScore *score = [[GKScore alloc] initWithLeaderboardIdentifier: _leaderboardIdentifier];
+   GKScore *score = [[GKScore alloc] initWithLeaderboardIdentifier: @"leader_1.0"];
     ScoreData* decodedHighScore = [NSKeyedUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] objectForKey:@"highscore"]];
     
     if ([decodedHighScore.alies isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"gcalies"]]) {
@@ -1311,61 +1102,8 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height / 2 );
     [playBtn removeActionForKey:@"BGAnim"];
     [_highScoreLabelNode removeActionForKey:@"BGAnim"];
-    grass.position = CGPointMake(grass.size.width /2 , grass.size.height / 2);
-    [grass removeActionForKey:@"BGAnim"];
-    frontTree.position = CGPointMake(90, frontTree.size.height /2 );
-    [frontTree removeActionForKey:@"BGAnim"];
-    leftTree.position = CGPointMake(self.frame.size.width / 1.2, leftTree.size.height / 2 - 5);
-    [leftTree removeActionForKey:@"BGAnim"];
-    rightTree.position = CGPointMake(120, rightTree.size.height / 1.7);
-    [rightTree removeActionForKey:@"BGAnim"];
-    rightMidTree.position = CGPointMake(250, rightMidTree.size.height);
-    [rightMidTree removeActionForKey:@"BGAnim"];
-    leftMidTree.position = CGPointMake(self.frame.size.width / 1.6, leftMidTree.size.height);
-    [leftMidTree removeActionForKey:@"BGAnim"];
-    midTree.position = CGPointMake(self.size.width / 2, midTree.size.height * 1.13);
-    [midTree removeActionForKey:@"BGAnim"];
-    bGTrees.position = CGPointMake(430, bGTrees.size.height * 2);
-    [bGTrees removeActionForKey:@"BGAnim"];
-    lake.position = CGPointMake(self.size.width / 2, lake.size.height * 4.8);
-    [lake removeActionForKey:@"BGAnim"];
-    smallMount1.position = CGPointMake(self.size.width / 2, smallMount1.size.height * 3.8);
-    [smallMount1 removeActionForKey:@"BGAnim"];
-    smallMount2.position = CGPointMake(smallMount2.size.width / 4, smallMount1.size.height * 3.8);
-    [smallMount2 removeActionForKey:@"BGAnim"];
-    smallMount3.position = CGPointMake(smallMount3.size.width, smallMount1.size.height * 3.8);
-    [smallMount3 removeActionForKey:@"BGAnim"];
-    largeMount1.position = CGPointMake(self.frame.size.width / 1.4, smallMount1.size.height * 5);
-    [largeMount1 removeActionForKey:@"BGAnim"];
-    largeMount2.position = CGPointMake(self.frame.size.width / 3, smallMount1.size.height * 5);
-    [largeMount2 removeActionForKey:@"BGAnim"];
-    
 }
 
--(void) resetSpaceBackground{
-    
-    titleBanner.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height /2 - 5);
-    [titleBanner removeActionForKey:@"BGAnim"];
-    playBtn.position = CGPointMake(CGRectGetMidX(self.frame), titleBanner.size.height / 2 );
-    [playBtn removeActionForKey:@"BGAnim"];
-    [_highScoreLabelNode removeActionForKey:@"BGAnim"];
-    
-    
-    starsBG.position = CGPointMake(CGRectGetMidX(self.frame), 10);
-    [starsBG removeActionForKey:@"BGAnim"];
-    
-    saturn.position = CGPointMake(600, 500);
-    [saturn removeActionForKey:@"BGAnim"];
-    
-    jupiter.position = CGPointMake(200, 1000);
-    [jupiter removeActionForKey:@"BGAnim"];
-    
-    venus.position = CGPointMake(300, 1300);
-    [venus removeActionForKey:@"BGAnim"];
-    
-    neptune.position = CGPointMake(100, 1600);
-    [neptune removeActionForKey:@"BGAnim"];
-}
 
 -(void) resetScene{
     
@@ -1387,14 +1125,18 @@ NSString *const HorizontalShelveGap = @"HorizontalShelveGap";
     
     // Reseting the scene
     if (levelSelected < 2) {
-        [self resetBackGround];
+        [forrestLevel resetMovement];
+        [forrestScene removeFromParent];
+        forrestScene = [forrestLevel createScene];
+        [_moving addChild:forrestScene];
+        [self resetBackGround]; // remove after method is updated
         [self moveForrestScene];
     }else if(levelSelected == 2){
-        [testSpace resetMovement];
-        [spaceLevel removeFromParent];
-        spaceLevel = [testSpace createSpaceScene];
-        [_moving addChild:spaceLevel];
-        //[self resetSpaceBackground];
+        [spaceLevel resetMovement];
+        [spaceScene removeFromParent];
+        spaceScene = [spaceLevel createSpaceScene];
+        [_moving addChild:spaceScene];
+        [self resetBackGround]; // remove after method is updated
         [self moveSpaceScene];
     }
     

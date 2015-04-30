@@ -18,10 +18,9 @@
     SKTexture* starsTextures = [SKTexture textureWithImageNamed:@"starsBG"];
     starsBG = [SKSpriteNode spriteNodeWithTexture: starsTextures];
     [starsBG setScale:.9];
-    starsBG.position = CGPointMake(CGRectGetMidX(self.frame), 10);
+    starsBG.position = CGPointMake(CGRectGetMidX(self.frame) + 300, 10);
     starsBG.zPosition = -50;
     [spaceContainer addChild:starsBG];
-    //[_moving addChild:starsBG];
     
     SKAction* starsMove = [SKAction moveByX:0 y:-starsBG.size.height + 200 duration:2 * starsBG.size.height];
     keepStars = [SKAction repeatActionForever:starsMove];
@@ -31,7 +30,6 @@
     saturn.position = CGPointMake(600, 500);
     saturn.zPosition = -30;
     [spaceContainer addChild:saturn];
-    //[_moving addChild:saturn];
     
     SKAction* saturnMove = [SKAction moveByX:80 y:-saturn.size.height * 2 duration:.55 * saturn.size.height * 2];
     keepSaturn = [SKAction repeatActionForever:saturnMove];
@@ -41,7 +39,6 @@
     jupiter.position = CGPointMake(200, 1000);
     jupiter.zPosition = -29;
     [spaceContainer addChild:jupiter];
-    //[_moving addChild:jupiter];
     
     SKAction* jupiterMove = [SKAction moveByX:-180 y:-jupiter.size.height * 2 duration:.55 * jupiter.size.height * 2];
     keepJupiter = [SKAction repeatActionForever:jupiterMove];
@@ -51,7 +48,6 @@
     venus.position = CGPointMake(300, 1300);
     venus.zPosition = -29;
     [spaceContainer addChild:venus];
-    //[_moving addChild:venus];
     
     SKAction* venusMove = [SKAction moveByX:0 y:-venus.size.height * 2 duration:.55 * venus.size.height * 2];
     keepVenus = [SKAction repeatActionForever:venusMove];
@@ -61,13 +57,18 @@
     neptune.position = CGPointMake(100, 1600);
     neptune.zPosition = -29;
     [spaceContainer addChild:neptune];
-    //[_moving addChild:neptune];
     
     SKAction* neptuneMove = [SKAction moveByX:-50 y:-neptune.size.height * 2 duration:.55 * neptune.size.height * 2];
     keepNeptune = [SKAction repeatActionForever:neptuneMove];
     
 
     return spaceContainer;
+}
+
+-(SKTexture*) shelveTexture{
+    
+    SKTexture* shelves = [SKTexture textureWithImageNamed:@"spaceShelve"];
+    return shelves;
 }
 
 -(void) moveSpace{

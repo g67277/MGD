@@ -84,7 +84,7 @@
         //[skView presentScene:scene];
         
     }else if ([node.name isEqualToString:@"credits"]){
-        
+                
         CreditsScene *scene = [CreditsScene unarchiveFromFile:@"GameScene"];
         scene.scaleMode = SKSceneScaleModeAspectFill;
         
@@ -216,7 +216,7 @@
     
     if (shouldShowLeaderboard) {
         gcViewController.viewState = GKGameCenterViewControllerStateLeaderboards;
-        gcViewController.leaderboardIdentifier = @"leader_1.0"; //Quick Fix, need to change to make it dynamic**
+        gcViewController.leaderboardIdentifier = @"leader_1.0"; 
     }
     else{
         gcViewController.viewState = GKGameCenterViewControllerStateAchievements;

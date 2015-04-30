@@ -30,5 +30,6 @@
 -(SKNode*) createSpaceScene;
 -(void) moveSpace;
 -(void) resetMovement;
+-(SKTexture*) shelveTexture;
 
 @end

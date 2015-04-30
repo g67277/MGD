@@ -29,6 +29,7 @@
 		817F31E31AE876AF0063AEAE /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 817F31E21AE876AF0063AEAE /* Social.framework */; };
 		817F31E51AE877160063AEAE /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 817F31E41AE877160063AEAE /* Accounts.framework */; };
 		818C1A1D1AF275CF00124118 /* SpaceScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 818C1A1C1AF275CF00124118 /* SpaceScene.m */; };
+		818C1A201AF2862400124118 /* ForrestScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 818C1A1F1AF2862400124118 /* ForrestScene.m */; };
 		818EF2831AABD8DF0005D758 /* BGMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2821AABD8DF0005D758 /* BGMusic.mp3 */; };
 		818EF2861AABDDCA0005D758 /* flap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2851AABDDCA0005D758 /* flap.mp3 */; };
 		818EF2881AABDDE20005D758 /* losing.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 818EF2871AABDDE20005D758 /* losing.mp3 */; };
@@ -89,6 +90,8 @@
 		817F31E41AE877160063AEAE /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		818C1A1B1AF275CF00124118 /* SpaceScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceScene.h; sourceTree = "<group>"; };
 		818C1A1C1AF275CF00124118 /* SpaceScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpaceScene.m; sourceTree = "<group>"; };
+		818C1A1E1AF2862400124118 /* ForrestScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForrestScene.h; sourceTree = "<group>"; };
+		818C1A1F1AF2862400124118 /* ForrestScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ForrestScene.m; sourceTree = "<group>"; };
 		818EF2821AABD8DF0005D758 /* BGMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BGMusic.mp3; sourceTree = "<group>"; };
 		818EF2851AABDDCA0005D758 /* flap.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = flap.mp3; sourceTree = "<group>"; };
 		818EF2871AABDDE20005D758 /* losing.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = losing.mp3; sourceTree = "<group>"; };
@@ -176,6 +179,8 @@
 				817F31DE1AE875590063AEAE /* Score TableView */,
 				818C1A1B1AF275CF00124118 /* SpaceScene.h */,
 				818C1A1C1AF275CF00124118 /* SpaceScene.m */,
+				818C1A1E1AF2862400124118 /* ForrestScene.h */,
+				818C1A1F1AF2862400124118 /* ForrestScene.m */,
 			);
 			path = UpWard;
 			sourceTree = "<group>";
@@ -417,6 +422,7 @@
 				817F31DA1AE8510B0063AEAE /* LocalLeaderBoardViewController.m in Sources */,
 				817696771AC38CF700330D2F /* GameData.m in Sources */,
 				8176967F1AC4C84C00330D2F /* CreditsScene.m in Sources */,
+				818C1A201AF2862400124118 /* ForrestScene.m in Sources */,
 				817696821AC4DF6A00330D2F /* TutorialScene.m in Sources */,
 				8143A9F91AA54D6E000C951E /* main.m in Sources */,
 				81CBFAB01AE02F3A00BD5A7F /* LevelSelection.m in Sources */,
