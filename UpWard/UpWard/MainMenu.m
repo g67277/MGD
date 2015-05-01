@@ -46,8 +46,8 @@
 -(void)didMoveToView:(SKView *)view {
     
     //**************Cheats for grading (Uncomment to activate)***********************
-    [GameData sharedGameData].coinsCollected = 100;
-    [GameData sharedGameData].chicksCollected = 100;
+    //[GameData sharedGameData].coinsCollected = 100;
+    //[GameData sharedGameData].chicksCollected = 100;
     //**************Cheats for grading***********************
   
     [self createIntro];  // Creates main screen intro
@@ -123,9 +123,9 @@
 
         [self showAlertWithTextField];  // Display alertview with uitextfield for name input
         
-    }else if([node.name isEqualToString:@"clearAchievement"]){
-        [self resetAchievements];
-    }
+    }//else if([node.name isEqualToString:@"clearAchievement"]){
+//        [self resetAchievements];
+//    }
 }
 
 -(void)showAlertWithTextField{  // Display alertview with uitextfield for name input
@@ -283,12 +283,12 @@
     [self addChild:tutorialBtn];
     
     //Debugging only***
-    SKSpriteNode* clearAchievement = [SKSpriteNode spriteNodeWithImageNamed:@"tutorialIcon"];
-    [clearAchievement setScale:.5];
-    clearAchievement.position = CGPointMake(self.size.width /5, self.size.height - 250);
-    clearAchievement.zPosition = 100;
-    clearAchievement.name = @"clearAchievement";
-    [self addChild:clearAchievement];
+//    SKSpriteNode* clearAchievement = [SKSpriteNode spriteNodeWithImageNamed:@"tutorialIcon"];
+//    [clearAchievement setScale:.5];
+//    clearAchievement.position = CGPointMake(self.size.width /5, self.size.height - 250);
+//    clearAchievement.zPosition = 100;
+//    clearAchievement.name = @"clearAchievement";
+//    [self addChild:clearAchievement];
     
     SKSpriteNode* background = [SKSpriteNode spriteNodeWithImageNamed:@"introPic"];
     [background setScale:[self deviceSize]];

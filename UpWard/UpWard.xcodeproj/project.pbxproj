@@ -177,10 +177,7 @@
 				81CBFAB41AE09C2800BD5A7F /* Level Selection */,
 				817F31DF1AE875660063AEAE /* Score Data */,
 				817F31DE1AE875590063AEAE /* Score TableView */,
-				818C1A1B1AF275CF00124118 /* SpaceScene.h */,
-				818C1A1C1AF275CF00124118 /* SpaceScene.m */,
-				818C1A1E1AF2862400124118 /* ForrestScene.h */,
-				818C1A1F1AF2862400124118 /* ForrestScene.m */,
+				818C1A211AF2C5C100124118 /* Levels */,
 			);
 			path = UpWard;
 			sourceTree = "<group>";
@@ -265,6 +262,17 @@
 				81DB719C1AE484C300521DD3 /* ScoreData.m */,
 			);
 			name = "Score Data";
+			sourceTree = "<group>";
+		};
+		818C1A211AF2C5C100124118 /* Levels */ = {
+			isa = PBXGroup;
+			children = (
+				818C1A1B1AF275CF00124118 /* SpaceScene.h */,
+				818C1A1C1AF275CF00124118 /* SpaceScene.m */,
+				818C1A1E1AF2862400124118 /* ForrestScene.h */,
+				818C1A1F1AF2862400124118 /* ForrestScene.m */,
+			);
+			name = Levels;
 			sourceTree = "<group>";
 		};
 		818EF2841AABD8E50005D758 /* Music and FX */ = {
@@ -543,6 +551,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = UpWard/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -558,6 +567,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = UpWard/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

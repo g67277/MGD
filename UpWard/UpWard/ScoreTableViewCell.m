@@ -16,10 +16,10 @@
     if (self) {
         // Initialization code
         
-        usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, CGRectGetMidY(self.frame), self.frame.size.width / 2, 50)];
+        usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, CGRectGetMidY(self.frame), self.frame.size.width / 2.5, 50)];
         [self addSubview:usernameLabel];
         
-        scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(usernameLabel.frame.size.width + 20, CGRectGetMidY(self.frame), self.frame.size.width / 2, 50)];
+        scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(usernameLabel.frame.size.width + 10, CGRectGetMidY(self.frame), self.frame.size.width / 2, 50)];
         [self addSubview:scoreLabel];
         
     }
